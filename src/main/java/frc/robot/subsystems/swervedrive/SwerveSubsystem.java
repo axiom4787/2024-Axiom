@@ -321,6 +321,16 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   /**
+   * Gets the current pitch angle of the robot, as reported by the imu.
+   *
+   * @return The heading as a {@link Rotation2d} angle
+   */
+  public Rotation2d getRoll()
+  {
+    return swerveDrive.getRoll();
+  }
+
+  /**
    * Add a fake vision reading for testing purposes.
    */
   public void addFakeVisionReading()
