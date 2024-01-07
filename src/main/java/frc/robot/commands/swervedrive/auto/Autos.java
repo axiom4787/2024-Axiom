@@ -15,7 +15,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
@@ -38,7 +38,7 @@ public final class Autos
     throw new UnsupportedOperationException("This is a utility class!");
   }
 
-  public static CommandBase driveAndSpin(SwerveSubsystem swerve)
+  public static Command driveAndSpin(SwerveSubsystem swerve)
   {
     return Commands.sequence(
         new RepeatCommand(new InstantCommand(() -> swerve.drive(new Translation2d(1, 0), 5, true), swerve)));
@@ -47,7 +47,7 @@ public final class Autos
   /**
    * Example static factory for an autonomous command.
    */
-  public static CommandBase exampleAuto(SwerveSubsystem swerve)
+  public static Command exampleAuto(SwerveSubsystem swerve)
   {
     boolean               onTheFly = false; // Use the path defined in code or loaded from PathPlanner.
     PathPlannerTrajectory example;
@@ -106,7 +106,7 @@ public final class Autos
    * @param offset            Offset from the April Tag.
    * @return {@link FollowTrajectory} command. May return null if cannot load field.
    */
-  public static CommandBase driveToAprilTag(SwerveSubsystem swerve, int id, Rotation2d rotation,
+  public static Command driveToAprilTag(SwerveSubsystem swerve, int id, Rotation2d rotation,
                                             Rotation2d holonomicRotation, Translation2d offset)
   {
     if (aprilTagField == null)
