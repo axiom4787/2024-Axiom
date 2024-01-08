@@ -30,6 +30,7 @@ import frc.robot.subsystems.LimeLight;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathfindHolonomic;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -130,7 +131,8 @@ public class RobotContainer
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return drivebase.getAutonomousCommand("New Path", true);
+    // return drivebase.getAutonomousCommand("PathFindToCycleAmp", true);
+    return drivebase.pathFindToCycleAmpCommand();
   }
 
   public void setDriveMode()

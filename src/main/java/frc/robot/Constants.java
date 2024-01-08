@@ -35,7 +35,7 @@ public final class Constants
     public static final PIDFConfig TranslationPID     = new PIDFConfig(0.7, 0, 0);
     public static final PIDFConfig angleAutoPID = new PIDFConfig(0.4, 0, 0.01);
 
-    public static final double MAX_ACCELERATION = 2;
+    public static final double MAX_ACCELERATION = 3;
   }
 
   public static final class Drivebase
@@ -43,8 +43,8 @@ public final class Constants
 
     // Hold time on motor brakes when disabled
     public static final double WHEEL_LOCK_TIME = 10; // seconds
-    public static final double MAX_ANGULAR_VELOCITY = 2;
-    public static final double MAX_ANGULAR_ACCELERATION = 1;
+    public static final double MAX_ANGULAR_VELOCITY = Math.toRadians(540);
+    public static final double MAX_ANGULAR_ACCELERATION = Math.toRadians(720);
   }
 
   public static class OperatorConstants

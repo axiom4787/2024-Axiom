@@ -49,7 +49,7 @@ public class SwerveSubsystem extends SubsystemBase
   /**
    * Maximum speed of the robot in meters per second, used to limit acceleration.
    */
-  public        double      maximumSpeed = Units.feetToMeters(14.5);
+  public        double      maximumSpeed = 9;
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -118,14 +118,20 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   public Command pathFindToCycleAmpCommand() {
+    // return AutoBuilder.isConfigured() && AutoBuilder.isPathfindingConfigured() ? 
+    //         AutoBuilder.pathfindThenFollowPath(PathPlannerPath.fromPathFile("PathFindToCycleAmp"), 
+    //                                                                                           new PathConstraints(
+    //                                                                                               maximumSpeed,
+    //                                                                                               Constants.Auton.MAX_ACCELERATION, 
+    //                                                                                               Constants.Drivebase.MAX_ANGULAR_VELOCITY, 
+    //                                                                                               Constants.Drivebase.MAX_ANGULAR_ACCELERATION
+    //                                                                                               )) : null;
+    PathPlannerPath path = PathPlannerPath.fromPathFile("PathFindToCycleAmp");
+    System.out.println("AutoBuilder.isConfigured(): " + AutoBuilder.isConfigured());
+    System.out.println("AutoBuilder.isPathfindingConfigured(): " + AutoBuilder.isPathfindingConfigured());
+    System.out.println(path.getPoint(0).position);
     return AutoBuilder.isConfigured() && AutoBuilder.isPathfindingConfigured() ? 
-            AutoBuilder.pathfindThenFollowPath(PathPlannerPath.fromPathFile("PathFindToCycleAmp"), 
-                                                                                              new PathConstraints(
-                                                                                                  maximumSpeed,
-                                                                                                  Constants.Auton.MAX_ACCELERATION, 
-                                                                                                  Constants.Drivebase.MAX_ANGULAR_VELOCITY, 
-                                                                                                  Constants.Drivebase.MAX_ANGULAR_ACCELERATION
-                                                                                                  )) : null;
+            AutoBuilder.followPathWithEvents(path) : null;
   }
 
   /**
@@ -206,8 +212,8 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic()
   {
-    double timestamp = Timer.getFPGATimestamp();
-    swerveDrive.addVisionMeasurement(this.limeLight.getBotPose2d(), timestamp);
+    // double timestamp = Timer.getFPGATimestamp();
+    // swerveDrive.addVisionMeasurement(this.limeLight.getBotPose2d(), timestamp);
   }
 
   @Override
