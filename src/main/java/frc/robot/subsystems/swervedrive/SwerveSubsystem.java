@@ -117,21 +117,22 @@ public class SwerveSubsystem extends SubsystemBase
                                   );
   }
 
-  public Command pathFindToCycleAmpCommand() {
-    // return AutoBuilder.isConfigured() && AutoBuilder.isPathfindingConfigured() ? 
-    //         AutoBuilder.pathfindThenFollowPath(PathPlannerPath.fromPathFile("PathFindToCycleAmp"), 
-    //                                                                                           new PathConstraints(
-    //                                                                                               maximumSpeed,
-    //                                                                                               Constants.Auton.MAX_ACCELERATION, 
-    //                                                                                               Constants.Drivebase.MAX_ANGULAR_VELOCITY, 
-    //                                                                                               Constants.Drivebase.MAX_ANGULAR_ACCELERATION
-    //                                                                                               )) : null;
+  public Command pathFindToCycleAmpCommand() {                                                                       
     PathPlannerPath path = PathPlannerPath.fromPathFile("PathFindToCycleAmp");
     System.out.println("AutoBuilder.isConfigured(): " + AutoBuilder.isConfigured());
     System.out.println("AutoBuilder.isPathfindingConfigured(): " + AutoBuilder.isPathfindingConfigured());
     System.out.println(path.getPoint(0).position);
-    return AutoBuilder.isConfigured() && AutoBuilder.isPathfindingConfigured() ? 
-            AutoBuilder.followPathWithEvents(path) : null;
+
+    // return a pathfinding command to avoid obstacles and then follow a path using autobuilder
+    return AutoBuilder.pathfindThenFollowPath(
+        path,
+        new PathConstraints(
+            9.0,
+            Constants.Auton.MAX_ACCELERATION, 
+            Constants.Drivebase.MAX_ANGULAR_VELOCITY, 
+            Constants.Drivebase.MAX_ANGULAR_ACCELERATION
+        ),
+        3.0);
   }
 
   /**

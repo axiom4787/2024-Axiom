@@ -80,9 +80,10 @@
           "arrowWeight": 3.0,
           "style": "Hidden"
         },
-        "height": 14.619999885559082,
+        "height": 16.15999984741211,
         "image": "C:\\Users\\angel\\Downloads\\field24.png",
-        "width": 27.709999084472656,
+        "units": "meters",
+        "width": 32.560001373291016,
         "window": {
           "visible": true
         }
