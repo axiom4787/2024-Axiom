@@ -5,6 +5,8 @@
 package frc.robot.subsystems.swervedrive;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathfindThenFollowPathHolonomic;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
@@ -19,6 +21,9 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.subsystems.LimeLight;
+
 import java.io.File;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
@@ -37,6 +42,11 @@ public class SwerveSubsystem extends SubsystemBase
    */
   private final SwerveDrive swerveDrive;
   /**
+   * Limelight Object
+   */
+  private final LimeLight limeLight;
+
+  /**
    * Maximum speed of the robot in meters per second, used to limit acceleration.
    */
   public        double      maximumSpeed = Units.feetToMeters(14.5);
@@ -46,8 +56,9 @@ public class SwerveSubsystem extends SubsystemBase
    *
    * @param directory Directory of swerve drive config files.
    */
-  public SwerveSubsystem(File directory)
+  public SwerveSubsystem(File directory, LimeLight limeLight)
   {
+    this.limeLight = limeLight;
     // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
     //  In this case the gear ratio is 12.8 motor revolutions per wheel rotation.
     //  The encoder resolution per motor revolution is 1 per motor revolution.
@@ -106,6 +117,17 @@ public class SwerveSubsystem extends SubsystemBase
                                   );
   }
 
+  public Command pathFindToCycleAmpCommand() {
+    return AutoBuilder.isConfigured() && AutoBuilder.isPathfindingConfigured() ? 
+            AutoBuilder.pathfindThenFollowPath(PathPlannerPath.fromPathFile("PathFindToCycleAmp"), 
+                                                                                              new PathConstraints(
+                                                                                                  maximumSpeed,
+                                                                                                  Constants.Auton.MAX_ACCELERATION, 
+                                                                                                  Constants.Drivebase.MAX_ANGULAR_VELOCITY, 
+                                                                                                  Constants.Drivebase.MAX_ANGULAR_ACCELERATION
+                                                                                                  )) : null;
+  }
+
   /**
    * Get the path follower with events.
    *
@@ -133,8 +155,9 @@ public class SwerveSubsystem extends SubsystemBase
    * @param driveCfg      SwerveDriveConfiguration for the swerve.
    * @param controllerCfg Swerve Controller.
    */
-  public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg)
+  public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg, LimeLight limeLight)
   {
+    this.limeLight = limeLight;
     swerveDrive = new SwerveDrive(driveCfg, controllerCfg, maximumSpeed);
   }
 
@@ -183,6 +206,8 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic()
   {
+    double timestamp = Timer.getFPGATimestamp();
+    swerveDrive.addVisionMeasurement(this.limeLight.getBotPose2d(), timestamp);
   }
 
   @Override
@@ -376,4 +401,26 @@ public class SwerveSubsystem extends SubsystemBase
   {
     swerveDrive.addVisionMeasurement(new Pose2d(3, 3, Rotation2d.fromDegrees(65)), Timer.getFPGATimestamp());
   }
+
+  // public Command createPathfindingCommand(PathPlannerPath goalPath) {
+  //   PathConstraints pathfindingConstraints = new PathConstraints(
+  //       maximumSpeed,
+  //       Constants.Auton.MAX_ACCELERATION, 
+  //       Constants.Drivebase.MAX_ANGULAR_VELOCITY, 
+  //       Constants.Drivebase.MAX_ANGULAR_ACCELERATION
+  //   );
+  //   HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(
+        
+  //   );
+
+  //   return new PathfindThenFollowPathHolonomic(
+  //       goalPath,
+  //       pathfindingConstraints,
+  //       this::getPose, // Robot pose supplier
+  //       this::getRobotVelocity, // Current robot relative speeds supplier
+  //       this::setChassisSpeeds, // Output speeds consumer
+  //       config,
+  //       this // Pass the SwerveSubsystem as the required subsystem
+  //   );
+  // }
 }
