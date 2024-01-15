@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -11,8 +12,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.pathfinding.LocalADStar;
+import com.pathplanner.lib.pathfinding.Pathfinder;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.pathfinding.RemoteADStar;
 
@@ -49,11 +53,12 @@ public class Robot extends TimedRobot
   @Override
   public void robotInit()
   {
-    Pathfinding.setPathfinder(new RemoteADStar());
-
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    // Set up pathfinding 
+    Pathfinding.setPathfinder(new RemoteADStar());
 
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
     // immediately when disabled, but then also let it be pushed more 
@@ -104,6 +109,8 @@ public class Robot extends TimedRobot
   @Override
   public void autonomousInit()
   {
+    // Pathfinding.ensureInitialized();
+    // Pathfinding.setPathfinder(new RemoteADStar());
     m_robotContainer.setMotorBrake(true);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
@@ -112,8 +119,9 @@ public class Robot extends TimedRobot
     {
       m_autonomousCommand.schedule();
     }
-  }
 
+    
+  }
   /**
    * This function is called periodically during autonomous.
    */

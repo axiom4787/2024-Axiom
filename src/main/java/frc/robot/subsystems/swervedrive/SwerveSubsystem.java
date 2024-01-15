@@ -5,11 +5,16 @@
 package frc.robot.subsystems.swervedrive;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.commands.PathfindHolonomic;
 import com.pathplanner.lib.commands.PathfindThenFollowPathHolonomic;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.pathfinding.Pathfinder;
+import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -19,12 +24,15 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.LimeLight;
 
 import java.io.File;
+import java.util.List;
+
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.math.SwerveMath;
@@ -49,7 +57,7 @@ public class SwerveSubsystem extends SubsystemBase
   /**
    * Maximum speed of the robot in meters per second, used to limit acceleration.
    */
-  public        double      maximumSpeed = 9;
+  public        double      maximumSpeed = 3;
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -81,7 +89,7 @@ public class SwerveSubsystem extends SubsystemBase
       // Alternative method if you don't want to supply the conversion factor via JSON files.
       // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed, angleConversionFactor, driveConversionFactor);
     } catch (Exception e)
-    {
+    { 
       throw new RuntimeException(e);
     }
     swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
@@ -94,45 +102,102 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public void setupPathPlanner()
   {
+    // AutoBuilder.configureHolonomic(
+    //   this::getPose, // Robot pose supplier
+    //   this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
+    //   this::getRobotVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+    //   this::setChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+    //   new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+    //     new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+    //     new PIDConstants(swerveDrive.swerveController.config.headingPIDF.p,
+    //       swerveDrive.swerveController.config.headingPIDF.i,
+    //       swerveDrive.swerveController.config.headingPIDF.d), // Rotation PID constants
+    //     4.5, // Max module speed, in m/s
+    //     swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters(), // Drive base radius in meters. Distance from robot center to furthest module.
+    //     new ReplanningConfig() // Default path replanning config. See the API for the options here
+    //   ),
+    //   () -> false, // BooleanSupplier to determine if the path is complete
+    //   this // Reference to this subsystem to set requirements
+    // );
+
     AutoBuilder.configureHolonomic(
-        this::getPose, // Robot pose supplier
-        this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
-        this::getRobotVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-        this::setChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-        new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                                         new PIDConstants(5.0, 0.0, 0.0),
-                                         // Translation PID constants
-                                         new PIDConstants(swerveDrive.swerveController.config.headingPIDF.p,
-                                                          swerveDrive.swerveController.config.headingPIDF.i,
-                                                          swerveDrive.swerveController.config.headingPIDF.d),
-                                         // Rotation PID constants
-                                         4.5,
-                                         // Max module speed, in m/s
-                                         swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters(),
-                                         // Drive base radius in meters. Distance from robot center to furthest module.
-                                         new ReplanningConfig()
-                                         // Default path replanning config. See the API for the options here
-        ),
-        this // Reference to this subsystem to set requirements
-                                  );
+      this::getPose, // Robot pose supplier
+      this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
+      this::getRobotVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+      this::setChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+      new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+        new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+        new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+        4.5, // Max module speed, in m/s
+        swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters(), // Drive base radius in meters. Distance from robot center to furthest module.
+        new ReplanningConfig() // Default path replanning config. See the API for the options here
+      ),
+      () -> false, // BooleanSupplier to determine if the path is complete
+      this // Reference to this subsystem to set requirements
+    );
   }
+
 
   public Command pathFindToCycleAmpCommand() {                                                                       
     PathPlannerPath path = PathPlannerPath.fromPathFile("PathFindToCycleAmp");
-    System.out.println("AutoBuilder.isConfigured(): " + AutoBuilder.isConfigured());
-    System.out.println("AutoBuilder.isPathfindingConfigured(): " + AutoBuilder.isPathfindingConfigured());
-    System.out.println(path.getPoint(0).position);
+    
+    // Assuming Constants are defined correctly with MAX_SPEED, MAX_ACCELERATION, etc.
+    PathConstraints constraints = new PathConstraints(
+        maximumSpeed,
+        Constants.Auton.MAX_ACCELERATION,
+        Constants.Drivebase.MAX_ANGULAR_VELOCITY,
+        Constants.Drivebase.MAX_ANGULAR_ACCELERATION
+    );
 
-    // return a pathfinding command to avoid obstacles and then follow a path using autobuilder
-    return AutoBuilder.pathfindThenFollowPath(
+    return new PathfindThenFollowPathHolonomic(
         path,
-        new PathConstraints(
-            9.0,
-            Constants.Auton.MAX_ACCELERATION, 
-            Constants.Drivebase.MAX_ANGULAR_VELOCITY, 
-            Constants.Drivebase.MAX_ANGULAR_ACCELERATION
+        constraints,
+        this::getPose,
+        this::getRobotVelocity,
+        this::setChassisSpeeds,
+        new HolonomicPathFollowerConfig(
+          new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+          new PIDConstants(swerveDrive.swerveController.config.headingPIDF.p,
+          swerveDrive.swerveController.config.headingPIDF.i,
+          swerveDrive.swerveController.config.headingPIDF.d), // Rotation PID constants
+          4.5, // Max module speed, in m/s
+          swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters(), // Drive base radius in meters. Distance from robot center to furthest module.
+          new ReplanningConfig() // Default path replanning config. See the API for the options here), // Configure with appropriate PID constants and settings
         ),
-        3.0);
+        () -> false, // BooleanSupplier to determine if the path is complete
+        this // Pass the SwerveSubsystem as the required subsystem
+    );
+  }
+
+  public Command pathFindToPose() {
+    Pose2d pose = new Pose2d(2, 2, new Rotation2d(2, 2));
+
+    PathConstraints constraints = new PathConstraints(
+        maximumSpeed,
+        Constants.Auton.MAX_ACCELERATION,
+        Constants.Drivebase.MAX_ANGULAR_VELOCITY,
+        Constants.Drivebase.MAX_ANGULAR_ACCELERATION
+    );
+
+    // Use the same approach as in pathFindToCycleAmpCommand
+    return new PathfindHolonomic(
+        pose,
+        constraints,
+        0.0,
+        this::getPose,
+        this::getRobotVelocity,
+        this::setChassisSpeeds,
+        new HolonomicPathFollowerConfig(
+          new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+          new PIDConstants(swerveDrive.swerveController.config.headingPIDF.p,
+          swerveDrive.swerveController.config.headingPIDF.i,
+          swerveDrive.swerveController.config.headingPIDF.d), // Rotation PID constants
+          4.5, // Max module speed, in m/s
+          swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters(), // Drive base radius in meters. Distance from robot center to furthest module.
+          new ReplanningConfig() // Default path replanning config. See the API for the options here), // Configure with appropriate PID constants and settings
+        ),
+        this
+    );
   }
 
   /**
@@ -213,6 +278,7 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic()
   {
+    // System.out.println("Pose: " + getPose());
     // double timestamp = Timer.getFPGATimestamp();
     // swerveDrive.addVisionMeasurement(this.limeLight.getBotPose2d(), timestamp);
   }
@@ -262,6 +328,7 @@ public class SwerveSubsystem extends SubsystemBase
   public void setChassisSpeeds(ChassisSpeeds chassisSpeeds)
   {
     swerveDrive.setChassisSpeeds(chassisSpeeds);
+    System.out.println("Chassis Speeds set tp: " + chassisSpeeds);
   }
 
   /**
