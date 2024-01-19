@@ -4,13 +4,7 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
 import swervelib.parser.PIDFConfig;
@@ -36,7 +30,7 @@ public final class Constants
     public static final PIDFConfig TranslationPID     = new PIDFConfig(0.7, 0, 0);
     public static final PIDFConfig angleAutoPID = new PIDFConfig(0.4, 0, 0.01);
 
-    public static final double MAX_ACCELERATION = 3.0;
+    public static final double MAX_ACCELERATION = 2;
   }
 
   public static final class Drivebase
@@ -44,28 +38,15 @@ public final class Constants
 
     // Hold time on motor brakes when disabled
     public static final double WHEEL_LOCK_TIME = 10; // seconds
-    public static final double MAX_ANGULAR_VELOCITY = Math.toRadians(540);
-    public static final double MAX_ANGULAR_ACCELERATION = Math.toRadians(720);
   }
 
   public static class OperatorConstants
   {
 
     // Joystick Deadband
-    public static final double LEFT_X_DEADBAND = 0.1;
-    public static final double LEFT_Y_DEADBAND = 0.1;
-    public static final double RIGHT_X_DEADBAND = 0.1;
+    public static final double LEFT_X_DEADBAND = 0.01;
+    public static final double LEFT_Y_DEADBAND = 0.01;
+    public static final double RIGHT_X_DEADBAND = 0.01;
     public static final double TURN_CONSTANT = 0.75;
-  }
-
-  public static final class LimelightConstants {
-    public static final double kLLHeight = Units.inchesToMeters(24.5);
-    public static final double kLLPitch = Units.degreesToRadians(0);
-    public static final double kMinObjectAvoidanceDistance = Units.inchesToMeters(12);
-    public static final double kObjectHeight = Units.inchesToMeters(12);
-    public static final double kObjectPitch = Units.degreesToRadians(0);
-
-    public static final int[] kBlueAprilTags = new int[]{1,2,3,4};
-    public static final int[] kRedAprilTags = new int[]{5,6,7,8};
   }
 }
