@@ -19,6 +19,9 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.subsystems.LimeLight;
+
 import java.io.File;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
@@ -35,6 +38,7 @@ public class SwerveSubsystem extends SubsystemBase
   /**
    * Swerve drive object.
    */
+  private final LimeLight limelight;
   private final SwerveDrive swerveDrive;
   /**
    * Maximum speed of the robot in meters per second, used to limit acceleration.
@@ -46,8 +50,9 @@ public class SwerveSubsystem extends SubsystemBase
    *
    * @param directory Directory of swerve drive config files.
    */
-  public SwerveSubsystem(File directory)
+  public SwerveSubsystem(File directory, LimeLight limelight)
   {
+    this.limelight = limelight;
     // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
     //  In this case the gear ratio is 12.8 motor revolutions per wheel rotation.
     //  The encoder resolution per motor revolution is 1 per motor revolution.
@@ -102,6 +107,7 @@ public class SwerveSubsystem extends SubsystemBase
                                          new ReplanningConfig()
                                          // Default path replanning config. See the API for the options here
         ),
+        () -> false,
         this // Reference to this subsystem to set requirements
                                   );
   }
@@ -133,8 +139,9 @@ public class SwerveSubsystem extends SubsystemBase
    * @param driveCfg      SwerveDriveConfiguration for the swerve.
    * @param controllerCfg Swerve Controller.
    */
-  public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg)
+  public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg, LimeLight limelight)
   {
+    this.limelight = limelight;
     swerveDrive = new SwerveDrive(driveCfg, controllerCfg, maximumSpeed);
   }
 
@@ -183,6 +190,9 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic()
   {
+    // double timestamp = Timer.getFPGATimestamp();
+    // swerveDrive.addVisionMeasurement(this.limeLight.getBotPose2d(), timestamp);
+    // System.out.println("Pose: " + getPose().getX() + " | " + getPose().getY());
   }
 
   @Override
@@ -309,6 +319,12 @@ public class SwerveSubsystem extends SubsystemBase
                                                         angle.getRadians(),
                                                         getHeading().getRadians(),
                                                         maximumSpeed);
+  }
+  public ChassisSpeeds getRawTargetSpeeds(double xInput, double yInput, double rot)
+  {
+    xInput = Math.pow(xInput, 3);
+    yInput = Math.pow(yInput, 3);
+    return swerveDrive.swerveController.getRawTargetSpeeds(xInput, yInput, rot);
   }
 
   /**

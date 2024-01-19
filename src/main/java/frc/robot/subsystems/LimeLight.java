@@ -17,6 +17,7 @@ import frc.robot.Constants.LimelightConstants;
 public class LimeLight extends SubsystemBase {
     // NetworkTable fields
     NetworkTable table;
+    NetworkTableEntry t6c_ts;
     NetworkTableEntry tv;
     NetworkTableEntry tx;
     NetworkTableEntry ty;
@@ -38,7 +39,8 @@ public class LimeLight extends SubsystemBase {
      */
     public LimeLight() {
         table = NetworkTableInstance.getDefault().getTable("limelight");
-
+        
+        t6c_ts = table.getEntry("t6c_ts	");
         tv = table.getEntry("tv");
         tx = table.getEntry("tx");
         ty = table.getEntry("ty");
@@ -108,6 +110,11 @@ public class LimeLight extends SubsystemBase {
 
     public Pose2d getBotPose2d() {
         return new Pose2d(getBotTranslation2d(), getBotRotation2d());
+    }
+
+    public Pose2d getCamPose2dInTargetSpace() {
+        Double[] t6c_tsDoubleArray = t6c_ts.getDoubleArray(new Double[6]);
+        return new Pose2d(t6c_tsDoubleArray[0], t6c_tsDoubleArray[2], new Rotation2d(t6c_tsDoubleArray[5]));
     }
 
     /**

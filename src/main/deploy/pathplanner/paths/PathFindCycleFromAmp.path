@@ -3,72 +3,63 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 14.72574872422472,
-        "y": 7.4816542360357445
+        "x": 1.8966704122965419,
+        "y": 7.548440714053126
       },
       "prevControl": null,
       "nextControl": {
-        "x": 10.96626411434641,
-        "y": 6.595423372664927
+        "x": 6.78700262587689,
+        "y": 6.961013421130562
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.2795852864433,
+        "x": 8.307571524233957,
         "y": 4.113976955226638
       },
       "prevControl": {
-        "x": 9.014808796760537,
-        "y": 6.44057240563842
+        "x": 8.391530237605929,
+        "y": 6.688710831967119
       },
       "nextControl": {
-        "x": 6.861615905049991,
-        "y": -0.37314983720876554
+        "x": 8.229758932302152,
+        "y": 1.727724135984622
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.7308056434294685,
-        "y": 0.8209296418592844
+        "x": 14.908184950531345,
+        "y": 0.8664552570589569
       },
       "prevControl": {
-        "x": 3.4101299677537957,
-        "y": 1.8087674796971205
+        "x": 10.987107770273226,
+        "y": 0.6021129752438021
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.0,
-      "rotationDegrees": 91.2453642667683,
-      "rotateFast": false
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 9.0,
+    "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -124.14358665193775,
-    "rotateFast": true
+    "rotation": -59.84845201817792,
+    "rotateFast": false
   },
   "reversed": false,
   "folder": null,
-  "previewStartingState": {
-    "rotation": 90.0,
-    "velocity": 0
-  },
+  "previewStartingState": null,
   "useDefaultConstraints": false
 }

@@ -1,6 +1,4 @@
 /**
- * Yet-Another Generic Swerve Library (YAGSL) main package AKA swervelib.
- *
- * @version 1.0.0
+ * Telemetry package for sending data to NT4 or SmartDashboard.
  */
 package swervelib;
