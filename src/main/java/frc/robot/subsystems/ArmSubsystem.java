@@ -22,7 +22,7 @@ public class ArmSubsystem extends SubsystemBase {
     private static int kI;
     private static int kD;
 
-    PIDController ArmPID = new PIDController(kP, kI, kD);
+    private PIDController ArmPID = new PIDController(kP, kI, kD);
     
     public ArmSubsystem() {
 
@@ -47,27 +47,11 @@ public class ArmSubsystem extends SubsystemBase {
 
       armLeftEncoder = armLeftMotor.getEncoder();
       armRightEncoder = armRightMotor.getEncoder();
-      
-      // PIDController pid = new PIDController(ArmIntakeShooter.ShootingP, 
-      //                                             ArmIntakeShooter.ShootingI, 
-      //                                             ArmIntakeShooter.ShootingD); 
-      // PIDController.enableContinuousOutput(-180, 180); 
-      
-
-      // armLeftMotor.set(pid.calculate(armLeftEncoder.getDistance(), setPoint) + feedforward);
-      // armRightMotor.set(pid.calculate(armRightEncoder.getDistance(), setPoint) + feedforward);
     }
-    public void ArmPID(double goalPoint, int newPointNum) {
-      if (currentPointNum != newPointNum){
-        currentPointNum = newPointNum;
-        ArmPID = new PIDController(kP, kI, kD);
-        ArmPID.setSetpoint(armLeftEncoder.getPosition());
-      }
-      if (goalPoint == 0 && (armLeftEncoder.getPosition() < 8)) {
-        armLeftMotor.set(MathUtil.clamp(ArmPID.calculate(armLeftEncoder.getPosition(), goalPoint), -0.075, .4));
-      } else {
-        armLeftMotor.set(MathUtil.clamp(ArmPID.calculate(armLeftEncoder.getPosition(), goalPoint), -0.075, .4));
-      } 
+
+    public void ArmPID(double kSetpoint) {
+      armLeftMotor.set(ArmPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD);
+      ArmPID.reset();
   }
 
   public void ArmMove(double Movement){
