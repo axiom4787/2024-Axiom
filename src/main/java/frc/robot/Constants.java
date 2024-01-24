@@ -63,6 +63,14 @@ public final class Constants
     public static final double FEED_FOWARD = 0;
   }
 
+  public static final class SetPointAngles
+  {
+    public static final int INTAKE_GROUND_ANGLE = 0;
+    public static final int INTAKE_HUMAN_ANGLE = 0;
+    public static final int SHOOTER_AMP_ANGLE = 0;
+    public static final int SHOOTER_SPEAKER_ANGLE = 0;
+  }
+
   public static class OperatorConstants
   {
 
