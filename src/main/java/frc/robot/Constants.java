@@ -59,6 +59,8 @@ public final class Constants
     // public static final IdleMode BOTTOM_MOTOR_IDLE_MODE = IdleMode.kBrake;
     // public static final IdleMode LEFTARM_MOTOR_IDLE_MODE = IdleMode.kBrake;
     // public static final IdleMode RIGHTMOTOR_MOTOR_IDLE_MODE = IdleMode.kBrake;
+
+    public static final double FEED_FOWARD = 0;
   }
 
   public static class OperatorConstants
