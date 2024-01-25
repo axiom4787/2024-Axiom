@@ -17,7 +17,6 @@ public class ArmSubsystem extends SubsystemBase {
     private final RelativeEncoder armLeftEncoder; //encoder for left arm
     private final RelativeEncoder armRightEncoder; //encoder for right arm
 
-    private int currentPointNum = 0; 
     private static int kP;
     private static int kI;
     private static int kD;
