@@ -145,6 +145,14 @@ public class SwerveDrive
    */
   private       double                   maxSpeedMPS;
   /**
+   * Module offsets in degrees.
+   */
+  private       double                   offsetBackLeftDegrees = 0.0; 
+  private       double                   offsetBackRightDegrees = 0.0; 
+  private       double                   offsetFrontRightDegrees = 0.0;
+  private       double                   offsetFrontLeftDegrees = 0.0;  
+
+  /**
    * Alert to recommend Tuner X if the configuration is compatible.
    */
   private final Alert                    tunerXRecommendation                            = new Alert("Swerve Drive",
@@ -540,6 +548,18 @@ public class SwerveDrive
   }
 
   /**
+   * apply offset to a module state
+   * @param state
+   * @param offsetDegrees
+   * @return
+   */
+  private SwerveModuleState applyOffsetToState(SwerveModuleState state, double offsetDegrees) {
+    // Adjust the module's state angle by the offset
+    Rotation2d adjustedAngle = state.angle.rotateBy(Rotation2d.fromDegrees(offsetDegrees));
+    return new SwerveModuleState(state.speedMetersPerSecond, adjustedAngle);
+  }
+
+  /**
    * Set the module states (azimuth and velocity) directly. Used primarily for auto pathing.
    *
    * @param desiredStates A list of SwerveModuleStates to send to the modules.
@@ -547,6 +567,12 @@ public class SwerveDrive
    */
   private void setRawModuleStates(SwerveModuleState[] desiredStates, boolean isOpenLoop)
   {
+    // Apply offsets to each module's state
+    desiredStates[0] = applyOffsetToState(desiredStates[0], offsetBackLeftDegrees);
+    desiredStates[1] = applyOffsetToState(desiredStates[1], offsetBackRightDegrees);
+    desiredStates[2] = applyOffsetToState(desiredStates[2], offsetFrontRightDegrees);
+    desiredStates[3] = applyOffsetToState(desiredStates[3], offsetFrontLeftDegrees);
+
     // Desaturates wheel speeds
     if (attainableMaxTranslationalSpeedMetersPerSecond != 0 || attainableMaxRotationalVelocityRadiansPerSecond != 0)
     {
