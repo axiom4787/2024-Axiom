@@ -22,7 +22,6 @@ public class ArmSubsystem extends SubsystemBase {
   private static int kP;
   private static int kI;
   private static int kD;
-  private static double setPoint;
 
   private static XBoxController xboxcontroller = new XBoxController();
 
