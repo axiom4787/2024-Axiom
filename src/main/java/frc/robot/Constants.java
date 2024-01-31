@@ -47,10 +47,10 @@ public final class Constants
 
   public static final class ArmIntakeShooter 
   {
-    public static final int TOP_MOTORID = 7; // neo
-    public static final int BOTTOM_MOTORID = 8; //neo 550
-    public static final int LEFTARM_MOTORID = 9; //neo 
-    public static final int RIGHTARM_MOTORID = 9; //neo
+    public static final int TOP_MOTORID = 9; // neo
+    public static final int BOTTOM_MOTORID = 10; //neo 550
+    public static final int LEFTARM_MOTORID = 11; //neo 
+    public static final int RIGHTARM_MOTORID = 12; //neo
     
     public static final int TOP_MOTOR_CURRENT_LIMIT = 40; // neo amp
     public static final int BOTTOM_MOTOR_CURRENT_LIMIT = 20; // neo 550 amp
@@ -67,10 +67,10 @@ public final class Constants
 
   public static final class SetPointAngles
   {
-    public static final int INTAKE_GROUND_ANGLE = 0;
-    public static final int INTAKE_HUMAN_ANGLE = 0;
-    public static final int SHOOTER_AMP_ANGLE = 0;
-    public static final int SHOOTER_SPEAKER_ANGLE = 0;
+    public static final int INTAKE_GROUND_ANGLE = 100;
+    public static final int INTAKE_HUMAN_ANGLE = 90;
+    public static final int SHOOTER_AMP_ANGLE = 80;
+    public static final int SHOOTER_SPEAKER_ANGLE = 70;
   }
 
   public static class OperatorConstants

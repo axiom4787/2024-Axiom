@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.SetPointAngles;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
@@ -38,6 +39,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import frc.robot.subsystems.ArmSubsystem; 
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -55,6 +57,8 @@ public class RobotContainer
   // CommandJoystick rotationController = new CommandJoystick(1);
   // Replace with CommandPS4Controller or CommandJoystick if needed
   CommandJoystick driverController = new CommandJoystick(1);
+
+  ArmSubsystem armSubsystem = new ArmSubsystem();
 
   // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
   XboxController driverXbox = new XboxController(0);
@@ -295,5 +299,23 @@ public class RobotContainer
   public void setMotorBrake(boolean brake)
   {
     drivebase.setMotorBrake(brake);
+  }
+
+
+  public void setArmPID() {
+    if (driverXbox.getPOV() == 180) {
+      armSubsystem.CalculateArmPID(SetPointAngles.INTAKE_GROUND_ANGLE);
+      // armLeftMotor.set(1);
+    }
+    else if (driverXbox.getPOV() == 270) {
+      armSubsystem.CalculateArmPID(SetPointAngles.SHOOTER_AMP_ANGLE);
+    }
+    else if (driverXbox.getPOV() == 90) {
+      armSubsystem.CalculateArmPID(SetPointAngles.SHOOTER_SPEAKER_ANGLE);
+    }
+    else if (driverXbox.getPOV() == 0) {
+      armSubsystem.CalculateArmPID(SetPointAngles.INTAKE_HUMAN_ANGLE);
+      armSubsystem.armLeftMotor.set(1);
+    }
   }
 }
