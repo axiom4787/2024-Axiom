@@ -1,5 +1,6 @@
 package swervelib;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -146,11 +147,16 @@ public class SwerveDrive
   private       double                   maxSpeedMPS;
   /**
    * Module offsets in degrees.
-   */
-  private       double                   offsetBackLeftDegrees = 0.0; 
-  private       double                   offsetBackRightDegrees = 0.0; 
-  private       double                   offsetFrontRightDegrees = 0.0;
-  private       double                   offsetFrontLeftDegrees = 0.0;  
+  //  */
+  // private       double                   offsetBackLeftDegrees = 90.0; //front left
+  // private       double                   offsetBackRightDegrees = 0.0; //front right
+  // private       double                   offsetFrontRightDegrees = 180.0; //back left
+  // private       double                   offsetFrontLeftDegrees = 270.0;  //back right
+
+  private       double                   offsetBackLeftDegrees = 0.0; //front left
+  private       double                   offsetBackRightDegrees = 0.0; //front right
+  private       double                   offsetFrontRightDegrees = 0.0; //back left
+  private       double                   offsetFrontLeftDegrees = 0.0;  //back right
 
   /**
    * Alert to recommend Tuner X if the configuration is compatible.
@@ -556,6 +562,7 @@ public class SwerveDrive
   private SwerveModuleState applyOffsetToState(SwerveModuleState state, double offsetDegrees) {
     // Adjust the module's state angle by the offset
     Rotation2d adjustedAngle = state.angle.rotateBy(Rotation2d.fromDegrees(offsetDegrees));
+    // return new SwerveModuleState(MathUtil.clamp(state.speedMetersPerSecond, -1, 1), adjustedAngle); // clamp speed to -1, 1
     return new SwerveModuleState(state.speedMetersPerSecond, adjustedAngle);
   }
 
