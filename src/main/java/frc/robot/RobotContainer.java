@@ -30,6 +30,7 @@ import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.commands.swervedrive.drivebase.TeleopDrive;
 import frc.robot.subsystems.LimeLight;
+import frc.robot.subsystems.MotorTest;
 import frc.robot.subsystems.SimulatedLimelightData;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
@@ -58,7 +59,8 @@ public class RobotContainer
   // Replace with CommandPS4Controller or CommandJoystick if needed
   // CommandJoystick driverController = new CommandJoystick(0);
 
-  ArmSubsystem armSubsystem = new ArmSubsystem();
+  // ArmSubsystem armSubsystem = new ArmSubsystem();
+  MotorTest testSubsystem = new MotorTest();
 
   // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
   XboxController driverXbox = new XboxController(0);
@@ -216,7 +218,7 @@ public class RobotContainer
   {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     // new JoystickButton(driverXbox, Button.kY.value).onTrue((new RunCommand(drivebase::zeroModules, drivebase)));
-
+    new JoystickButton(driverXbox, Button.kY.value).onTrue((new RunCommand(()-> testSubsystem.move(0.5), testSubsystem)));
     // new JoystickButton(driverXbox, 1).onTrue((new InstantCommand(drivebase::zeroGyro)));
     // new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
@@ -302,26 +304,26 @@ public class RobotContainer
   }
 
 
-  public void setArmPID() {
-    System.out.println(driverXbox.getPOV());
-    if (driverXbox.getPOV() == 180) {
-      armSubsystem.CalculateArmPID(SetPointAngles.INTAKE_GROUND_ANGLE);
-      // armLeftMotor.set(1);
-    }
-    else if (driverXbox.getPOV() == 270) {
-      armSubsystem.CalculateArmPID(SetPointAngles.SHOOTER_AMP_ANGLE);
-    }
-    else if (driverXbox.getPOV() == 90) {
-      armSubsystem.CalculateArmPID(SetPointAngles.SHOOTER_SPEAKER_ANGLE);
-    }
-    else if (driverXbox.getPOV() == 0) {
-      armSubsystem.CalculateArmPID(SetPointAngles.INTAKE_HUMAN_ANGLE);
-    }
-    else {armSubsystem.armLeftMotor.set(0);}
-  }
+  // public void setArmPID() {
+  //   System.out.println(driverXbox.getPOV());
+  //   if (driverXbox.getPOV() == 180) {
+  //     armSubsystem.CalculateArmPID(SetPointAngles.INTAKE_GROUND_ANGLE);
+  //     // armLeftMotor.set(1);
+  //   }
+  //   else if (driverXbox.getPOV() == 270) {
+  //     armSubsystem.CalculateArmPID(SetPointAngles.SHOOTER_AMP_ANGLE);
+  //   }
+  //   else if (driverXbox.getPOV() == 90) {
+  //     armSubsystem.CalculateArmPID(SetPointAngles.SHOOTER_SPEAKER_ANGLE);
+  //   }
+  //   else if (driverXbox.getPOV() == 0) {
+  //     armSubsystem.CalculateArmPID(SetPointAngles.INTAKE_HUMAN_ANGLE);
+  //   }
+  //   else {armSubsystem.armLeftMotor.set(0);}
+  // }
 
-  public RunCommand getArmCommand() {
-    return new RunCommand(() -> setArmPID(), armSubsystem);
-  }
+  // public RunCommand getArmCommand() {
+  //   return new RunCommand(() -> setArmPID(), armSubsystem);
+  // }
 
 }

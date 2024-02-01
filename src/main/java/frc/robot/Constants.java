@@ -65,6 +65,11 @@ public final class Constants
     public static final double FEED_FOWARD = 0;
   }
 
+  public static final class MotorTestConstants
+  {
+    public static final int MOTOR_ID = 13; // neo
+  }
+
   public static final class SetPointAngles
   {
     public static final int INTAKE_GROUND_ANGLE = 100;

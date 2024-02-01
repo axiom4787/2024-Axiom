@@ -167,8 +167,8 @@ public class Robot extends TimedRobot
   @Override
   public void simulationInit()
   {
-    Command armCoommand = m_robotContainer.getArmCommand();
-    armCoommand.schedule();
+    // Command armCoommand = m_robotContainer.getArmCommand();
+    // armCoommand.schedule();
   }
 
   /**
