@@ -56,7 +56,7 @@ public class RobotContainer
                                                                          "swerve/neo"), limelight);
   // CommandJoystick rotationController = new CommandJoystick(1);
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  CommandJoystick driverController = new CommandJoystick(1);
+  // CommandJoystick driverController = new CommandJoystick(0);
 
   ArmSubsystem armSubsystem = new ArmSubsystem();
 
@@ -109,11 +109,11 @@ public class RobotContainer
                                                     () -> -MathUtil.applyDeadband(driverXbox.getLeftX(),
                                                                                  OperatorConstants.LEFT_X_DEADBAND),
                                                     () -> -driverXbox.getRawAxis(4), () -> true);
-    TeleopDrive closedFieldRel = new TeleopDrive(
-        drivebase,
-        () -> -MathUtil.applyDeadband(driverController.getY(), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> -MathUtil.applyDeadband(driverController.getX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> MathUtil.applyDeadband(driverXbox.getRightX(), OperatorConstants.RIGHT_X_DEADBAND), () -> true);
+    // TeleopDrive closedFieldRel = new TeleopDrive(
+    //     drivebase,
+    //     () -> -MathUtil.applyDeadband(driverController.getY(), OperatorConstants.LEFT_Y_DEADBAND),
+    //     () -> -MathUtil.applyDeadband(driverController.getX(), OperatorConstants.LEFT_X_DEADBAND),
+    //     () -> MathUtil.applyDeadband(driverXbox.getRightX(), OperatorConstants.RIGHT_X_DEADBAND), () -> true);
 
     // drivebase.setDefaultCommand(RobotBase.isSimulation() ? closedAbsoluteDrive : closedFieldAbsoluteDrive);
     drivebase.setDefaultCommand(closedFieldAbsoluteDrive);
@@ -249,12 +249,12 @@ public class RobotContainer
       0
     ));
 
-    TeleopDrive lockToAprilTag = new TeleopDrive(
-        drivebase,
-        () -> -MathUtil.applyDeadband(driverController.getY(), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> -calculateTrackingXVelocity(MathUtil.applyDeadband(driverController.getX(), OperatorConstants.LEFT_X_DEADBAND)),
-        () -> -calculateTrackingAngularVelocity(-driverController.getRawAxis(4)), () -> false);
-    SmartDashboard.putData("lock to tag", lockToAprilTag);
+    // TeleopDrive lockToAprilTag = new TeleopDrive(
+    //     drivebase,
+    //     () -> -MathUtil.applyDeadband(driverController.getY(), OperatorConstants.LEFT_Y_DEADBAND),
+    //     () -> -calculateTrackingXVelocity(MathUtil.applyDeadband(driverController.getX(), OperatorConstants.LEFT_X_DEADBAND)),
+    //     () -> -calculateTrackingAngularVelocity(-driverController.getRawAxis(4)), () -> false);
+    // SmartDashboard.putData("lock to tag", lockToAprilTag);
 
     // Add a button to SmartDashboard that will create and follow an on-the-fly path
     // This example will simply move the robot 2m forward of its current position
@@ -303,6 +303,7 @@ public class RobotContainer
 
 
   public void setArmPID() {
+    System.out.println(driverXbox.getPOV());
     if (driverXbox.getPOV() == 180) {
       armSubsystem.CalculateArmPID(SetPointAngles.INTAKE_GROUND_ANGLE);
       // armLeftMotor.set(1);
@@ -315,7 +316,12 @@ public class RobotContainer
     }
     else if (driverXbox.getPOV() == 0) {
       armSubsystem.CalculateArmPID(SetPointAngles.INTAKE_HUMAN_ANGLE);
-      armSubsystem.armLeftMotor.set(1);
     }
+    else {armSubsystem.armLeftMotor.set(0);}
   }
+
+  public RunCommand getArmCommand() {
+    return new RunCommand(() -> setArmPID(), armSubsystem);
+  }
+
 }
