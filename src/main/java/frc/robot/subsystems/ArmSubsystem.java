@@ -19,7 +19,7 @@ public class ArmSubsystem extends SubsystemBase {
   private final RelativeEncoder armLeftEncoder; //encoder for left arm
   private final RelativeEncoder armRightEncoder; //encoder for right arm
 
-  private static double kP = 1.0;
+  private static double kP = 0.000005;
   private static double kI = 0.0;
   private static double kD = 0.0;
 
@@ -54,12 +54,12 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void CalculateArmPID(double kSetpoint) {
-    armLeftMotor.set(MathUtil.clamp(ArmPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, -1, 1));
+    armLeftMotor.set(MathUtil.clamp(ArmPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, -0.1, 0.1));
     System.out.println(ArmPID.calculate(armLeftEncoder.getPosition(), kSetpoint));
   }
 
   public void SimCalculateArmPID(double kSetpoint) {
-    armLeftMotor.setVoltage(MathUtil.clamp(ArmPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, -1, 1));
+    armLeftMotor.setVoltage(MathUtil.clamp(ArmPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, -0.1, 0.1));
     System.out.println(ArmPID.calculate(armLeftEncoder.getPosition(), kSetpoint));
   }
 
