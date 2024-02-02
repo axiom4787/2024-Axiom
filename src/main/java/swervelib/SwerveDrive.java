@@ -1,5 +1,6 @@
 package swervelib;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -144,6 +145,19 @@ public class SwerveDrive
    * Maximum speed of the robot in meters per second.
    */
   private       double                   maxSpeedMPS;
+  /**
+   * Module offsets in degrees.
+  //  */
+  // private       double                   offsetBackLeftDegrees = 90.0; //front left
+  // private       double                   offsetBackRightDegrees = 0.0; //front right
+  // private       double                   offsetFrontRightDegrees = 180.0; //back left
+  // private       double                   offsetFrontLeftDegrees = 270.0;  //back right
+
+  private       double                   offsetBackLeftDegrees = 0.0; //front left
+  private       double                   offsetBackRightDegrees = 0.0; //front right
+  private       double                   offsetFrontRightDegrees = 0.0; //back left
+  private       double                   offsetFrontLeftDegrees = 0.0;  //back right
+
   /**
    * Alert to recommend Tuner X if the configuration is compatible.
    */
@@ -540,6 +554,19 @@ public class SwerveDrive
   }
 
   /**
+   * apply offset to a module state
+   * @param state
+   * @param offsetDegrees
+   * @return
+   */
+  private SwerveModuleState applyOffsetToState(SwerveModuleState state, double offsetDegrees) {
+    // Adjust the module's state angle by the offset
+    Rotation2d adjustedAngle = state.angle.rotateBy(Rotation2d.fromDegrees(offsetDegrees));
+    // return new SwerveModuleState(MathUtil.clamp(state.speedMetersPerSecond, -1, 1), adjustedAngle); // clamp speed to -1, 1
+    return new SwerveModuleState(state.speedMetersPerSecond, adjustedAngle);
+  }
+
+  /**
    * Set the module states (azimuth and velocity) directly. Used primarily for auto pathing.
    *
    * @param desiredStates A list of SwerveModuleStates to send to the modules.
@@ -547,6 +574,12 @@ public class SwerveDrive
    */
   private void setRawModuleStates(SwerveModuleState[] desiredStates, boolean isOpenLoop)
   {
+    // Apply offsets to each module's state
+    desiredStates[0] = applyOffsetToState(desiredStates[0], offsetBackLeftDegrees);
+    desiredStates[1] = applyOffsetToState(desiredStates[1], offsetBackRightDegrees);
+    desiredStates[2] = applyOffsetToState(desiredStates[2], offsetFrontRightDegrees);
+    desiredStates[3] = applyOffsetToState(desiredStates[3], offsetFrontLeftDegrees);
+
     // Desaturates wheel speeds
     if (attainableMaxTranslationalSpeedMetersPerSecond != 0 || attainableMaxRotationalVelocityRadiansPerSecond != 0)
     {

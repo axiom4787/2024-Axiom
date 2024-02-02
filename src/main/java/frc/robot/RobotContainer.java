@@ -34,6 +34,9 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 import java.util.List;
 
+import org.opencv.core.Mat;
+
+import com.ctre.phoenix.Util;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
@@ -210,6 +213,9 @@ public class RobotContainer
    */
   private void configureBindings()
   {
+    // Boolean isDriving = MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND) != 0
+    //                     || MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND) != 0
+    //                     || MathUtil.applyDeadband(driverXbox.getRightX(), OperatorConstants.LEFT_X_DEADBAND) != 0;
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     // new JoystickButton(driverXbox, Button.kY.value).onTrue((new RunCommand(drivebase::zeroModules, drivebase)));
 
@@ -226,6 +232,7 @@ public class RobotContainer
       0, 
       2.0
     ));
+    
     SmartDashboard.putData("Pathfind to Scoring Pos", AutoBuilder.pathfindToPose(
       new Pose2d(2.15, 3.0, Rotation2d.fromDegrees(180)), 
       new PathConstraints(
@@ -236,13 +243,13 @@ public class RobotContainer
       0
     ));
 
-    SmartDashboard.putData("Pathfind to AmpCycle", AutoBuilder.pathfindThenFollowPath(
-      PathPlannerPath.fromPathFile("PathFindCycleToAmp"), 
-      new PathConstraints(
-        4.0, 4.0, 
-        Units.degreesToRadians(360), Units.degreesToRadians(540)
-      ), 
-      0
+    SmartDashboard.putData("Pathfind to AmpCycle", AutoBuilder.followPath(
+      PathPlannerPath.fromPathFile("PathFindCycleToAmp")
+      // new PathConstraints(
+      //   4.0, 4.0, 
+      //   Units.degreesToRadians(360), Units.degreesToRadians(540)
+      // ), 
+      // 0
     ));
 
     TeleopDrive lockToAprilTag = new TeleopDrive(
