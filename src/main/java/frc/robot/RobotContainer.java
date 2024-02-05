@@ -59,7 +59,7 @@ public class RobotContainer
   // Replace with CommandPS4Controller or CommandJoystick if needed
   // CommandJoystick driverController = new CommandJoystick(0);
 
-  // ArmSubsystem armSubsystem = new ArmSubsystem();
+  ArmSubsystem armSubsystem = new ArmSubsystem();
   MotorTest testSubsystem = new MotorTest();
 
   // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
@@ -304,26 +304,25 @@ public class RobotContainer
   }
 
 
-  // public void setArmPID() {
-  //   System.out.println(driverXbox.getPOV());
-  //   if (driverXbox.getPOV() == 180) {
-  //     armSubsystem.CalculateArmPID(SetPointAngles.INTAKE_GROUND_ANGLE);
-  //     // armLeftMotor.set(1);
-  //   }
-  //   else if (driverXbox.getPOV() == 270) {
-  //     armSubsystem.CalculateArmPID(SetPointAngles.SHOOTER_AMP_ANGLE);
-  //   }
-  //   else if (driverXbox.getPOV() == 90) {
-  //     armSubsystem.CalculateArmPID(SetPointAngles.SHOOTER_SPEAKER_ANGLE);
-  //   }
-  //   else if (driverXbox.getPOV() == 0) {
-  //     armSubsystem.CalculateArmPID(SetPointAngles.INTAKE_HUMAN_ANGLE);
-  //   }
-  //   else {armSubsystem.armLeftMotor.set(0);}
-  // }
+  public void setArmPID() {
+    System.out.println(driverXbox.getPOV());
+    if (driverXbox.getPOV() == 180) {
+      armSubsystem.CalculateArmPID(SetPointAngles.INTAKE_GROUND_ANGLE);
+    }
+    else if (driverXbox.getPOV() == 270) {
+      armSubsystem.CalculateArmPID(SetPointAngles.SHOOTER_AMP_ANGLE);
+    }
+    else if (driverXbox.getPOV() == 90) {
+      armSubsystem.CalculateArmPID(SetPointAngles.SHOOTER_SPEAKER_ANGLE);
+    }
+    else if (driverXbox.getPOV() == 0) {
+      armSubsystem.CalculateArmPID(SetPointAngles.INTAKE_HUMAN_ANGLE);
+    }
+    else {armSubsystem.armLeftMotor.set(0);}
+  }
 
-  // public RunCommand getArmCommand() {
-  //   return new RunCommand(() -> setArmPID(), armSubsystem);
-  // }
+  public RunCommand getArmCommand() {
+    return new RunCommand(() -> setArmPID(), armSubsystem);
+  }
 
 }
