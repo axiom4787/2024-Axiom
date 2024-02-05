@@ -19,11 +19,17 @@ public class ArmSubsystem extends SubsystemBase {
   private final RelativeEncoder armLeftEncoder; //encoder for left arm
   private final RelativeEncoder armRightEncoder; //encoder for right arm
 
-  private static double kP = 1.0;
+  private static double kP = 0.000005;
   private static double kI = 0.0;
   private static double kD = 0.0;
 
+<<<<<<< HEAD
   XboxController xboxcontroller = new XboxController(0);
+=======
+  private XboxController driverXbox = new XboxController(0);
+
+
+>>>>>>> 9a118b73fb34be9a32b3799da7dc69eec0517216
   private PIDController ArmPID = new PIDController(kP, kI, kD);
     
   public ArmSubsystem() {
@@ -52,15 +58,59 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void CalculateArmPID(double kSetpoint) {
+<<<<<<< HEAD
     armLeftMotor.setVoltage(MathUtil.clamp(ArmPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, 0, 12));
     ArmPID.reset();
+=======
+    armLeftMotor.set(MathUtil.clamp(ArmPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, -0.1, 0.1));
+    System.out.println(ArmPID.calculate(armLeftEncoder.getPosition(), kSetpoint));
+  }
+
+  public void SimCalculateArmPID(double kSetpoint) {
+    armLeftMotor.setVoltage(MathUtil.clamp(ArmPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, -0.1, 0.1));
+    System.out.println(ArmPID.calculate(armLeftEncoder.getPosition(), kSetpoint));
+>>>>>>> 9a118b73fb34be9a32b3799da7dc69eec0517216
   }
 
   // public void ArmMove(double Movement){
   //   armLeftMotor.set(Movement/2.5); //Change this for more motor power
   // }
 
-    
+  public void setArmPID() {
+    System.out.println(driverXbox.getPOV());
+    if (driverXbox.getPOV() == 180) {
+      CalculateArmPID(SetPointAngles.INTAKE_GROUND_ANGLE);
+      // armLeftMotor.set(1);
+    }
+    else if (driverXbox.getPOV() == 270) {
+      CalculateArmPID(SetPointAngles.SHOOTER_AMP_ANGLE);
+    }
+    else if (driverXbox.getPOV() == 90) {
+      CalculateArmPID(SetPointAngles.SHOOTER_SPEAKER_ANGLE);
+    }
+    else if (driverXbox.getPOV() == 0) {
+      CalculateArmPID(SetPointAngles.INTAKE_HUMAN_ANGLE);
+    }
+    else {armLeftMotor.set(0);}
+  }
+  public void SimSetArmPID() {
+    System.out.println(driverXbox.getPOV());
+    if (driverXbox.getPOV() == 180) {
+      SimCalculateArmPID(SetPointAngles.INTAKE_GROUND_ANGLE);
+      // armLeftMotor.set(1);
+    }
+    else if (driverXbox.getPOV() == 270) {
+      SimCalculateArmPID(SetPointAngles.SHOOTER_AMP_ANGLE);
+    }
+    else if (driverXbox.getPOV() == 90) {
+      SimCalculateArmPID(SetPointAngles.SHOOTER_SPEAKER_ANGLE);
+    }
+    else if (driverXbox.getPOV() == 0) {
+      SimCalculateArmPID(SetPointAngles.INTAKE_HUMAN_ANGLE);
+    }
+    else {armLeftMotor.setVoltage(0);}
+  }
+
   @Override
   public void periodic() {
   // This method will be called once per scheduler run
