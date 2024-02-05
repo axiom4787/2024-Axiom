@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.XboxController;
 
 
 public class ShooterIntake extends SubsystemBase {
@@ -28,7 +29,7 @@ public class ShooterIntake extends SubsystemBase {
       bottomMotor.restoreFactoryDefaults();
 
       topMotor.setInverted(false); 
-      bottomMotor.setInverted(false); 
+      bottomMotor.setInverted(true); 
 
       topMotor.follow(bottomMotor);
 
@@ -42,4 +43,19 @@ public class ShooterIntake extends SubsystemBase {
       topEncoder = topMotor.getEncoder();
       bottomEncoder = bottomMotor.getEncoder();
     }
-}
+    public void periodic() {
+      bottomMotor.set(1);
+    }
+  //   String state = XboxController.get(); 
+  //   public void handleStates(){
+  //     switch(state) {
+      
+  //     Case 
+  //     topMotor.setInverted(true); 
+  //     bottomMotor.setInverted(false); 
+  //     bottomMotor.set(1);
+  //     topMotor.setInverted(false); 
+  //     bottomMotor.setInverted(true); 
+  //   }
+  // }
+  }

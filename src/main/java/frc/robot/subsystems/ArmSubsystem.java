@@ -23,13 +23,7 @@ public class ArmSubsystem extends SubsystemBase {
   private static double kI = 0.0;
   private static double kD = 0.0;
 
-<<<<<<< HEAD
-  XboxController xboxcontroller = new XboxController(0);
-=======
-  private XboxController driverXbox = new XboxController(0);
-
-
->>>>>>> 9a118b73fb34be9a32b3799da7dc69eec0517216
+  XboxController driverXbox = new XboxController(0);
   private PIDController ArmPID = new PIDController(kP, kI, kD);
     
   public ArmSubsystem() {
@@ -57,19 +51,13 @@ public class ArmSubsystem extends SubsystemBase {
     armRightEncoder = armRightMotor.getEncoder();
   }
 
-  public void CalculateArmPID(double kSetpoint) {
-<<<<<<< HEAD
-    armLeftMotor.setVoltage(MathUtil.clamp(ArmPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, 0, 12));
-    ArmPID.reset();
-=======
-    armLeftMotor.set(MathUtil.clamp(ArmPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, -0.1, 0.1));
-    System.out.println(ArmPID.calculate(armLeftEncoder.getPosition(), kSetpoint));
-  }
-
   public void SimCalculateArmPID(double kSetpoint) {
-    armLeftMotor.setVoltage(MathUtil.clamp(ArmPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, -0.1, 0.1));
-    System.out.println(ArmPID.calculate(armLeftEncoder.getPosition(), kSetpoint));
->>>>>>> 9a118b73fb34be9a32b3799da7dc69eec0517216
+    armLeftMotor.setVoltage(MathUtil.clamp(ArmPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, 0, 12));
+    // ArmPID.reset();
+  }
+  public void CalculateArmPID(double kSetpoint) {
+    armLeftMotor.set(MathUtil.clamp(ArmPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, 0, 12));
+    // ArmPID.reset();
   }
 
   // public void ArmMove(double Movement){
@@ -114,16 +102,16 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
   // This method will be called once per scheduler run
-    if (xboxcontroller.getPOV() == 180) {
+    if (driverXbox.getPOV() == 180) {
       CalculateArmPID(SetPointAngles.INTAKE_GROUND_ANGLE);
     }
-    else if (xboxcontroller.getPOV() == 270) {
+    else if (driverXbox.getPOV() == 270) {
       CalculateArmPID(SetPointAngles.SHOOTER_AMP_ANGLE);
     }
-    else if (xboxcontroller.getPOV() == 90) {
+    else if (driverXbox.getPOV() == 90) {
       CalculateArmPID(SetPointAngles.SHOOTER_SPEAKER_ANGLE);
     }
-    else if (xboxcontroller.getPOV() == 0) {
+    else if (driverXbox.getPOV() == 0) {
       CalculateArmPID(SetPointAngles.INTAKE_HUMAN_ANGLE);
     }
     // need an else statement once triggers ready.
