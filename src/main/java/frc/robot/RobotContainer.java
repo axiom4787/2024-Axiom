@@ -78,17 +78,17 @@ public class RobotContainer
                                                           // controls are front-left positive
                                                           () -> -MathUtil.applyDeadband(driverXbox.getLeftY(),
                                                                                        OperatorConstants.LEFT_Y_DEADBAND),
-                                                          () -> -MathUtil.applyDeadband(driverXbox.getLeftX(),
+                                                          () -> MathUtil.applyDeadband(driverXbox.getLeftX(),
                                                                                        OperatorConstants.LEFT_X_DEADBAND),
-                                                          () -> -driverXbox.getRightX(),
+                                                          () -> driverXbox.getRightX(),
                                                           () -> -driverXbox.getRightY());
 
     AbsoluteFieldDrive closedFieldAbsoluteDrive = new AbsoluteFieldDrive(drivebase,
                                                                          () -> -MathUtil.applyDeadband(driverXbox.getLeftY(),
-                                                                                                    OperatorConstants.LEFT_Y_DEADBAND)/2,
+                                                                                                    OperatorConstants.LEFT_Y_DEADBAND),
                                                                          () -> MathUtil.applyDeadband(driverXbox.getLeftX(),
-                                                                                                      OperatorConstants.LEFT_X_DEADBAND)/2,
-                                                                         () -> driverXbox.getRightX()/2);
+                                                                                                      OperatorConstants.LEFT_X_DEADBAND),
+                                                                         () -> -driverXbox.getRawAxis(4));
 
     AbsoluteDriveAdv closedAbsoluteDriveAdv = new AbsoluteDriveAdv(drivebase,
                                                                       () -> MathUtil.applyDeadband(driverXbox.getLeftY(),
@@ -114,8 +114,8 @@ public class RobotContainer
         () -> -MathUtil.applyDeadband(driverController.getX(), OperatorConstants.LEFT_X_DEADBAND),
         () -> MathUtil.applyDeadband(driverXbox.getRightX(), OperatorConstants.RIGHT_X_DEADBAND), () -> true);
 
-    // drivebase.setDefaultCommand(RobotBase.isSimulation() ? closedAbsoluteDrive : closedFieldAbsoluteDrive);
-    drivebase.setDefaultCommand(closedFieldAbsoluteDrive);
+    drivebase.setDefaultCommand(!RobotBase.isSimulation() ? closedAbsoluteDrive : closedFieldAbsoluteDrive);
+    // drivebase.setDefaultCommand(closedFieldAbsoluteDrive);
 
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     SmartDashboard.putData("Auto Mode", autoChooser);
