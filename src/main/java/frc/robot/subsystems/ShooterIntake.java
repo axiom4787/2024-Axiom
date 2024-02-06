@@ -19,7 +19,8 @@ public class ShooterIntake extends SubsystemBase {
 
     private final RelativeEncoder topEncoder; //encoder for top 
     private final RelativeEncoder bottomEncoder; //encoder for bottom
-  
+
+    XboxController driverXbox = new XboxController(0);
     public ShooterIntake() {
 
       topMotor = new CANSparkMax(Constants.ArmIntakeShooter.TOP_MOTORID, CANSparkMax.MotorType.kBrushless);
@@ -43,19 +44,30 @@ public class ShooterIntake extends SubsystemBase {
       topEncoder = topMotor.getEncoder();
       bottomEncoder = bottomMotor.getEncoder();
     }
-    public void periodic() {
-      bottomMotor.set(1);
+  
+    public String state = "";
+    if (driverXbox.getAButton()) {
+      state = "intake";
     }
-  //   String state = XboxController.get(); 
-  //   public void handleStates(){
-  //     switch(state) {
-      
-  //     Case 
-  //     topMotor.setInverted(true); 
-  //     bottomMotor.setInverted(false); 
-  //     bottomMotor.set(1);
-  //     topMotor.setInverted(false); 
-  //     bottomMotor.setInverted(true); 
-  //   }
-  // }
+    if (driverXbox.getYButton()) {
+      state = "shoot";
+    }
+
+    if (driverXbox.getAButtonPressed() || driverXBox.getYButtonPressed()) {
+      state = "off";
+    }
+    switch(state) {
+    case "intake":
+      topMotor.setInverted(false); 
+      bottomMotor.setInverted(true); 
+      bottomMotor.set(1.0);
+      break;
+    case "shoot":
+      topMotor.setInverted(true); 
+      bottomMotor.setInverted(false); 
+      bottomMotor.set(1.0);
+      break;
+    case "off":
+      bottomMotor.set(0.0);
+    }
   }
