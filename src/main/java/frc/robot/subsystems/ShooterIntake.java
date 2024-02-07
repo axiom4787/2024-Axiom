@@ -4,6 +4,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmIntakeShooter;
 
+import java.util.concurrent.TimeUnit;
+
+import java.util.concurrent.TimeUnit;
+
 import com.revrobotics.CANSparkMax;
 
 import com.revrobotics.RelativeEncoder;
@@ -52,23 +56,46 @@ public class ShooterIntake extends SubsystemBase {
   public void setShoot() {
     state = "shoot";
   }
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler
+  public void setShooterIntake() {
     switch(state) {
       case "intake":
         topMotor.setInverted(false); 
         bottomMotor.setInverted(true); 
         bottomMotor.set(1.0);
+        TimeUnit.SECONDS.sleep(2); // want to make sure that the motor spins for long enough before it stops moving
         break;
       case "shoot":
         topMotor.setInverted(true); 
         bottomMotor.setInverted(false); 
         bottomMotor.set(1.0);
+        TimeUnit.SECONDS.sleep(3); // want to make sure that the motor spins for long enough before it stops moving
         break;
       default:
         bottomMotor.set(0.0);
       }
+  }
+  public void SimSetShooterIntake() {
+    switch(state) {
+      case "intake":
+        topMotor.setInverted(false); 
+        bottomMotor.setInverted(true);
+        bottomMotor.setVoltage(1.0);
+        wait(300); // want to make sure that the motor spins for long enough before it stops moving
+        break;
+      case "shoot":
+        topMotor.setInverted(true); 
+        bottomMotor.setInverted(false); 
+        bottomMotor.setVoltage(1.0);
+        wait(300); // want to make sure that the motor spins for long enough before it stops moving
+        break;
+      default:
+        bottomMotor.set(0.0);
+      }
+  }
+
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler
+    
     }
 }
