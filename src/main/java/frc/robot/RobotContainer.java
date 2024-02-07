@@ -33,6 +33,7 @@ import frc.robot.subsystems.LimeLight;
 import frc.robot.subsystems.MotorTest;
 import frc.robot.subsystems.SimulatedLimelightData;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.subsystems.ShooterIntake;
 import java.io.File;
 import java.util.List;
 
@@ -59,6 +60,7 @@ public class RobotContainer
   // Replace with CommandPS4Controller or CommandJoystick if needed
   // CommandJoystick driverController = new CommandJoystick(0);
 
+  ShooterIntake shooterIntake = new ShooterIntake();
   ArmSubsystem armSubsystem = new ArmSubsystem();
   MotorTest testSubsystem = new MotorTest();
 
@@ -223,7 +225,10 @@ public class RobotContainer
     // new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
     // Add a button to run pathfinding commands to SmartDashboard
-    new JoystickButton(driverXbox, Button.kY.value).onTrue(new RunCommand(() -> armSubsystem.SimSetArmPID(), armSubsystem));
+    new JoystickButton(driverXbox, Button.kLeftBumper.value).onTrue(new RunCommand(() -> shooterIntake.setState("intake"), shooterIntake));
+    new JoystickButton(driverXbox, Button.kRightBumper.value).onTrue(new RunCommand(() -> shooterIntake.setState("shoot"), shooterIntake));
+    new JoystickButton(driverXbox, Button.kA.value).onTrue(new RunCommand(() -> shooterIntake.setState("off"), shooterIntake));
+    // new JoystickButton(driverXbox, Button.kY.value).onTrue(new RunCommand(() -> armSubsystem.setArmPID(), armSubsystem));
     SmartDashboard.putData("Pathfind to Pickup Pos", AutoBuilder.pathfindToPose(
       new Pose2d(14.0, 6.5, Rotation2d.fromDegrees(0)), 
       new PathConstraints(
@@ -305,10 +310,21 @@ public class RobotContainer
   }
 
 
-  
-
-  public RunCommand getArmCommand() {
-    return new RunCommand(() -> setArmPID(), armSubsystem);
-  }
+  // public void setArmPID() {
+  //   System.out.println(driverXbox.getPOV());
+  //   if (driverXbox.getPOV() == 180) {
+  //     armSubsystem.CalculateArmPID(SetPointAngles.INTAKE_GROUND_ANGLE);
+  //   }
+  //   else if (driverXbox.getPOV() == 270) {
+  //     armSubsystem.CalculateArmPID(SetPointAngles.SHOOTER_AMP_ANGLE);
+  //   }
+  //   else if (driverXbox.getPOV() == 90) {
+  //     armSubsystem.CalculateArmPID(SetPointAngles.SHOOTER_SPEAKER_ANGLE);
+  //   }
+  //   else if (driverXbox.getPOV() == 0) {
+  //     armSubsystem.CalculateArmPID(SetPointAngles.INTAKE_HUMAN_ANGLE);
+  //   }
+  //   else {armSubsystem.armLeftMotor.set(0);}
+  // }
 
 }

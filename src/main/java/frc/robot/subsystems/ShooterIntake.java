@@ -13,12 +13,13 @@ import edu.wpi.first.wpilibj.XboxController;
 
 
 public class ShooterIntake extends SubsystemBase {
-    
     private final CANSparkMax topMotor; //neo
     private final CANSparkMax bottomMotor; //neo 550
 
     private final RelativeEncoder topEncoder; //encoder for top 
     private final RelativeEncoder bottomEncoder; //encoder for bottom
+
+    private String state; 
 
     XboxController driverXbox = new XboxController(0);
     public ShooterIntake() {
@@ -44,30 +45,31 @@ public class ShooterIntake extends SubsystemBase {
       topEncoder = topMotor.getEncoder();
       bottomEncoder = bottomMotor.getEncoder();
     }
-  
-    public String state = "";
-    if (driverXbox.getAButton()) {
-      state = "intake";
-    }
-    if (driverXbox.getYButton()) {
-      state = "shoot";
+
+    public void setState(String state){
+      this.state = state; 
     }
 
-    if (driverXbox.getAButtonPressed() || driverXBox.getYButtonPressed()) {
-      state = "off";
+    public String getState(){
+      return state;
     }
-    switch(state) {
-    case "intake":
-      topMotor.setInverted(false); 
-      bottomMotor.setInverted(true); 
-      bottomMotor.set(1.0);
-      break;
-    case "shoot":
-      topMotor.setInverted(true); 
-      bottomMotor.setInverted(false); 
-      bottomMotor.set(1.0);
-      break;
-    case "off":
-      bottomMotor.set(0.0);
+    
+    private void stateMachine() {
+      switch(state) {
+        case "intake":
+          topMotor.setInverted(false); 
+          bottomMotor.setInverted(true); 
+          bottomMotor.set(1.0);
+          break;
+        case "shoot":
+          topMotor.setInverted(true); 
+          bottomMotor.setInverted(false); 
+          bottomMotor.set(1.0);
+          break;
+        case "off":
+          bottomMotor.set(0.0);
+          break;
+      }
     }
-  }
+  
+}
