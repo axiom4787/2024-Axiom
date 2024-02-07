@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
@@ -31,6 +32,7 @@ import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.commands.swervedrive.drivebase.TeleopDrive;
 import frc.robot.subsystems.LimeLight;
 import frc.robot.subsystems.MotorTest;
+import frc.robot.subsystems.ShooterIntake;
 import frc.robot.subsystems.SimulatedLimelightData;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
@@ -61,6 +63,7 @@ public class RobotContainer
 
   ArmSubsystem armSubsystem = new ArmSubsystem();
   MotorTest testSubsystem = new MotorTest();
+  ShooterIntake shooterIntake = new ShooterIntake();
 
   // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
   XboxController driverXbox = new XboxController(0);
@@ -223,7 +226,9 @@ public class RobotContainer
     // new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
     // Add a button to run pathfinding commands to SmartDashboard
-    new JoystickButton(driverXbox, Button.kY.value).onTrue(new RunCommand(() -> armSubsystem.SimSetArmPID(), armSubsystem));
+    new JoystickButton(driverXbox, Button.kX.value).onTrue(new RunCommand(() -> armSubsystem.SimSetArmPID(), armSubsystem));
+    new JoystickButton(driverXbox, Button.kY.value).onTrue(new RunCommand(() -> shooterIntake.setShoot(), shooterIntake));
+    new JoystickButton(driverXbox, Button.kA.value).onTrue(new RunCommand(() -> shooterIntake.setIntake(), shooterIntake));
     SmartDashboard.putData("Pathfind to Pickup Pos", AutoBuilder.pathfindToPose(
       new Pose2d(14.0, 6.5, Rotation2d.fromDegrees(0)), 
       new PathConstraints(
