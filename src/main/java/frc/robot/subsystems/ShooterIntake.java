@@ -70,7 +70,7 @@ public class ShooterIntake extends SubsystemBase {
     } catch (InterruptedException e) {
         e.printStackTrace();
     }
-  bottomMotor.set(0);
+    bottomMotor.set(0);
   }
   public void SimSetIntake() {
     topMotor.setInverted(false); 
