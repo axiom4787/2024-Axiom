@@ -51,46 +51,45 @@ public class ShooterIntake extends SubsystemBase {
     bottomEncoder = bottomMotor.getEncoder();
   }
   public void setIntake() {
-    state = "intake";
+    topMotor.setInverted(false); 
+    bottomMotor.setInverted(true); 
+    bottomMotor.set(1.0);
+    try {
+        TimeUnit.SECONDS.sleep(3);
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
   }
   public void setShoot() {
-    state = "shoot";
+    topMotor.setInverted(true); 
+    bottomMotor.setInverted(false); 
+    bottomMotor.set(1.0);
+    try {
+        TimeUnit.SECONDS.sleep(3);
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
   }
-  public void setShooterIntake() {
-    switch(state) {
-      case "intake":
-        topMotor.setInverted(false); 
-        bottomMotor.setInverted(true); 
-        bottomMotor.set(1.0);
-        TimeUnit.SECONDS.sleep(2); // want to make sure that the motor spins for long enough before it stops moving
-        break;
-      case "shoot":
-        topMotor.setInverted(true); 
-        bottomMotor.setInverted(false); 
-        bottomMotor.set(1.0);
-        TimeUnit.SECONDS.sleep(3); // want to make sure that the motor spins for long enough before it stops moving
-        break;
-      default:
-        bottomMotor.set(0.0);
-      }
+  public void SimSetIntake() {
+    topMotor.setInverted(false); 
+    bottomMotor.setInverted(true); 
+    bottomMotor.setVoltage(1.0);
+    try {
+        TimeUnit.SECONDS.sleep(3);
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
   }
-  public void SimSetShooterIntake() {
-    switch(state) {
-      case "intake":
-        topMotor.setInverted(false); 
-        bottomMotor.setInverted(true);
-        bottomMotor.setVoltage(1.0);
-        wait(300); // want to make sure that the motor spins for long enough before it stops moving
-        break;
-      case "shoot":
-        topMotor.setInverted(true); 
-        bottomMotor.setInverted(false); 
-        bottomMotor.setVoltage(1.0);
-        wait(300); // want to make sure that the motor spins for long enough before it stops moving
-        break;
-      default:
-        bottomMotor.set(0.0);
-      }
+  public void SimSetShoot() {
+    topMotor.setInverted(true); 
+    bottomMotor.setInverted(false); 
+    bottomMotor.setVoltage(1.0);
+    try {
+        TimeUnit.SECONDS.sleep(3);
+    } catch (InterruptedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+    }
   }
 
   @Override
