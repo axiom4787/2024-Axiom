@@ -59,6 +59,7 @@ public class ShooterIntake extends SubsystemBase {
     } catch (InterruptedException e) {
         e.printStackTrace();
     }
+    bottomMotor.set(0);
   }
   public void setShoot() {
     topMotor.setInverted(true); 
@@ -69,27 +70,31 @@ public class ShooterIntake extends SubsystemBase {
     } catch (InterruptedException e) {
         e.printStackTrace();
     }
+  bottomMotor.set(0);
   }
   public void SimSetIntake() {
     topMotor.setInverted(false); 
     bottomMotor.setInverted(true); 
     bottomMotor.setVoltage(1.0);
+    System.out.println("intake");
     try {
         TimeUnit.SECONDS.sleep(3);
     } catch (InterruptedException e) {
         e.printStackTrace();
     }
+  bottomMotor.setVoltage(0);
   }
   public void SimSetShoot() {
     topMotor.setInverted(true); 
     bottomMotor.setInverted(false); 
     bottomMotor.setVoltage(1.0);
+    System.out.println("shooter");
     try {
         TimeUnit.SECONDS.sleep(3);
     } catch (InterruptedException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
     }
+    bottomMotor.setVoltage(0);
   }
 
   @Override
