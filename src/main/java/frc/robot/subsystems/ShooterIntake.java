@@ -13,6 +13,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 
 
@@ -54,22 +55,14 @@ public class ShooterIntake extends SubsystemBase {
     topMotor.setInverted(false); 
     bottomMotor.setInverted(true); 
     bottomMotor.set(1.0);
-    try {
-        TimeUnit.SECONDS.sleep(3);
-    } catch (InterruptedException e) {
-        e.printStackTrace();
-    }
+    Timer.delay(3);
     bottomMotor.set(0);
   }
   public void setShoot() {
     topMotor.setInverted(true); 
     bottomMotor.setInverted(false); 
     bottomMotor.set(1.0);
-    try {
-        TimeUnit.SECONDS.sleep(3);
-    } catch (InterruptedException e) {
-        e.printStackTrace();
-    }
+    Timer.delay(3);
     bottomMotor.set(0);
   }
   public void SimSetIntake() {
@@ -77,23 +70,15 @@ public class ShooterIntake extends SubsystemBase {
     bottomMotor.setInverted(true); 
     bottomMotor.setVoltage(1.0);
     System.out.println("intake");
-    try {
-        TimeUnit.SECONDS.sleep(3);
-    } catch (InterruptedException e) {
-        e.printStackTrace();
-    }
-  bottomMotor.setVoltage(0);
+    Timer.delay(3);
+    bottomMotor.setVoltage(0);
   }
   public void SimSetShoot() {
     topMotor.setInverted(true); 
     bottomMotor.setInverted(false); 
     bottomMotor.setVoltage(1.0);
     System.out.println("shooter");
-    try {
-        TimeUnit.SECONDS.sleep(3);
-    } catch (InterruptedException e) {
-        e.printStackTrace();
-    }
+    Timer.delay(3);
     bottomMotor.setVoltage(0);
   }
 
