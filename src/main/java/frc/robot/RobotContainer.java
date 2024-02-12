@@ -224,7 +224,7 @@ public class RobotContainer {
     // new JoystickButton(driverXbox, Button.kY.value).onTrue((new RunCommand(()-> testSubsystem.move(0.5), testSubsystem)));
     // new JoystickButton(driverXbox, 1).onTrue((new InstantCommand(drivebase::zeroGyro)));
     // new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
-//    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
+    // new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
     // Add a button to run pathfinding commands to SmartDashboard
     new JoystickButton(driverXbox, Button.kLeftBumper.value).onTrue(new RunCommand(() -> shooterIntake.setState("intake"), shooterIntake));
     new JoystickButton(driverXbox, Button.kRightBumper.value).onTrue(new RunCommand(() -> shooterIntake.setState("shoot"), shooterIntake));
