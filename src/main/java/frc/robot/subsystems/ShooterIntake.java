@@ -18,20 +18,17 @@ import edu.wpi.first.wpilibj.XboxController;
 
 
 public class ShooterIntake extends SubsystemBase {
-    private final CANSparkMax topMotor; //neo
-    private final CANSparkMax bottomMotor; //neo 550
+  private final CANSparkMax topMotor; //neo
+  private final CANSparkMax bottomMotor; //neo 550
 
   private final RelativeEncoder topEncoder; //encoder for top 
   private final RelativeEncoder bottomEncoder; //encoder for bottom
 
-    private String state = "off"; 
-
-    XboxController driverXbox = new XboxController(0);
-    public ShooterIntake() {
+  private String state = "off"; 
 
   XboxController driverXbox = new XboxController(0);
-  public ShooterIntake() {
 
+  public ShooterIntake() {
     topMotor = new CANSparkMax(Constants.ArmIntakeShooter.TOP_MOTORID, CANSparkMax.MotorType.kBrushless);
     bottomMotor = new CANSparkMax(Constants.ArmIntakeShooter.BOTTOM_MOTORID, CANSparkMax.MotorType.kBrushless);
 
@@ -50,15 +47,15 @@ public class ShooterIntake extends SubsystemBase {
     // bottomMotor.setIdleMode(TurretConstants.kRotateMotorIdleMode);
 
 
-      topEncoder = topMotor.getEncoder();
-      bottomEncoder = bottomMotor.getEncoder();
+    topEncoder = topMotor.getEncoder();
+    bottomEncoder = bottomMotor.getEncoder();
     }
 
     public void setState(String state){
       this.state = state; 
     }
 
-    public String getState(){
+    public String getState() {
       return state;
     }
     

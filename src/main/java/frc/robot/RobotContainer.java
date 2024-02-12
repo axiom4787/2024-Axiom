@@ -65,7 +65,6 @@ public class RobotContainer
   ShooterIntake shooterIntake = new ShooterIntake();
   ArmSubsystem armSubsystem = new ArmSubsystem();
   MotorTest testSubsystem = new MotorTest();
-  ShooterIntake shooterIntake = new ShooterIntake();
 
   // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
   XboxController driverXbox = new XboxController(0);
