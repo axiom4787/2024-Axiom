@@ -50,8 +50,7 @@ import frc.robot.subsystems.ArmSubsystem;
  * little robot logic should actually be handled in the {@link Robot} periodic methods (other than the scheduler calls).
  * Instead, the structure of the robot (including subsystems, commands, and trigger mappings) should be declared here.
  */
-public class RobotContainer
-{
+public class RobotContainer {
   private final Pose2d simulatedAprilTag = new Pose2d(5.0, 5.0, new Rotation2d(200));
 
   // The robot's subsystems and commands are defined here...
@@ -332,3 +331,4 @@ public class RobotContainer
   public RunCommand getArmCommand() {
     return new RunCommand(() -> armSubsystem.SimSetArmPID(), armSubsystem);
   }
+}
