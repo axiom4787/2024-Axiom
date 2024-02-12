@@ -19,7 +19,7 @@ public class ShooterIntake extends SubsystemBase {
     private final RelativeEncoder topEncoder; //encoder for top 
     private final RelativeEncoder bottomEncoder; //encoder for bottom
 
-    private String state; 
+    private String state = "off"; 
 
     XboxController driverXbox = new XboxController(0);
     public ShooterIntake() {
@@ -54,7 +54,30 @@ public class ShooterIntake extends SubsystemBase {
       return state;
     }
     
+    private void simStateMachine() {
+      System.out.println(state);
+      switch(state) {
+        case "intake":
+          topMotor.setInverted(false); 
+          bottomMotor.setInverted(true); 
+          bottomMotor.setVoltage(1.0);
+          topMotor.setVoltage(1.0);
+          break;
+        case "shoot":
+          topMotor.setInverted(true); 
+          bottomMotor.setInverted(false); 
+          bottomMotor.setVoltage(1.0);
+          topMotor.setVoltage(1.0);
+          break;
+        case "off":
+          bottomMotor.setVoltage(0.0);
+          topMotor.setVoltage(0.0);
+          break;
+      }
+    }
+
     private void stateMachine() {
+      System.out.println(state);
       switch(state) {
         case "intake":
           topMotor.setInverted(false); 
@@ -70,6 +93,12 @@ public class ShooterIntake extends SubsystemBase {
           bottomMotor.set(0.0);
           break;
       }
+    }
+
+    @Override
+    public void periodic() {
+      simStateMachine(); 
+      // stateMachine(); 
     }
   
 }

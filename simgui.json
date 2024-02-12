@@ -1,7 +1,12 @@
 {
   "HALProvider": {
     "Other Devices": {
-      "SPARK MAX [11]": {
+      "SPARK MAX [10]": {
+        "header": {
+          "open": true
+        }
+      },
+      "SPARK MAX [9]": {
         "header": {
           "open": true
         }
