@@ -43,6 +43,13 @@ public final class Constants
     public static final double WHEEL_LOCK_TIME = 10; // seconds
   }
 
+  public static final class Climber {
+    public static final int LEFT_CLIMBER_ID = 99;
+    public static final int RIGHT_CLIMBER_ID = 100;
+    public static final boolean LEFT_INVERTED = false;
+    public static final boolean RIGHT_INVERTED = !LEFT_INVERTED;
+  }
+
   public static class OperatorConstants
   {
 
@@ -51,6 +58,7 @@ public final class Constants
     public static final double LEFT_Y_DEADBAND = 0.75;
     public static final double RIGHT_X_DEADBAND = 0.75;
     public static final double TURN_CONSTANT = 0.75;
+
   }
 
   public static final class LimelightConstants {
