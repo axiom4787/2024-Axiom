@@ -139,7 +139,7 @@ public class RobotContainer
     // Normalize angle to [-180, 180] range
     double xAngleToTag = Math.toDegrees(angleToTag);
     if (xAngleToTag > 180) xAngleToTag -= 360;
-    if (xAngleToTag < -180) xAngleToTag += 360;
+    if (xAngleToTag < -180) xAngleToTag += 360; 
 
     // Check if the tag is within the Limelight's FOV (80 degrees)
     boolean isTargetVisible = Math.abs(xAngleToTag) <= 40; // 80-degree FOV divided by 2
