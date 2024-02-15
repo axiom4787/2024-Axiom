@@ -47,8 +47,57 @@ public class Climber extends SubsystemBase {
     SmartDashboard.putNumber("Right Climber Adjusted Pos", rightEncoder.getPosition()-rightStartingPos);
   }
 
-  public void setClimbers(double leftSpeed, double rightSpeed) {
+  /**
+   * This method moves the climbers at specified speed
+   * @param leftSpeed
+   * @param rightSpeed
+   */
+  public void moveClimbers(double leftSpeed, double rightSpeed) {
     leftClimber.set(leftSpeed);
     rightClimber.set(rightSpeed);
   }
+
+  /**
+   * This method gets the ADJUSTED position of the left climber
+   * <p>
+   * Adjusted based on starting position
+   * @return the adjusted position of the left climber
+   */
+  public double getAdjustedLeftPos() {
+    return leftEncoder.getPosition()-leftStartingPos;
+  }
+
+  /**
+   * This method gets the ADJUSTED position of the right climber
+   * <p>
+   * Adjusted based on starting position
+   * @return the adjusted position of the right climber
+   */
+  public double getAdjustedRightPos() {
+    return rightEncoder.getPosition()-rightStartingPos;
+  }
+
+  /**
+   * SHOULD NOT USE (unless you know what you're doing)
+   * <p>
+   * This method gets the UNADJUSTED position of the left climber
+   * <p>
+   * Is NOT adjusted based on starting position
+   * @return the unadjusted position of the left climber
+   */
+  public double getUnadjustedLeftPos() { 
+    return leftEncoder.getPosition();
+  }
+
+  /**
+   * SHOULD NOT USE (unless you know what you're doing)
+   * <p>
+   * This method gets the UNADJUSTED position of the right climber
+   * <p>
+   * Is NOT adjusted based on starting position
+   * @return the unadjusted position of the right climber
+   */
+  public double getUnadjustedRightPos() {
+    return rightEncoder.getPosition();
+  }  
 }
