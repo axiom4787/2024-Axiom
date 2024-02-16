@@ -23,6 +23,7 @@ public class Robot extends TimedRobot
 
   private static Robot   instance;
   private        Command m_autonomousCommand;
+  private        Command m_teleopCommand;
 
   private RobotContainer m_robotContainer;
 
@@ -126,8 +127,11 @@ public class Robot extends TimedRobot
     {
       m_autonomousCommand.cancel();
     }
-    m_robotContainer.setDriveMode();
-    m_robotContainer.setMotorBrake(true);
+    m_teleopCommand = m_robotContainer.getTeleopCommand();
+    if (m_teleopCommand != null)
+    {
+      m_teleopCommand.schedule();
+    }
   }
 
   /**
