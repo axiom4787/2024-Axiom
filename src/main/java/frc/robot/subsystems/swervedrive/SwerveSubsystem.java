@@ -207,21 +207,21 @@ public class SwerveSubsystem extends SubsystemBase
     // swerveDrive.addVisionMeasurement(this.limeLight.getBotPose2d(), timestamp);
     // System.out.println("Pose: " + getPose().getX() + " | " + getPose().getY());
 
-    anglePIDOverride = new PIDFConfig(SmartDashboard.getNumber("Angle P", anglePIDOverride.p),
-                                     SmartDashboard.getNumber("Angle I", anglePIDOverride.i),
-                                     SmartDashboard.getNumber("Angle D", anglePIDOverride.d),
-                                     SmartDashboard.getNumber("Angle F", anglePIDOverride.f),
-                                     SmartDashboard.getNumber("Angle IZ", anglePIDOverride.iz));
+    // anglePIDOverride = new PIDFConfig(SmartDashboard.getNumber("Angle P", anglePIDOverride.p),
+    //                                  SmartDashboard.getNumber("Angle I", anglePIDOverride.i),
+    //                                  SmartDashboard.getNumber("Angle D", anglePIDOverride.d),
+    //                                  SmartDashboard.getNumber("Angle F", anglePIDOverride.f),
+    //                                  SmartDashboard.getNumber("Angle IZ", anglePIDOverride.iz));
 
-    drivePIDOverride = new PIDFConfig(SmartDashboard.getNumber("Drive P", drivePIDOverride.p),
-                                      SmartDashboard.getNumber("Drive I", drivePIDOverride.i),
-                                      SmartDashboard.getNumber("Drive D", drivePIDOverride.d),
-                                      SmartDashboard.getNumber("Drive F", drivePIDOverride.f),
-                                      SmartDashboard.getNumber("Drive IZ", drivePIDOverride.iz));
+    // drivePIDOverride = new PIDFConfig(SmartDashboard.getNumber("Drive P", drivePIDOverride.p),
+    //                                   SmartDashboard.getNumber("Drive I", drivePIDOverride.i),
+    //                                   SmartDashboard.getNumber("Drive D", drivePIDOverride.d),
+    //                                   SmartDashboard.getNumber("Drive F", drivePIDOverride.f),
+    //                                   SmartDashboard.getNumber("Drive IZ", drivePIDOverride.iz));
 
-    headingPIDOverride = new PIDController(SmartDashboard.getNumber("Heading P", headingPIDOverride.getP()),
-                                          SmartDashboard.getNumber("Heading I", headingPIDOverride.getI()),
-                                          SmartDashboard.getNumber("Heading D", headingPIDOverride.getD()));
+    // headingPIDOverride = new PIDController(SmartDashboard.getNumber("Heading P", headingPIDOverride.getP()),
+    //                                       SmartDashboard.getNumber("Heading I", headingPIDOverride.getI()),
+    //                                       SmartDashboard.getNumber("Heading D", headingPIDOverride.getD()));
 
     //set all motors and angle stuff to new overrides
     for (int i = 0; i < swerveDrive.getModules().length; i++)
@@ -232,21 +232,21 @@ public class SwerveSubsystem extends SubsystemBase
 
     swerveDrive.swerveController.thetaController = headingPIDOverride;
 
-    SmartDashboard.putNumber("Drive P", drivePIDOverride.p);
-    SmartDashboard.putNumber("Drive I", drivePIDOverride.i);
-    SmartDashboard.putNumber("Drive D", drivePIDOverride.d);
-    SmartDashboard.putNumber("Drive F", drivePIDOverride.f);
-    SmartDashboard.putNumber("Drive IZ", drivePIDOverride.iz);
+    // SmartDashboard.putNumber("Drive P", drivePIDOverride.p);
+    // SmartDashboard.putNumber("Drive I", drivePIDOverride.i);
+    // SmartDashboard.putNumber("Drive D", drivePIDOverride.d);
+    // SmartDashboard.putNumber("Drive F", drivePIDOverride.f);
+    // SmartDashboard.putNumber("Drive IZ", drivePIDOverride.iz);
 
-    SmartDashboard.putNumber("Angle P", anglePIDOverride.p);
-    SmartDashboard.putNumber("Angle I", anglePIDOverride.i);
-    SmartDashboard.putNumber("Angle D", anglePIDOverride.d);
-    SmartDashboard.putNumber("Angle F", anglePIDOverride.f);
-    SmartDashboard.putNumber("Angle IZ", anglePIDOverride.iz);
+    // SmartDashboard.putNumber("Angle P", anglePIDOverride.p);
+    // SmartDashboard.putNumber("Angle I", anglePIDOverride.i);
+    // SmartDashboard.putNumber("Angle D", anglePIDOverride.d);
+    // SmartDashboard.putNumber("Angle F", anglePIDOverride.f);
+    // SmartDashboard.putNumber("Angle IZ", anglePIDOverride.iz);
 
-    SmartDashboard.putNumber("Heading P", headingPIDOverride.getP());
-    SmartDashboard.putNumber("Heading I", headingPIDOverride.getI());
-    SmartDashboard.putNumber("Heading D", headingPIDOverride.getD());
+    // SmartDashboard.putNumber("Heading P", headingPIDOverride.getP());
+    // SmartDashboard.putNumber("Heading I", headingPIDOverride.getI());
+    // SmartDashboard.putNumber("Heading D", headingPIDOverride.getD());
   }
 
   @Override

@@ -77,9 +77,9 @@ public class RobotContainer
                                                           // are back-right positive while robot
                                                           // controls are front-left positive
                                                           () -> -MathUtil.applyDeadband(driverXbox.getLeftY(),
-                                                                                       OperatorConstants.LEFT_Y_DEADBAND),
+                                                                                       OperatorConstants.LEFT_Y_DEADBAND) / 2,
                                                           () -> MathUtil.applyDeadband(driverXbox.getLeftX(),
-                                                                                       OperatorConstants.LEFT_X_DEADBAND),
+                                                                                       OperatorConstants.LEFT_X_DEADBAND) / 2,
                                                           () -> driverXbox.getRightX(),
                                                           () -> -driverXbox.getRightY());
 
