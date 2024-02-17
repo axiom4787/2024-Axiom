@@ -32,10 +32,10 @@ public class ClimberCommand extends Command {
     double rightTrigger = controller.getRightTriggerAxis();
     if (leftTrigger > 0.1 || rightTrigger > 0.1) {
       if (leftTrigger > rightTrigger) {
-        climber.moveClimbers(0.05, 0.0);
+        climber.moveClimbers(0, 0.20);
       }
       else {
-        climber.moveClimbers(-0.05, 0.0);
+        climber.moveClimbers(0, -0.20);
       }
     } else {
       climber.moveClimbers(0.0, 0.0);
