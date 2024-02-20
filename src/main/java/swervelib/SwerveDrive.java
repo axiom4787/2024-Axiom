@@ -563,7 +563,7 @@ public class SwerveDrive
   private SwerveModuleState applyOffsetToState(SwerveModuleState state, double offsetDegrees) {
     // Adjust the module's state angle by the offset
     Rotation2d adjustedAngle = state.angle.rotateBy(Rotation2d.fromDegrees(offsetDegrees));
-    // return new SwerveModuleState(MathUtil.clamp(state.speedMetersPerSecond, -4, 4), adjustedAngle); // clamp speed to -1, 1
+    // return new SwerveModuleState(MathUtil.clamp(state.speedMetersPerSecond, -1, 1), adjustedAngle); // clamp speed to -1, 1
     return new SwerveModuleState(state.speedMetersPerSecond, adjustedAngle);
   }
 

@@ -252,6 +252,14 @@ public class RobotContainer
       // 0
     ));
 
+    // SmartDashboard.putData("move forward", AutoBuilder.followPath(
+    //   PathPlannerPath.fromPathFile("test")
+    // ));
+
+    SmartDashboard.putData("move forward", 
+      drivebase.getAutonomousCommand("test", true)
+    );
+
     TeleopDrive lockToAprilTag = new TeleopDrive(
         drivebase,
         () -> -MathUtil.applyDeadband(driverController.getY(), OperatorConstants.LEFT_Y_DEADBAND),

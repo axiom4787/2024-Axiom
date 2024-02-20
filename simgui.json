@@ -70,6 +70,7 @@
       "/SmartDashboard/Pigeon 2 [13]": "Gyro",
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
       "/SmartDashboard/lock to tag": "Command",
+      "/SmartDashboard/move forward": "Command",
       "/SmartDashboard/navX-Sensor[1]": "Gyro",
       "/SmartDashboard/navX-Sensor[4]": "Gyro"
     },
@@ -101,6 +102,11 @@
         }
       },
       "/SmartDashboard/lock to tag": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/move forward": {
         "window": {
           "visible": true
         }
