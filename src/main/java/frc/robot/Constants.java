@@ -44,8 +44,8 @@ public final class Constants
   }
 
   public static final class Climber {
-    public static final int LEFT_CLIMBER_ID = 10;
-    public static final int RIGHT_CLIMBER_ID = 9;
+    public static final int LEFT_CLIMBER_ID = 9;
+    public static final int RIGHT_CLIMBER_ID = 10;
     public static final boolean LEFT_INVERTED = false;
     public static final boolean RIGHT_INVERTED = !LEFT_INVERTED;
   }

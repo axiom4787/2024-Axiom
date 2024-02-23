@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
@@ -66,6 +67,7 @@ public class RobotContainer
 
   // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
   XboxController driverXbox = new XboxController(0);
+  Joystick backupJoystick = new Joystick(1);
 
   //private final SendableChooser<Command> autoChooser;
   //private final Boolean lockToAprilTagBool = false;
@@ -77,7 +79,7 @@ public class RobotContainer
     // Configure the trigger bindings
     configureBindings();
 
-    climberCommand = new ClimberCommand(climber, driverXbox);
+    climberCommand = new ClimberCommand(climber, driverXbox, backupJoystick);
 
     // AbsoluteDrive closedAbsoluteDrive = new AbsoluteDrive(drivebase,
     //                                                       // Applies deadbands and inverts controls because joysticks

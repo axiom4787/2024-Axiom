@@ -31,6 +31,9 @@ public class Climber extends SubsystemBase {
 
     leftClimber.setSmartCurrentLimit(40);
     rightClimber.setSmartCurrentLimit(40);
+
+    leftStartingPos = leftEncoder.getPosition();
+    rightStartingPos = rightEncoder.getPosition();
   }
 
   @Override
