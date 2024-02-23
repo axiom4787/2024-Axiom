@@ -67,10 +67,10 @@ public class ClimberCommand extends Command {
       }
     } else if (leftTrigger > 0.1 || rightTrigger > 0.1) { //In case control not delegated to joystick: If triggers are outside deadzone, move climber
       if (leftTrigger > rightTrigger) {
-        climber.moveClimbers(CLIMBER_SPEED / 2, CLIMBER_SPEED); //If left trigger is pressed more, move both climbers up- left is faster
+        climber.moveClimbers(CLIMBER_SPEED, CLIMBER_SPEED); //If left trigger is pressed more, move both climbers up- left is faster
       }
       else {
-        climber.moveClimbers(-CLIMBER_SPEED / 2, -CLIMBER_SPEED); //If right trigger is pressed more, move both climbers down- left is faster
+        climber.moveClimbers(-CLIMBER_SPEED, -CLIMBER_SPEED); //If right trigger is pressed more, move both climbers down- left is faster
       }
     } else {
       climber.moveClimbers(0.0, 0.0); //If triggers are inside deadzone, stop
