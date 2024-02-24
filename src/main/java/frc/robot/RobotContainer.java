@@ -329,6 +329,6 @@ public class RobotContainer {
   
 
   public RunCommand getArmCommand() {
-    return new RunCommand(() -> armSubsystem.SimSetArmPID(), armSubsystem);
+    return new RunCommand(() -> armSubsystem.setArmPID(), armSubsystem);
   }
 }
