@@ -79,6 +79,8 @@ public class RobotContainer
     // Configure the trigger bindings
     configureBindings();
 
+    //Lambda 
+    climber.setDefaultCommand(new RunCommand(() -> climber.moveClimbers(0, 0), climber)); //Sets default command to brake climbers
     climberCommand = new ClimberCommand(climber, driverXbox, backupJoystick);
 
     // AbsoluteDrive closedAbsoluteDrive = new AbsoluteDrive(drivebase,
