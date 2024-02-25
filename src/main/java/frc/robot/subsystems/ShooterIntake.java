@@ -52,6 +52,7 @@ public class ShooterIntake extends SubsystemBase {
     }
 
     public void setState(String state){
+      System.out.println("Setting state to " + state);
       this.state = state; 
     }
 
@@ -60,7 +61,6 @@ public class ShooterIntake extends SubsystemBase {
     }
     
     private void simStateMachine() {
-      System.out.println(state);
       switch(state) {
         case "intake":
           topMotor.setInverted(false); 
