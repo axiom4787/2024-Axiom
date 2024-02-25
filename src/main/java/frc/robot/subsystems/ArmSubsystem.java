@@ -23,6 +23,8 @@ public class ArmSubsystem extends SubsystemBase {
   private static double kI = 0.0;
   private static double kD = 0.0;
 
+  private double ticks = 0.0;
+
   XboxController driverXbox = new XboxController(0);
   private PIDController armPID = new PIDController(kP, kI, kD);
     
@@ -52,13 +54,28 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void simCalculateArmPID(double kSetpoint) {
-    armLeftMotor.setVoltage(MathUtil.clamp(armPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, 0, 1));
-    armRightMotor.setVoltage(MathUtil.clamp(armPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, 0, 1));
-    // armPID.reset();
+    ticks = 2.844444444444 * kSetpoint;
+    if (armLeftEncoder.getPosition() > ticks || armLeftEncoder.getPosition() < ticks) {
+      armLeftMotor.setVoltage(MathUtil.clamp(armPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, 0, 1));
+      armRightMotor.setVoltage(MathUtil.clamp(armPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, 0, 1));
+      System.out.println("Setting");
+    }
+    else if (armLeftEncoder.getPosition() == ticks) {
+      armLeftMotor.setVoltage(0);
+      armRightMotor.setVoltage(0);
+    }
   }
+    // armPID.reset();
+
   public void calculateArmPID(double kSetpoint) {
-    armLeftMotor.set(MathUtil.clamp(armPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, 0, 1));
-    armRightMotor.set(MathUtil.clamp(armPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, 0, 1));
+    if (armLeftEncoder.getPosition()/12 == 2.844444444444*kSetpoint) {
+      armLeftMotor.set(MathUtil.clamp(armPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, 0, 1));
+      armRightMotor.set(MathUtil.clamp(armPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, 0, 1));
+    }
+    else {
+      armLeftMotor.set(0);
+      armRightMotor.set(0);
+    }
     // armPID.reset();
   }
 
