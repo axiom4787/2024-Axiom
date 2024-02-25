@@ -149,15 +149,15 @@ public class SwerveDrive
   /**
    * Module offsets in degrees.
   //  */
-  private       double                   offsetBackLeftDegrees = 90.0; //front left
-  private       double                   offsetBackRightDegrees = 0.0; //front right
-  private       double                   offsetFrontRightDegrees = 0.0; //back left
-  private       double                   offsetFrontLeftDegrees = 270.0;  //back right
-
-  // private       double                   offsetBackLeftDegrees = 0.0; //front left
+  // private       double                   offsetBackLeftDegrees = 90.0; //front left
   // private       double                   offsetBackRightDegrees = 0.0; //front right
   // private       double                   offsetFrontRightDegrees = 0.0; //back left
-  // private       double                   offsetFrontLeftDegrees = 0.0;  //back right
+  // private       double                   offsetFrontLeftDegrees = 270.0;  //back right
+
+  private       double                   offsetBackLeftDegrees = 0.0; //front left
+  private       double                   offsetBackRightDegrees = 0.0; //front right
+  private       double                   offsetFrontRightDegrees = 0.0; //back left
+  private       double                   offsetFrontLeftDegrees = 0.0;  //back right
 
   /**
    * Alert to recommend Tuner X if the configuration is compatible.

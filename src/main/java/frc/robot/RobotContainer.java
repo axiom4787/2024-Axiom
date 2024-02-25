@@ -77,17 +77,17 @@ public class RobotContainer
                                                           // are back-right positive while robot
                                                           // controls are front-left positive
                                                           () -> -MathUtil.applyDeadband(driverXbox.getLeftY(),
-                                                                                       OperatorConstants.LEFT_Y_DEADBAND) / 2,
+                                                                                       OperatorConstants.LEFT_Y_DEADBAND),
                                                           () -> MathUtil.applyDeadband(driverXbox.getLeftX(),
-                                                                                       OperatorConstants.LEFT_X_DEADBAND) / 2,
+                                                                                       OperatorConstants.LEFT_X_DEADBAND),
                                                           () -> driverXbox.getRightX(),
                                                           () -> -driverXbox.getRightY());
 
     AbsoluteFieldDrive closedFieldAbsoluteDrive = new AbsoluteFieldDrive(drivebase,
                                                                          () -> -MathUtil.applyDeadband(driverXbox.getLeftY(),
-                                                                                                    OperatorConstants.LEFT_Y_DEADBAND)/2,
+                                                                                                    OperatorConstants.LEFT_Y_DEADBAND),
                                                                          () -> -MathUtil.applyDeadband(driverXbox.getLeftX(),
-                                                                                                      OperatorConstants.LEFT_X_DEADBAND)/2,
+                                                                                                      OperatorConstants.LEFT_X_DEADBAND),
                                                                          () -> -driverXbox.getRawAxis(3));
 
     AbsoluteDriveAdv closedAbsoluteDriveAdv = new AbsoluteDriveAdv(drivebase,
@@ -110,11 +110,11 @@ public class RobotContainer
                                                     () -> -driverXbox.getRawAxis(4), () -> true);
     TeleopDrive closedFieldRel = new TeleopDrive(
         drivebase,
-        () -> -MathUtil.applyDeadband(driverController.getY(), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> -MathUtil.applyDeadband(driverController.getX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> MathUtil.applyDeadband(driverXbox.getRightX(), OperatorConstants.RIGHT_X_DEADBAND), () -> true);
+        () -> -MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+        () -> -MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+        () -> -MathUtil.applyDeadband(driverXbox.getRightX(), OperatorConstants.RIGHT_X_DEADBAND), () -> true);
 
-    drivebase.setDefaultCommand(!RobotBase.isSimulation() ? closedAbsoluteDrive : closedFieldAbsoluteDrive);
+    drivebase.setDefaultCommand(!RobotBase.isSimulation() ? closedFieldRel : closedFieldRel);
     // drivebase.setDefaultCommand(closedFieldAbsoluteDrive);
 
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
@@ -226,18 +226,18 @@ public class RobotContainer
     SmartDashboard.putData("Pathfind to Pickup Pos", AutoBuilder.pathfindToPose(
       new Pose2d(14.0, 6.5, Rotation2d.fromDegrees(0)), 
       new PathConstraints(
-        4.0, 4.0, 
-        Units.degreesToRadians(360), Units.degreesToRadians(540)
+        3.0, 3.0, 
+        Units.degreesToRadians(540), Units.degreesToRadians(720)
       ), 
       0, 
-      2.0
+      0
     ));
     
     SmartDashboard.putData("Pathfind to Scoring Pos", AutoBuilder.pathfindToPose(
       new Pose2d(2.15, 3.0, Rotation2d.fromDegrees(180)), 
       new PathConstraints(
-        4.0, 4.0, 
-        Units.degreesToRadians(360), Units.degreesToRadians(540)
+        3.0, 3.0, 
+        Units.degreesToRadians(540), Units.degreesToRadians(720)
       ), 
       0, 
       0
