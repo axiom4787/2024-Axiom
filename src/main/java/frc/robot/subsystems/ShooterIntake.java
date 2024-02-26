@@ -105,5 +105,6 @@ public class ShooterIntake extends SubsystemBase {
       simStateMachine(); 
       // stateMachine(); 
     }
+
   
 }
