@@ -226,9 +226,10 @@ public class RobotContainer {
     // new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
     // new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
     // Add a button to run pathfinding commands to SmartDashboard
-    new JoystickButton(driverXbox, 7).onTrue(new InstantCommand(() -> shooterIntake.setState("intake"), shooterIntake));
-    new JoystickButton(driverXbox, 8).onTrue(new InstantCommand(() -> shooterIntake.setState("shoot"), shooterIntake));
-    new JoystickButton(driverXbox, 1).onTrue(new InstantCommand(() -> shooterIntake.setState("off"), shooterIntake));
+    // Button binding based on the numbered box from the left.
+    new JoystickButton(driverXbox, 5).onTrue(new RunCommand(() -> shooterIntake.setState("intake"), shooterIntake));
+    new JoystickButton(driverXbox, 6).onTrue(new RunCommand(() -> shooterIntake.setState("shoot"), shooterIntake));
+    new JoystickButton(driverXbox, 1).onTrue(new RunCommand(() -> shooterIntake.setState("off"), shooterIntake));
     new JoystickButton(driverXbox, driverXbox.getPOV()).onTrue(new RunCommand(() -> armSubsystem.simSetArmPID(), armSubsystem));
     SmartDashboard.putData("Pathfind to Pickup Pos", AutoBuilder.pathfindToPose(
       new Pose2d(14.0, 6.5, Rotation2d.fromDegrees(0)), 
