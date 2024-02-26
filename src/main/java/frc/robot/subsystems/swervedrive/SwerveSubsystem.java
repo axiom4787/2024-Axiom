@@ -203,8 +203,11 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic()
   {
+  
     // double timestamp = Timer.getFPGATimestamp();
-    // swerveDrive.addVisionMeasurement(this.limelight.getBotPose2d(), timestamp);
+    // if (this.limelight.getBotPose2d().getX() != 0 && this.limelight.getBotPose2d().getY() != 0) {
+    //   swerveDrive.addVisionMeasurement(this.limelight.getBotPose2d(), timestamp);
+    // }
     // System.out.println("Pose: " + getPose().getX() + " | " + getPose().getY());
 
     // anglePIDOverride = new PIDFConfig(SmartDashboard.getNumber("Angle P", anglePIDOverride.p),

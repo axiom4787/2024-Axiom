@@ -447,7 +447,6 @@ public class SwerveDrive
         ? ChassisSpeeds.fromFieldRelativeSpeeds(
             translation.getX(), translation.getY(), rotation, getYaw())
         : new ChassisSpeeds(translation.getX(), translation.getY(), rotation);
-
     drive(velocity, isOpenLoop, new Translation2d());
   }
 
