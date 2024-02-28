@@ -63,4 +63,11 @@ public final class Constants
     public static final int[] kBlueAprilTags = new int[]{1,2,3,4};
     public static final int[] kRedAprilTags = new int[]{5,6,7,8};
   }
+
+  public static final class BlinkinConstants {
+    public static final int kPWMPort = 0;
+    public static final double kRainbow = -0.99;
+    public static final double kSolidOrange = 0.65;
+    public static final double kAllianceColor = -0.01;
+  }
 }
