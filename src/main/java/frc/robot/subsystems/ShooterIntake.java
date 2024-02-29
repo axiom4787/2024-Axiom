@@ -24,7 +24,8 @@ public class ShooterIntake extends SubsystemBase {
   private final RelativeEncoder topEncoder; //encoder for top 
   private final RelativeEncoder bottomEncoder; //encoder for bottom
 
-  private String state = "off"; 
+  private String stateDirection = "off";
+  private String stateLocation = "off";
 
   XboxController driverXbox = new XboxController(0);
 
@@ -46,56 +47,157 @@ public class ShooterIntake extends SubsystemBase {
     // topMotor.setIdleMode(TurretConstants.kShootMotorIdleMode);
     // bottomMotor.setIdleMode(TurretConstants.kRotateMotorIdleMode);
 
-
     topEncoder = topMotor.getEncoder();
     bottomEncoder = bottomMotor.getEncoder();
+  }
+
+    public void setStateDirection(String stateDirection){
+      System.out.println("Setting state to " + stateDirection);
+      this.stateDirection = stateDirection;
     }
 
-    public void setState(String state){
-      System.out.println("Setting state to " + state);
-      this.state = state; 
+    public void setStateLocation(String stateLocation) {
+      System.out.println("Setting state to " + stateLocation);
+      this.stateLocation = stateLocation;
     }
 
-    public String getState() {
-      return state;
+    public String getStateDirection() {
+      return stateDirection;
+    }
+
+    public String getStateLocation() {
+      return stateLocation;
+    }
+
+    private enum StateDirection {
+      INTAKE, SHOOT, OFF;
+    }
+
+    private enum StateLocation {
+      AMP, SPEAKER, OFF;
     }
     
     private void simStateMachine() {
-      switch(state) {
-        case "intake":
-          topMotor.setInverted(false); 
-          bottomMotor.setInverted(true); 
+      if (stateDirection=="shoot") {
+        topMotor.setInverted(true); 
+        bottomMotor.setInverted(false);
+        if (stateLocation == "amp") {
           bottomMotor.setVoltage(1.0);
+          topMotor.setVoltage(0);
+          System.out.println(stateLocation);
+        }
+        if (stateLocation == "speaker") {
+          bottomMotor.setVoltage(0);
           topMotor.setVoltage(1.0);
-          break;
-        case "shoot":
-          topMotor.setInverted(true); 
-          bottomMotor.setInverted(false); 
-          bottomMotor.setVoltage(1.0);
-          topMotor.setVoltage(1.0);
-          break;
-        case "off":
+          System.out.println(stateLocation);
+        }
+        else {
           bottomMotor.setVoltage(0.0);
           topMotor.setVoltage(0.0);
-          break;
+          System.out.println(stateLocation);
+        }
+        System.out.println(stateDirection);
       }
+      else if (stateDirection=="intake") {
+        topMotor.setInverted(false); 
+        bottomMotor.setInverted(true); 
+        bottomMotor.setVoltage(1.0);
+        topMotor.setVoltage(1.0);
+        System.out.println(stateDirection);
+      }
+      else if (stateDirection=="off") {
+        bottomMotor.setVoltage(0.0);
+        topMotor.setVoltage(0.0);
+        System.out.println(stateDirection);
+      }
+      else {
+        System.out.println("Invalid state");
+      }
+      // switch(stateDirection) {
+      //   case "intake":
+      //     topMotor.setInverted(false); 
+      //     bottomMotor.setInverted(true); 
+      //     bottomMotor.setVoltage(1.0);
+      //     topMotor.setVoltage(1.0);
+      //     System.out.println(stateDirection);
+      //     break;
+          
+      //   case "shoot":
+      //     topMotor.setInverted(true); 
+      //     bottomMotor.setInverted(false); 
+      //     bottomMotor.setVoltage(1.0);
+      //     topMotor.setVoltage(1.0);
+      //     System.out.println(stateDirection);
+      //     switch(stateLocation) {
+      //       System.out.println(stateLocation);
+      //       case "amp":
+      //         topMotor.setInverted(false); 
+      //         bottomMotor.setInverted(false); 
+      //         bottomMotor.setVoltage(1.0);
+      //         topMotor.setVoltage(0);
+      //         System.out.println(stateLocation);
+      //         break;
+      //       case "speaker":
+      //         topMotor.setInverted(true); 
+      //         bottomMotor.setInverted(true); 
+      //         bottomMotor.setVoltage(0);
+      //         topMotor.setVoltage(1.0);
+      //         System.out.println(stateLocation);
+      //         break;
+      //       case "off":
+      //         bottomMotor.setVoltage(0.0);
+      //         topMotor.setVoltage(0.0);
+      //         System.out.println(stateLocation);
+      //         break;
+      //     }
+
+      //     break;
+      //   case "off":
+      //     bottomMotor.setVoltage(0.0);
+      //     topMotor.setVoltage(0.0);
+      //     System.out.println(stateDirection);
+      //     break;
+      // }
     }
 
     private void stateMachine() {
-      System.out.println(state);
-      switch(state) {
+      System.out.println(stateDirection);
+      switch(stateDirection) {
         case "intake":
           topMotor.setInverted(false); 
           bottomMotor.setInverted(true); 
           bottomMotor.set(1.0);
+          topMotor.set(1.0);
           break;
         case "shoot":
           topMotor.setInverted(true); 
           bottomMotor.setInverted(false); 
           bottomMotor.set(1.0);
+          topMotor.set(1.0);
+
+          switch(stateLocation) {
+            case "amp":
+              topMotor.setInverted(false); 
+              bottomMotor.setInverted(false); 
+              bottomMotor.set(1.0);
+              topMotor.set(0);
+              break;
+            case "speaker":
+              topMotor.setInverted(true); 
+              bottomMotor.setInverted(true); 
+              bottomMotor.set(0);
+              topMotor.set(1.0);
+              break;
+            case "off":
+              bottomMotor.set(0.0);
+              topMotor.set(0.0);
+              break;
+          }
+          
           break;
         case "off":
           bottomMotor.set(0.0);
+          topMotor.set(0.0);
           break;
       }
     }

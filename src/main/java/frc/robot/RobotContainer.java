@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -70,6 +71,10 @@ public class RobotContainer {
 
   private final SendableChooser<Command> autoChooser;
   private final Boolean lockToAprilTagBool = false;
+
+  private RunCommand offStateDirection = new RunCommand(() -> shooterIntake.setStateDirection("off"), shooterIntake);
+  private RunCommand offStateLocation = new RunCommand(() -> shooterIntake.setStateLocation("off"), shooterIntake);
+  private ParallelCommandGroup offShooterIntake = new ParallelCommandGroup(offStateDirection, offStateLocation);
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -227,9 +232,11 @@ public class RobotContainer {
     // new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
     // Add a button to run pathfinding commands to SmartDashboard
     // Button binding based on the numbered box from the left.
-    new JoystickButton(driverXbox, 5).onTrue(new RunCommand(() -> shooterIntake.setState("intake"), shooterIntake));
-    new JoystickButton(driverXbox, 6).onTrue(new RunCommand(() -> shooterIntake.setState("shoot"), shooterIntake));
-    new JoystickButton(driverXbox, 1).onTrue(new RunCommand(() -> shooterIntake.setState("off"), shooterIntake));
+    new JoystickButton(driverXbox, 5).onTrue(new RunCommand(() -> shooterIntake.setStateDirection("intake"), shooterIntake));
+    new JoystickButton(driverXbox, 6).onTrue(new RunCommand(() -> shooterIntake.setStateDirection("shoot"), shooterIntake));
+    new JoystickButton(driverXbox, 1).onTrue(new RunCommand(() -> shooterIntake.setStateDirection("off"), shooterIntake).alongWith(new RunCommand(() -> shooterIntake.setStateLocation("off"), shooterIntake)));
+    new JoystickButton(driverXbox, 7).onTrue(new RunCommand(() -> shooterIntake.setStateLocation("amp"), shooterIntake));
+    new JoystickButton(driverXbox, 8).onTrue(new RunCommand(() -> shooterIntake.setStateLocation("speaker"), shooterIntake));
     new JoystickButton(driverXbox, driverXbox.getPOV()).onTrue(new RunCommand(() -> armSubsystem.simSetArmPID(), armSubsystem));
     SmartDashboard.putData("Pathfind to Pickup Pos", AutoBuilder.pathfindToPose(
       new Pose2d(14.0, 6.5, Rotation2d.fromDegrees(0)), 
