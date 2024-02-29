@@ -24,8 +24,7 @@ public class ShooterIntake extends SubsystemBase {
   private final RelativeEncoder topEncoder; //encoder for top 
   private final RelativeEncoder bottomEncoder; //encoder for bottom
 
-  private String stateDirection = "off";
-  private String stateLocation = "off";
+  private String state = "off";
 
   XboxController driverXbox = new XboxController(0);
 
@@ -51,64 +50,43 @@ public class ShooterIntake extends SubsystemBase {
     bottomEncoder = bottomMotor.getEncoder();
   }
 
-    public void setStateDirection(String stateDirection){
-      System.out.println("Setting state to " + stateDirection);
-      this.stateDirection = stateDirection;
-    }
-
-    public void setStateLocation(String stateLocation) {
-      System.out.println("Setting state to " + stateLocation);
-      this.stateLocation = stateLocation;
-    }
-
-    public String getStateDirection() {
-      return stateDirection;
-    }
-
-    public String getStateLocation() {
-      return stateLocation;
-    }
-
-    private enum StateDirection {
-      INTAKE, SHOOT, OFF;
-    }
-
-    private enum StateLocation {
-      AMP, SPEAKER, OFF;
+    public void setStateDirection(String state){
+      System.out.println("Setting state to " + state);
+      this.state = state;
     }
     
     private void simStateMachine() {
-      if (stateDirection=="shoot") {
+      if (state=="shoot") {
         topMotor.setInverted(true); 
         bottomMotor.setInverted(false);
-        if (stateLocation == "amp") {
+        if (driverXbox.getLeftTriggerAxis() > 0.9) {
           bottomMotor.setVoltage(1.0);
           topMotor.setVoltage(0);
-          System.out.println(stateLocation);
+          System.out.println("amp");
         }
-        if (stateLocation == "speaker") {
+        else if (driverXbox.getRightTriggerAxis() > 0.9) {
           bottomMotor.setVoltage(0);
           topMotor.setVoltage(1.0);
-          System.out.println(stateLocation);
+          System.out.println("Speaker");
         }
         else {
           bottomMotor.setVoltage(0.0);
           topMotor.setVoltage(0.0);
-          System.out.println(stateLocation);
+          // System.out.println(stateLocation);
         }
-        System.out.println(stateDirection);
+        System.out.println(state);
       }
-      else if (stateDirection=="intake") {
+      else if (state=="intake") {
         topMotor.setInverted(false); 
         bottomMotor.setInverted(true); 
         bottomMotor.setVoltage(1.0);
         topMotor.setVoltage(1.0);
-        System.out.println(stateDirection);
+        System.out.println(state);
       }
-      else if (stateDirection=="off") {
+      else if (state=="off") {
         bottomMotor.setVoltage(0.0);
         topMotor.setVoltage(0.0);
-        System.out.println(stateDirection);
+        System.out.println(state);
       }
       else {
         System.out.println("Invalid state");
@@ -161,44 +139,40 @@ public class ShooterIntake extends SubsystemBase {
     }
 
     private void stateMachine() {
-      System.out.println(stateDirection);
-      switch(stateDirection) {
-        case "intake":
-          topMotor.setInverted(false); 
-          bottomMotor.setInverted(true); 
+      if (state=="shoot") {
+        topMotor.setInverted(true); 
+        bottomMotor.setInverted(false);
+        if (driverXbox.getLeftTriggerAxis() > 0.9) {
           bottomMotor.set(1.0);
+          topMotor.set(0);
+          System.out.println("amp");
+        }
+        else if (driverXbox.getRightTriggerAxis() > 0.9) {
+          bottomMotor.set(0);
           topMotor.set(1.0);
-          break;
-        case "shoot":
-          topMotor.setInverted(true); 
-          bottomMotor.setInverted(false); 
-          bottomMotor.set(1.0);
-          topMotor.set(1.0);
-
-          switch(stateLocation) {
-            case "amp":
-              topMotor.setInverted(false); 
-              bottomMotor.setInverted(false); 
-              bottomMotor.set(1.0);
-              topMotor.set(0);
-              break;
-            case "speaker":
-              topMotor.setInverted(true); 
-              bottomMotor.setInverted(true); 
-              bottomMotor.set(0);
-              topMotor.set(1.0);
-              break;
-            case "off":
-              bottomMotor.set(0.0);
-              topMotor.set(0.0);
-              break;
-          }
-          
-          break;
-        case "off":
+          System.out.println("Speaker");
+        }
+        else {
           bottomMotor.set(0.0);
           topMotor.set(0.0);
-          break;
+          // System.out.println(stateLocation);
+        }
+        System.out.println(state);
+      }
+      else if (state=="intake") {
+        topMotor.setInverted(false); 
+        bottomMotor.setInverted(true); 
+        bottomMotor.set(1.0);
+        topMotor.set(1.0);
+        System.out.println(state);
+      }
+      else if (state=="off") {
+        bottomMotor.set(0.0);
+        topMotor.set(0.0);
+        System.out.println(state);
+      }
+      else {
+        System.out.println("Invalid state");
       }
     }
 
@@ -207,6 +181,5 @@ public class ShooterIntake extends SubsystemBase {
       simStateMachine(); 
       // stateMachine(); 
     }
-
   
 }

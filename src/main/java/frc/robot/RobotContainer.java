@@ -72,9 +72,6 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
   private final Boolean lockToAprilTagBool = false;
 
-  private RunCommand offStateDirection = new RunCommand(() -> shooterIntake.setStateDirection("off"), shooterIntake);
-  private RunCommand offStateLocation = new RunCommand(() -> shooterIntake.setStateLocation("off"), shooterIntake);
-  private ParallelCommandGroup offShooterIntake = new ParallelCommandGroup(offStateDirection, offStateLocation);
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -234,10 +231,8 @@ public class RobotContainer {
     // Button binding based on the numbered box from the left.
     new JoystickButton(driverXbox, 5).onTrue(new RunCommand(() -> shooterIntake.setStateDirection("intake"), shooterIntake));
     new JoystickButton(driverXbox, 6).onTrue(new RunCommand(() -> shooterIntake.setStateDirection("shoot"), shooterIntake));
-    new JoystickButton(driverXbox, 1).onTrue(new RunCommand(() -> shooterIntake.setStateDirection("off"), shooterIntake).alongWith(new RunCommand(() -> shooterIntake.setStateLocation("off"), shooterIntake)));
-    new JoystickButton(driverXbox, 7).onTrue(new RunCommand(() -> shooterIntake.setStateLocation("amp"), shooterIntake));
-    new JoystickButton(driverXbox, 8).onTrue(new RunCommand(() -> shooterIntake.setStateLocation("speaker"), shooterIntake));
-    new JoystickButton(driverXbox, driverXbox.getPOV()).onTrue(new RunCommand(() -> armSubsystem.simSetArmPID(), armSubsystem));
+    new JoystickButton(driverXbox, 1).onTrue(new RunCommand(() -> shooterIntake.setStateDirection("off"), shooterIntake));
+    // new JoystickButton(driverXbox, driverXbox.getPOV()).onTrue(new RunCommand(() -> armSubsystem.simSetArmPID(), armSubsystem));
     SmartDashboard.putData("Pathfind to Pickup Pos", AutoBuilder.pathfindToPose(
       new Pose2d(14.0, 6.5, Rotation2d.fromDegrees(0)), 
       new PathConstraints(

@@ -134,7 +134,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    System.out.println("encoder pos: " + armLeftEncoder.getPosition());
+    // System.out.println("encoder pos: " + armLeftEncoder.getPosition());
   // This method will be called once per scheduler run
     // if (driverXbox.getPOV() == 180) {
     //   calculateArmPID(SetPointAngles.INTAKE_GROUND_ANGLE);
