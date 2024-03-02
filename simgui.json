@@ -70,6 +70,7 @@
       "/SmartDashboard/Pigeon 2 [13]": "Gyro",
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
       "/SmartDashboard/lock to tag": "Command",
+      "/SmartDashboard/move forward": "Command",
       "/SmartDashboard/navX-Sensor[1]": "Gyro",
       "/SmartDashboard/navX-Sensor[4]": "Gyro"
     },
@@ -86,6 +87,12 @@
           "arrowWeight": 3.0,
           "style": "Hidden"
         },
+        "bottom": 1476,
+        "height": 8.210550308227539,
+        "left": 150,
+        "right": 2961,
+        "top": 79,
+        "width": 16.541748046875,
         "window": {
           "visible": true
         }
@@ -100,6 +107,11 @@
           "visible": true
         }
       },
+      "/SmartDashboard/Pathfind to Scoring Pos": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/lock to tag": {
         "window": {
           "visible": true
@@ -108,9 +120,6 @@
     }
   },
   "NetworkTables": {
-    "Transitory Values": {
-      "open": false
-    },
     "transitory": {
       "SmartDashboard": {
         "open": true,
@@ -119,5 +128,17 @@
         }
       }
     }
+  },
+  "NetworkTables Info": {
+    "Clients": {
+      "open": true
+    },
+    "Connections": {
+      "open": true
+    },
+    "Server": {
+      "open": true
+    },
+    "visible": true
   }
 }

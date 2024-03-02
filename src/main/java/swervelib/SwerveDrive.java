@@ -34,6 +34,7 @@ import swervelib.imu.Pigeon2Swerve;
 import swervelib.imu.SwerveIMU;
 import swervelib.math.SwerveMath;
 import swervelib.motors.TalonFXSwerve;
+import swervelib.parser.PIDFConfig;
 import swervelib.parser.SwerveControllerConfiguration;
 import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.simulation.SwerveIMUSimulation;
@@ -150,7 +151,7 @@ public class SwerveDrive
   //  */
   // private       double                   offsetBackLeftDegrees = 90.0; //front left
   // private       double                   offsetBackRightDegrees = 0.0; //front right
-  // private       double                   offsetFrontRightDegrees = 180.0; //back left
+  // private       double                   offsetFrontRightDegrees = 0.0; //back left
   // private       double                   offsetFrontLeftDegrees = 270.0;  //back right
 
   private       double                   offsetBackLeftDegrees = 0.0; //front left
@@ -446,7 +447,6 @@ public class SwerveDrive
         ? ChassisSpeeds.fromFieldRelativeSpeeds(
             translation.getX(), translation.getY(), rotation, getYaw())
         : new ChassisSpeeds(translation.getX(), translation.getY(), rotation);
-
     drive(velocity, isOpenLoop, new Translation2d());
   }
 
@@ -566,7 +566,7 @@ public class SwerveDrive
     return new SwerveModuleState(state.speedMetersPerSecond, adjustedAngle);
   }
 
-  /**
+  /**x
    * Set the module states (azimuth and velocity) directly. Used primarily for auto pathing.
    *
    * @param desiredStates A list of SwerveModuleStates to send to the modules.
@@ -579,6 +579,7 @@ public class SwerveDrive
     desiredStates[1] = applyOffsetToState(desiredStates[1], offsetBackRightDegrees);
     desiredStates[2] = applyOffsetToState(desiredStates[2], offsetFrontRightDegrees);
     desiredStates[3] = applyOffsetToState(desiredStates[3], offsetFrontLeftDegrees);
+    
 
     // Desaturates wheel speeds
     if (attainableMaxTranslationalSpeedMetersPerSecond != 0 || attainableMaxRotationalVelocityRadiansPerSecond != 0)
@@ -588,7 +589,6 @@ public class SwerveDrive
                                                   attainableMaxTranslationalSpeedMetersPerSecond,
                                                   attainableMaxRotationalVelocityRadiansPerSecond);
     }
-
     // Sets states
     for (SwerveModule module : swerveModules)
     {

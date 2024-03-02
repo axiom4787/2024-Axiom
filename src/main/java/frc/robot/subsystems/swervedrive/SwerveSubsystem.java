@@ -9,6 +9,8 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -17,6 +19,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -26,6 +29,7 @@ import java.io.File;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.math.SwerveMath;
+import swervelib.parser.PIDFConfig;
 import swervelib.parser.SwerveControllerConfiguration;
 import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
@@ -44,6 +48,10 @@ public class SwerveSubsystem extends SubsystemBase
    * Maximum speed of the robot in meters per second, used to limit acceleration.
    */
   public        double      maximumSpeed = Units.feetToMeters(14.5);
+
+  private PIDFConfig     drivePIDOverride;
+  private PIDFConfig     anglePIDOverride;
+  private PIDController     headingPIDOverride;
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -81,6 +89,11 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
 
     setupPathPlanner();
+
+    //pid overrides are set to current values of the angle and drive motors
+    drivePIDOverride = swerveDrive.getModules()[0].getConfiguration().velocityPIDF;
+    anglePIDOverride = swerveDrive.getModules()[0].getConfiguration().anglePIDF;
+    headingPIDOverride = swerveDrive.swerveController.thetaController;
   }
 
   /**
@@ -94,7 +107,7 @@ public class SwerveSubsystem extends SubsystemBase
         this::getRobotVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         this::setChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                                         new PIDConstants(5.0, 0.0, 0.0),
+                                         new PIDConstants(2, 0.0, 0.0), // P: 5 I: 0.0 D: 0.0
                                          // Translation PID constants
                                          new PIDConstants(swerveDrive.swerveController.config.headingPIDF.p,
                                                           swerveDrive.swerveController.config.headingPIDF.i,
@@ -137,7 +150,7 @@ public class SwerveSubsystem extends SubsystemBase
    * Construct the swerve drive.
    *
    * @param driveCfg      SwerveDriveConfiguration for the swerve.
-   * @param controllerCfg Swerve Controller.
+   * 
    */
   public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg, LimeLight limelight)
   {
@@ -190,9 +203,53 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic()
   {
+  
     // double timestamp = Timer.getFPGATimestamp();
-    // swerveDrive.addVisionMeasurement(this.limeLight.getBotPose2d(), timestamp);
+    // if (this.limelight.getBotPose2d().getX() != 0 && this.limelight.getBotPose2d().getY() != 0) {
+    //   swerveDrive.addVisionMeasurement(this.limelight.getBotPose2d(), timestamp);
+    // }
     // System.out.println("Pose: " + getPose().getX() + " | " + getPose().getY());
+
+    // anglePIDOverride = new PIDFConfig(SmartDashboard.getNumber("Angle P", anglePIDOverride.p),
+    //                                  SmartDashboard.getNumber("Angle I", anglePIDOverride.i),
+    //                                  SmartDashboard.getNumber("Angle D", anglePIDOverride.d),
+    //                                  SmartDashboard.getNumber("Angle F", anglePIDOverride.f),
+    //                                  SmartDashboard.getNumber("Angle IZ", anglePIDOverride.iz));
+
+    // drivePIDOverride = new PIDFConfig(SmartDashboard.getNumber("Drive P", drivePIDOverride.p),
+    //                                   SmartDashboard.getNumber("Drive I", drivePIDOverride.i),
+    //                                   SmartDashboard.getNumber("Drive D", drivePIDOverride.d),
+    //                                   SmartDashboard.getNumber("Drive F", drivePIDOverride.f),
+    //                                   SmartDashboard.getNumber("Drive IZ", drivePIDOverride.iz));
+
+    // headingPIDOverride = new PIDController(SmartDashboard.getNumber("Heading P", headingPIDOverride.getP()),
+    //                                       SmartDashboard.getNumber("Heading I", headingPIDOverride.getI()),
+    //                                       SmartDashboard.getNumber("Heading D", headingPIDOverride.getD()));
+
+    //set all motors and angle stuff to new overrides
+    for (int i = 0; i < swerveDrive.getModules().length; i++)
+    {
+      swerveDrive.getModules()[i].configuration.anglePIDF = anglePIDOverride;
+      swerveDrive.getModules()[i].configuration.velocityPIDF = drivePIDOverride;
+    }  
+
+    swerveDrive.swerveController.thetaController = headingPIDOverride;
+
+    // SmartDashboard.putNumber("Drive P", drivePIDOverride.p);
+    // SmartDashboard.putNumber("Drive I", drivePIDOverride.i);
+    // SmartDashboard.putNumber("Drive D", drivePIDOverride.d);
+    // SmartDashboard.putNumber("Drive F", drivePIDOverride.f);
+    // SmartDashboard.putNumber("Drive IZ", drivePIDOverride.iz);
+
+    // SmartDashboard.putNumber("Angle P", anglePIDOverride.p);
+    // SmartDashboard.putNumber("Angle I", anglePIDOverride.i);
+    // SmartDashboard.putNumber("Angle D", anglePIDOverride.d);
+    // SmartDashboard.putNumber("Angle F", anglePIDOverride.f);
+    // SmartDashboard.putNumber("Angle IZ", anglePIDOverride.iz);
+
+    // SmartDashboard.putNumber("Heading P", headingPIDOverride.getP());
+    // SmartDashboard.putNumber("Heading I", headingPIDOverride.getI());
+    // SmartDashboard.putNumber("Heading D", headingPIDOverride.getD());
   }
 
   @Override
@@ -277,7 +334,8 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public Rotation2d getHeading()
   {
-    return swerveDrive.getYaw();
+    // return swerveDrive.getYaw();
+    return getPose().getRotation();
   }
 
   /**

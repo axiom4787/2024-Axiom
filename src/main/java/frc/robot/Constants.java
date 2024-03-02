@@ -47,10 +47,10 @@ public final class Constants
   {
 
     // Joystick Deadband
-    public static final double LEFT_X_DEADBAND = 0.75;
-    public static final double LEFT_Y_DEADBAND = 0.75;
-    public static final double RIGHT_X_DEADBAND = 0.75;
-    public static final double TURN_CONSTANT = 0.75;
+    public static final double LEFT_X_DEADBAND = 0.2;
+    public static final double LEFT_Y_DEADBAND = 0.2;
+    public static final double RIGHT_X_DEADBAND = 0.2;
+    public static final double TURN_CONSTANT = 0.2;
   }
 
   public static final class LimelightConstants {
@@ -62,5 +62,12 @@ public final class Constants
 
     public static final int[] kBlueAprilTags = new int[]{1,2,3,4};
     public static final int[] kRedAprilTags = new int[]{5,6,7,8};
+  }
+
+  public static final class BlinkinConstants {
+    public static final int kPWMPort = 0;
+    public static final double kRainbow = -0.99;
+    public static final double kSolidOrange = 0.65;
+    public static final double kAllianceColor = -0.01;
   }
 }

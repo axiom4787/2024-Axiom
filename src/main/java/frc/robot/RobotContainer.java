@@ -28,6 +28,7 @@ import frc.robot.commands.swervedrive.drivebase.AbsoluteDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.commands.swervedrive.drivebase.TeleopDrive;
+import frc.robot.subsystems.Blinkin;
 import frc.robot.subsystems.LimeLight;
 import frc.robot.subsystems.SimulatedLimelightData;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -61,6 +62,7 @@ public class RobotContainer
 
   // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
   XboxController driverXbox = new XboxController(0);
+  Blinkin blinkin = new Blinkin(Constants.BlinkinConstants.kPWMPort);
 
   private final SendableChooser<Command> autoChooser;
   private final Boolean lockToAprilTagBool = false;
@@ -78,17 +80,17 @@ public class RobotContainer
                                                           // controls are front-left positive
                                                           () -> -MathUtil.applyDeadband(driverXbox.getLeftY(),
                                                                                        OperatorConstants.LEFT_Y_DEADBAND),
-                                                          () -> -MathUtil.applyDeadband(driverXbox.getLeftX(),
+                                                          () -> MathUtil.applyDeadband(driverXbox.getLeftX(),
                                                                                        OperatorConstants.LEFT_X_DEADBAND),
-                                                          () -> -driverXbox.getRightX(),
+                                                          () -> driverXbox.getRightX(),
                                                           () -> -driverXbox.getRightY());
 
     AbsoluteFieldDrive closedFieldAbsoluteDrive = new AbsoluteFieldDrive(drivebase,
                                                                          () -> -MathUtil.applyDeadband(driverXbox.getLeftY(),
-                                                                                                    OperatorConstants.LEFT_Y_DEADBAND)/2,
-                                                                         () -> MathUtil.applyDeadband(driverXbox.getLeftX(),
-                                                                                                      OperatorConstants.LEFT_X_DEADBAND)/2,
-                                                                         () -> driverXbox.getRightX()/2);
+                                                                                                    OperatorConstants.LEFT_Y_DEADBAND),
+                                                                         () -> -MathUtil.applyDeadband(driverXbox.getLeftX(),
+                                                                                                      OperatorConstants.LEFT_X_DEADBAND),
+                                                                         () -> -driverXbox.getRawAxis(3));
 
     AbsoluteDriveAdv closedAbsoluteDriveAdv = new AbsoluteDriveAdv(drivebase,
                                                                       () -> MathUtil.applyDeadband(driverXbox.getLeftY(),
@@ -110,12 +112,12 @@ public class RobotContainer
                                                     () -> -driverXbox.getRawAxis(4), () -> true);
     TeleopDrive closedFieldRel = new TeleopDrive(
         drivebase,
-        () -> -MathUtil.applyDeadband(driverController.getY(), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> -MathUtil.applyDeadband(driverController.getX(), OperatorConstants.LEFT_X_DEADBAND),
+        () -> -MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+        () -> MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
         () -> MathUtil.applyDeadband(driverXbox.getRightX(), OperatorConstants.RIGHT_X_DEADBAND), () -> true);
 
-    // drivebase.setDefaultCommand(RobotBase.isSimulation() ? closedAbsoluteDrive : closedFieldAbsoluteDrive);
-    drivebase.setDefaultCommand(closedFieldAbsoluteDrive);
+    drivebase.setDefaultCommand(!RobotBase.isSimulation() ? closedFieldRel : closedFieldRel);
+    // drivebase.setDefaultCommand(closedFieldAbsoluteDrive);
 
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     SmartDashboard.putData("Auto Mode", autoChooser);
@@ -139,7 +141,7 @@ public class RobotContainer
     // Normalize angle to [-180, 180] range
     double xAngleToTag = Math.toDegrees(angleToTag);
     if (xAngleToTag > 180) xAngleToTag -= 360;
-    if (xAngleToTag < -180) xAngleToTag += 360;
+    if (xAngleToTag < -180) xAngleToTag += 360; 
 
     // Check if the tag is within the Limelight's FOV (80 degrees)
     boolean isTargetVisible = Math.abs(xAngleToTag) <= 40; // 80-degree FOV divided by 2
@@ -226,18 +228,18 @@ public class RobotContainer
     SmartDashboard.putData("Pathfind to Pickup Pos", AutoBuilder.pathfindToPose(
       new Pose2d(14.0, 6.5, Rotation2d.fromDegrees(0)), 
       new PathConstraints(
-        4.0, 4.0, 
-        Units.degreesToRadians(360), Units.degreesToRadians(540)
+        3.0, 3.0, 
+        Units.degreesToRadians(540), Units.degreesToRadians(720)
       ), 
       0, 
-      2.0
+      0
     ));
     
     SmartDashboard.putData("Pathfind to Scoring Pos", AutoBuilder.pathfindToPose(
       new Pose2d(2.15, 3.0, Rotation2d.fromDegrees(180)), 
       new PathConstraints(
-        4.0, 4.0, 
-        Units.degreesToRadians(360), Units.degreesToRadians(540)
+        3.0, 3.0, 
+        Units.degreesToRadians(540), Units.degreesToRadians(720)
       ), 
       0, 
       0
@@ -251,6 +253,14 @@ public class RobotContainer
       // ), 
       // 0
     ));
+
+    // SmartDashboard.putData("move forward", AutoBuilder.followPath(
+    //   PathPlannerPath.fromPathFile("test")
+    // ));
+
+    SmartDashboard.putData("move forward", 
+      drivebase.getAutonomousCommand("test", true)
+    );
 
     TeleopDrive lockToAprilTag = new TeleopDrive(
         drivebase,
