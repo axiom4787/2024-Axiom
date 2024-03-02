@@ -123,7 +123,7 @@ public class RobotContainer {
     //     () -> MathUtil.applyDeadband(driverXbox.getRightX(), OperatorConstants.RIGHT_X_DEADBAND), () -> true);
 
     // drivebase.setDefaultCommand(RobotBase.isSimulation() ? closedAbsoluteDrive : closedFieldAbsoluteDrive);
-    drivebase.setDefaultCommand(closedFieldAbsoluteDrive);
+    // drivebase.setDefaultCommand(closedFieldAbsoluteDrive);
 
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     SmartDashboard.putData("Auto Mode", autoChooser);
@@ -229,9 +229,13 @@ public class RobotContainer {
     // new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
     // Add a button to run pathfinding commands to SmartDashboard
     // Button binding based on the numbered box from the left.
-    new JoystickButton(driverXbox, 5).onTrue(new RunCommand(() -> shooterIntake.setStateDirection("intake"), shooterIntake));
-    new JoystickButton(driverXbox, 6).onTrue(new RunCommand(() -> shooterIntake.setStateDirection("shoot"), shooterIntake));
-    new JoystickButton(driverXbox, 1).onTrue(new RunCommand(() -> shooterIntake.setStateDirection("off"), shooterIntake));
+    new JoystickButton(driverXbox, 5).whileTrue(new RunCommand(() -> armSubsystem.moveArm(0.1), armSubsystem));
+    new JoystickButton(driverXbox, 6).whileTrue(new RunCommand(() -> armSubsystem.moveArm(-0.1), armSubsystem));
+    new JoystickButton(driverXbox, 1).whileTrue(new RunCommand(() -> armSubsystem.moveArm(0), armSubsystem));
+
+    // new JoystickButton(driverXbox, 5).onTrue(new RunCommand(() -> shooterIntake.setStateDirection("intake"), shooterIntake));
+    // new JoystickButton(driverXbox, 6).onTrue(new RunCommand(() -> shooterIntake.setStateDirection("shoot"), shooterIntake));
+    // new JoystickButton(driverXbox, 1).onTrue(new RunCommand(() -> shooterIntake.setStateDirection("off"), shooterIntake));
     // new JoystickButton(driverXbox, driverXbox.getPOV()).onTrue(new RunCommand(() -> armSubsystem.simSetArmPID(), armSubsystem));
     SmartDashboard.putData("Pathfind to Pickup Pos", AutoBuilder.pathfindToPose(
       new Pose2d(14.0, 6.5, Rotation2d.fromDegrees(0)), 

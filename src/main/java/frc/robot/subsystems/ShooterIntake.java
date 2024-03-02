@@ -51,7 +51,7 @@ public class ShooterIntake extends SubsystemBase {
   }
 
     public void setStateDirection(String state){
-      System.out.println("Setting state to " + state);
+
       this.state = state;
     }
     
@@ -62,31 +62,27 @@ public class ShooterIntake extends SubsystemBase {
         if (driverXbox.getLeftTriggerAxis() > 0.9) {
           bottomMotor.setVoltage(1.0);
           topMotor.setVoltage(0);
-          System.out.println("amp");
         }
         else if (driverXbox.getRightTriggerAxis() > 0.9) {
           bottomMotor.setVoltage(0);
           topMotor.setVoltage(1.0);
-          System.out.println("Speaker");
+          // System.out.println("Speaker");
         }
         else {
           bottomMotor.setVoltage(0.0);
           topMotor.setVoltage(0.0);
           // System.out.println(stateLocation);
         }
-        System.out.println(state);
       }
       else if (state=="intake") {
         topMotor.setInverted(false); 
         bottomMotor.setInverted(true); 
         bottomMotor.setVoltage(1.0);
         topMotor.setVoltage(1.0);
-        System.out.println(state);
       }
       else if (state=="off") {
         bottomMotor.setVoltage(0.0);
         topMotor.setVoltage(0.0);
-        System.out.println(state);
       }
       else {
         System.out.println("Invalid state");
@@ -145,41 +141,41 @@ public class ShooterIntake extends SubsystemBase {
         if (driverXbox.getLeftTriggerAxis() > 0.9) {
           bottomMotor.set(1.0);
           topMotor.set(0);
-          System.out.println("amp");
+
         }
         else if (driverXbox.getRightTriggerAxis() > 0.9) {
           bottomMotor.set(0);
           topMotor.set(1.0);
-          System.out.println("Speaker");
+
         }
         else {
           bottomMotor.set(0.0);
           topMotor.set(0.0);
           // System.out.println(stateLocation);
         }
-        System.out.println(state);
+
       }
       else if (state=="intake") {
         topMotor.setInverted(false); 
         bottomMotor.setInverted(true); 
         bottomMotor.set(1.0);
         topMotor.set(1.0);
-        System.out.println(state);
+
       }
       else if (state=="off") {
         bottomMotor.set(0.0);
         topMotor.set(0.0);
-        System.out.println(state);
+
       }
       else {
-        System.out.println("Invalid state");
+
       }
     }
 
     @Override
     public void periodic() {
-      simStateMachine(); 
-      // stateMachine(); 
+      // simStateMachine(); 
+      stateMachine(); 
     }
   
 }

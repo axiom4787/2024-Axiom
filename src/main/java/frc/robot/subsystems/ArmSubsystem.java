@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.concurrent.TransferQueue;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
@@ -21,7 +23,7 @@ public class ArmSubsystem extends SubsystemBase {
   private final RelativeEncoder armLeftEncoder; //encoder for left arm
   private final RelativeEncoder armRightEncoder; //encoder for right arm
   
-  private static double kP = 0.01;
+  private static double kP = 0.1;
   private static double kI = 0.0;
   private static double kD = 0.0;
 
@@ -41,10 +43,10 @@ public class ArmSubsystem extends SubsystemBase {
     armLeftMotor.restoreFactoryDefaults();
     armRightMotor.restoreFactoryDefaults();
 
-    armLeftMotor.setInverted(true);
+    armLeftMotor.setInverted(false);
     armRightMotor.setInverted(false);
 
-    armRightMotor.follow(armLeftMotor);
+    // armRightMotor.follow(armLeftMotor);
 
     armLeftMotor.setSmartCurrentLimit(ArmIntakeShooter.LEFTARM_MOTOR_CURRENT_LIMIT);
     armRightMotor.setSmartCurrentLimit(ArmIntakeShooter.RIGHTARM_MOTOR_CURRENT_LIMIT);
@@ -55,8 +57,8 @@ public class ArmSubsystem extends SubsystemBase {
     armLeftEncoder = armLeftMotor.getEncoder();
     armRightEncoder = armRightMotor.getEncoder();
 
-    REVPhysicsSim.getInstance().addSparkMax(armLeftMotor, DCMotor.getNEO(1));
-    REVPhysicsSim.getInstance().addSparkMax(armRightMotor, DCMotor.getNEO(1));
+    // REVPhysicsSim.getInstance().addSparkMax(armLeftMotor, DCMotor.getNEO(1));
+    // REVPhysicsSim.getInstance().addSparkMax(armRightMotor, DCMotor.getNEO(1));
   }
 
   public void simCalculateArmPID(double kSetpoint) {
@@ -64,7 +66,6 @@ public class ArmSubsystem extends SubsystemBase {
     if (armLeftEncoder.getPosition() > ticks || armLeftEncoder.getPosition() < ticks) {
       armLeftMotor.setVoltage(MathUtil.clamp(armPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, -1, 1));
       armRightMotor.setVoltage(MathUtil.clamp(armPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, -1, 1));
-      System.out.println("Setting");
     }
     else if (armLeftEncoder.getPosition() == ticks) {
       armLeftMotor.setVoltage(0);
@@ -74,14 +75,12 @@ public class ArmSubsystem extends SubsystemBase {
     // armPID.reset();
 
   public void calculateArmPID(double kSetpoint) {
-    if (armLeftEncoder.getPosition() > ticks || armLeftEncoder.getPosition() < ticks) {
-      armLeftMotor.set(MathUtil.clamp(armPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, 0, 1));
-      armRightMotor.set(MathUtil.clamp(armPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, 0, 1));
-    }
-    else {
-      armLeftMotor.set(0);
-      armRightMotor.set(0);
-    }
+    double pidOutput = MathUtil.clamp(armPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, -0.2, 0.2);
+    armLeftMotor.set(pidOutput);
+    armRightMotor.set(-pidOutput);
+    System.out.println("pid output:" + pidOutput);
+    System.out.println("armLeftEncoder ticks: " + armLeftEncoder.getPosition());
+    // System.out.println("ticks: " + ticks);
     // armPID.reset();
   }
 
@@ -90,7 +89,6 @@ public class ArmSubsystem extends SubsystemBase {
   // }
 
   public void setArmPID() {
-    System.out.println(driverXbox.getPOV());
     if (driverXbox.getPOV() == 180) {
       calculateArmPID(SetPointAngles.INTAKE_GROUND_ANGLE);
       // armLeftMotor.set(1);
@@ -132,6 +130,11 @@ public class ArmSubsystem extends SubsystemBase {
     }
   }
 
+  public void moveArm(double speed) {
+    armLeftMotor.set(speed);
+    armRightMotor.set(-speed);
+  }
+
   @Override
   public void periodic() {
     // System.out.println("encoder pos: " + armLeftEncoder.getPosition());
@@ -153,6 +156,6 @@ public class ArmSubsystem extends SubsystemBase {
     //   System.out.println(driverXbox.getPOV());
     // }
     // need an else statement once triggers ready.
-    simSetArmPID();
+    setArmPID();
   }
 }
