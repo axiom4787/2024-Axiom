@@ -21,6 +21,8 @@ import swervelib.parser.PIDFConfig;
 public final class Constants
 {
 
+  public static final int XCONTROLLER_PORT = 1;
+
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
   public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
   public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
@@ -41,6 +43,39 @@ public final class Constants
 
     // Hold time on motor brakes when disabled
     public static final double WHEEL_LOCK_TIME = 10; // seconds
+  }
+
+  public static final class ArmIntakeShooter 
+  {
+    public static final int TOP_MOTORID = 12; // neo
+    public static final int BOTTOM_MOTORID = 11; //neo 550
+    public static final int LEFTARM_MOTORID = 10; //neo 
+    public static final int RIGHTARM_MOTORID = 9; //neo
+    
+    public static final int TOP_MOTOR_CURRENT_LIMIT = 40; // neo amp
+    public static final int BOTTOM_MOTOR_CURRENT_LIMIT = 20; // neo 550 amp
+    public static final int LEFTARM_MOTOR_CURRENT_LIMIT = 40; //neo amp
+    public static final int RIGHTARM_MOTOR_CURRENT_LIMIT = 40; // neo amp
+    
+    // public static final IdleMode TOP_MOTOR_IDLE_MODE = IdleMode.kCoast;
+    // public static final IdleMode BOTTOM_MOTOR_IDLE_MODE = IdleMode.kBrake;
+    // public static final IdleMode LEFTARM_MOTOR_IDLE_MODE = IdleMode.kBrake;
+    // public static final IdleMode RIGHTMOTOR_MOTOR_IDLE_MODE = IdleMode.kBrake;
+
+    public static final double FEED_FOWARD = 0.0;
+  }
+
+  public static final class MotorTestConstants
+  {
+    public static final int MOTOR_ID = 13; // neo
+  }
+
+  public static final class SetPointAngles
+  {
+    public static final int INTAKE_GROUND_ANGLE = 100;
+    public static final int INTAKE_HUMAN_ANGLE = 90;
+    public static final int SHOOTER_AMP_ANGLE = -10;
+    public static final int SHOOTER_SPEAKER_ANGLE = 70;
   }
 
   public static class OperatorConstants

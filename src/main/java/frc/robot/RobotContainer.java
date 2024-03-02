@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
@@ -18,20 +19,25 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.SetPointAngles;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.commands.swervedrive.drivebase.TeleopDrive;
 import frc.robot.subsystems.Blinkin;
 import frc.robot.subsystems.LimeLight;
+import frc.robot.subsystems.MotorTest;
+import frc.robot.subsystems.ShooterIntake;
 import frc.robot.subsystems.SimulatedLimelightData;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.subsystems.ShooterIntake;
 import java.io.File;
 import java.util.List;
 
@@ -42,14 +48,14 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import frc.robot.subsystems.ArmSubsystem; 
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
  * little robot logic should actually be handled in the {@link Robot} periodic methods (other than the scheduler calls).
  * Instead, the structure of the robot (including subsystems, commands, and trigger mappings) should be declared here.
  */
-public class RobotContainer
-{
+public class RobotContainer {
   private final Pose2d simulatedAprilTag = new Pose2d(5.0, 5.0, new Rotation2d(200));
 
   // The robot's subsystems and commands are defined here...
@@ -58,7 +64,11 @@ public class RobotContainer
                                                                          "swerve/neo"), limelight);
   // CommandJoystick rotationController = new CommandJoystick(1);
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  CommandJoystick driverController = new CommandJoystick(1);
+  // CommandJoystick driverController = new CommandJoystick(0);
+
+  ShooterIntake shooterIntake = new ShooterIntake();
+  ArmSubsystem armSubsystem = new ArmSubsystem();
+  MotorTest testSubsystem = new MotorTest();
 
   // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
   XboxController driverXbox = new XboxController(0);
@@ -66,6 +76,7 @@ public class RobotContainer
 
   private final SendableChooser<Command> autoChooser;
   private final Boolean lockToAprilTagBool = false;
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -220,11 +231,20 @@ public class RobotContainer
     //                     || MathUtil.applyDeadband(driverXbox.getRightX(), OperatorConstants.LEFT_X_DEADBAND) != 0;
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     // new JoystickButton(driverXbox, Button.kY.value).onTrue((new RunCommand(drivebase::zeroModules, drivebase)));
-
+    // new JoystickButton(driverXbox, Button.kY.value).onTrue((new RunCommand(()-> testSubsystem.move(0.5), testSubsystem)));
     // new JoystickButton(driverXbox, 1).onTrue((new InstantCommand(drivebase::zeroGyro)));
     // new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
-//    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
+    // new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
     // Add a button to run pathfinding commands to SmartDashboard
+    // Button binding based on the numbered box from the left.
+    new JoystickButton(driverXbox, 5).whileTrue(new RunCommand(() -> armSubsystem.moveArm(0.1), armSubsystem));
+    new JoystickButton(driverXbox, 6).whileTrue(new RunCommand(() -> armSubsystem.moveArm(-0.1), armSubsystem));
+    new JoystickButton(driverXbox, 1).whileTrue(new RunCommand(() -> armSubsystem.moveArm(0), armSubsystem));
+
+    // new JoystickButton(driverXbox, 5).onTrue(new RunCommand(() -> shooterIntake.setStateDirection("intake"), shooterIntake));
+    // new JoystickButton(driverXbox, 6).onTrue(new RunCommand(() -> shooterIntake.setStateDirection("shoot"), shooterIntake));
+    // new JoystickButton(driverXbox, 1).onTrue(new RunCommand(() -> shooterIntake.setStateDirection("off"), shooterIntake));
+    // new JoystickButton(driverXbox, driverXbox.getPOV()).onTrue(new RunCommand(() -> armSubsystem.simSetArmPID(), armSubsystem));
     SmartDashboard.putData("Pathfind to Pickup Pos", AutoBuilder.pathfindToPose(
       new Pose2d(14.0, 6.5, Rotation2d.fromDegrees(0)), 
       new PathConstraints(
@@ -253,6 +273,14 @@ public class RobotContainer
       // ), 
       // 0
     ));
+
+    // SmartDashboard.putData("move forward", AutoBuilder.followPath(
+    //   PathPlannerPath.fromPathFile("test")
+    // ));
+
+    SmartDashboard.putData("move forward", 
+      drivebase.getAutonomousCommand("test", true)
+    );
 
     // SmartDashboard.putData("move forward", AutoBuilder.followPath(
     //   PathPlannerPath.fromPathFile("test")
@@ -312,5 +340,27 @@ public class RobotContainer
   public void setMotorBrake(boolean brake)
   {
     drivebase.setMotorBrake(brake);
+  }
+
+
+  // public void setArmPID() {
+  //   System.out.println(driverXbox.getPOV());
+  //   if (driverXbox.getPOV() == 180) {
+  //     armSubsystem.CalculateArmPID(SetPointAngles.INTAKE_GROUND_ANGLE);
+  //   }
+  //     armSubsystem.CalculateArmPID(SetPointAngles.SHOOTER_AMP_ANGLE);
+  //   }
+  //   else if (driverXbox.getPOV() == 90) {
+  //     armSubsystem.CalculateArmPID(SetPointAngles.SHOOTER_SPEAKER_ANGLE);
+  //   }
+  //   else if (driverXbox.getPOV() == 0) {
+  //     armSubsystem.CalculateArmPID(SetPointAngles.INTAKE_HUMAN_ANGLE);
+  //   }
+  //   else {armSubsystem.armLeftMotor.set(0);}
+  // }
+  
+
+  public RunCommand getArmCommand() {
+    return new RunCommand(() -> armSubsystem.setArmPID(), armSubsystem);
   }
 }
