@@ -290,12 +290,12 @@ public class RobotContainer {
       drivebase.getAutonomousCommand("test", true)
     );
 
-    TeleopDrive lockToAprilTag = new TeleopDrive(
-        drivebase,
-        () -> -MathUtil.applyDeadband(driverController.getY(), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> -calculateTrackingXVelocity(MathUtil.applyDeadband(driverController.getX(), OperatorConstants.LEFT_X_DEADBAND)),
-        () -> -calculateTrackingAngularVelocity(-driverController.getRawAxis(4)), () -> false);
-    SmartDashboard.putData("lock to tag", lockToAprilTag);
+    // TeleopDrive lockToAprilTag = new TeleopDrive(
+    //     drivebase,
+    //     () -> -MathUtil.applyDeadband(driverController.getY(), OperatorConstants.LEFT_Y_DEADBAND),
+    //     () -> -calculateTrackingXVelocity(MathUtil.applyDeadband(driverController.getX(), OperatorConstants.LEFT_X_DEADBAND)),
+    //     () -> -calculateTrackingAngularVelocity(-driverController.getRawAxis(4)), () -> false);
+    // SmartDashboard.putData("lock to tag", lockToAprilTag);
 
     // Add a button to SmartDashboard that will create and follow an on-the-fly path
     // This example will simply move the robot 2m forward of its current position
