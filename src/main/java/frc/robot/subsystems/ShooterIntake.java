@@ -12,6 +12,8 @@ import com.revrobotics.CANSparkMax;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkBase.IdleMode;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
@@ -32,15 +34,18 @@ public class ShooterIntake extends SubsystemBase {
     topMotor = new CANSparkMax(Constants.ArmIntakeShooter.TOP_MOTORID, CANSparkMax.MotorType.kBrushless);
     bottomMotor = new CANSparkMax(Constants.ArmIntakeShooter.BOTTOM_MOTORID, CANSparkMax.MotorType.kBrushless);
 
+    topMotor.setIdleMode(IdleMode.kBrake);
+
     topMotor.restoreFactoryDefaults();
     bottomMotor.restoreFactoryDefaults();
 
     topMotor.setInverted(false); 
     bottomMotor.setInverted(true); 
 
-    topMotor.follow(bottomMotor);
+    // topMotor.follow(bottomMotor);
 
-    topMotor.setSmartCurrentLimit(Constants.ArmIntakeShooter.TOP_MOTOR_CURRENT_LIMIT);
+    topMotor.setSmartCurrentLimit(40);
+    topMotor.setOpenLoopRampRate(0.05);
     bottomMotor.setSmartCurrentLimit(Constants.ArmIntakeShooter.BOTTOM_MOTOR_CURRENT_LIMIT);
 
     // topMotor.setIdleMode(TurretConstants.kShootMotorIdleMode);
@@ -146,6 +151,7 @@ public class ShooterIntake extends SubsystemBase {
         else if (driverXbox.getRightTriggerAxis() > 0.9) {
           bottomMotor.set(0);
           topMotor.set(1.0);
+          // System.out.println("shooter spin");
 
         }
         else {
@@ -176,6 +182,10 @@ public class ShooterIntake extends SubsystemBase {
     public void periodic() {
       // simStateMachine(); 
       stateMachine(); 
+      System.out.println("motor output" + topMotor.getBusVoltage());
+      
+      // System.out.println(state);
+      // topMotor.set(1);
     }
   
 }
