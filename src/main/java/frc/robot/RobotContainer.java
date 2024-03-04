@@ -61,9 +61,9 @@ public class RobotContainer {
   private final Pose2d simulatedAprilTag = new Pose2d(5.0, 5.0, new Rotation2d(200));
 
   // The robot's subsystems and commands are defined here...
-  // private final LimeLight limelight = new LimeLight();
-  // private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
-  //                                                                        "swerve/neo"), limelight);
+  private final LimeLight limelight = new LimeLight();
+  private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
+                                                                          "swerve/neo"), limelight);
   private final Climber climber = new Climber();
   private final ClimberCommand climberCommand;
 
@@ -91,6 +91,10 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
 
+    //Lambda 
+    climber.setDefaultCommand(new RunCommand(() -> climber.moveClimbers(0, 0), climber)); //Sets default command to brake climbers
+    climberCommand = new ClimberCommand(climber, driverXbox, backupJoystick);
+
     AbsoluteDrive closedAbsoluteDrive = new AbsoluteDrive(drivebase,
                                                           // Applies deadbands and inverts controls because joysticks
                                                           // are back-right positive while robot
@@ -101,9 +105,6 @@ public class RobotContainer {
                                                                                        OperatorConstants.LEFT_X_DEADBAND),
                                                           () -> driverXbox.getRightX(),
                                                           () -> -driverXbox.getRightY());
-    //Lambda 
-    climber.setDefaultCommand(new RunCommand(() -> climber.moveClimbers(0, 0), climber)); //Sets default command to brake climbers
-    climberCommand = new ClimberCommand(climber, driverXbox, backupJoystick);
 
     AbsoluteFieldDrive closedFieldAbsoluteDrive = new AbsoluteFieldDrive(drivebase,
                                                                          () -> -MathUtil.applyDeadband(driverXbox.getLeftY(),
@@ -112,12 +113,17 @@ public class RobotContainer {
                                                                                                       OperatorConstants.LEFT_X_DEADBAND),
                                                                          () -> -driverXbox.getRawAxis(3));
 
-    // AbsoluteFieldDrive closedFieldAbsoluteDrive = new AbsoluteFieldDrive(drivebase,
-    //                                                                      () -> -MathUtil.applyDeadband(driverXbox.getLeftY(),
-    //                                                                                                 OperatorConstants.LEFT_Y_DEADBAND)/2,
-    //                                                                      () -> MathUtil.applyDeadband(driverXbox.getLeftX(),
-    //                                                                                                   OperatorConstants.LEFT_X_DEADBAND)/2,
-    //                                                                      () -> driverXbox.getRightX()/2);
+                                                                         AbsoluteDriveAdv closedAbsoluteDriveAdv = new AbsoluteDriveAdv(drivebase,
+                                                                         () -> MathUtil.applyDeadband(driverXbox.getLeftY(),
+                                                                                                   OperatorConstants.LEFT_Y_DEADBAND)/3,
+                                                                         () -> MathUtil.applyDeadband(driverXbox.getLeftX(),
+                                                                                                     OperatorConstants.LEFT_X_DEADBAND)/3,
+                                                                         () -> MathUtil.applyDeadband(driverXbox.getRightX(),
+                                                                                                     OperatorConstants.RIGHT_X_DEADBAND)/3, 
+                                                                         driverXbox::getYButtonPressed, 
+                                                                         driverXbox::getAButtonPressed, 
+                                                                         driverXbox::getXButtonPressed, 
+                                                                         driverXbox::getBButtonPressed);
 
     TeleopDrive simClosedFieldRel = new TeleopDrive(drivebase,
                                                     () -> -MathUtil.applyDeadband(driverXbox.getLeftY(),
@@ -134,11 +140,8 @@ public class RobotContainer {
     drivebase.setDefaultCommand(!RobotBase.isSimulation() ? closedFieldRel : closedFieldRel);
     // drivebase.setDefaultCommand(closedFieldAbsoluteDrive);
 
-    // // drivebase.setDefaultCommand(RobotBase.isSimulation() ? closedAbsoluteDrive : closedFieldAbsoluteDrive);
-    // drivebase.setDefaultCommand(closedFieldAbsoluteDrive);
-
-    // autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
-    // SmartDashboard.putData("Auto Mode", autoChooser);
+    autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
+    SmartDashboard.putData("Auto Mode", autoChooser);
 
     
   }
