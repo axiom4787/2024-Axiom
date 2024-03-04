@@ -41,11 +41,12 @@ public class ClimberCommand extends Command {
     boolean leftButton = joystick.getRawButton(5) || joystick.getRawButton(3); // Both buttons on the left side- either should mean that left is being pressed
     boolean rightButton = joystick.getRawButton(6) || joystick.getRawButton(4); // Both buttons on the right side- either should mean that right is being pressed
 
-    if (triggerButton) { //
+    if (triggerButton) { //If either trigger button is pressed, move both climbers
+      //If y axis is outside deadzone and negative, move both climbers down, else move up
       if (joystickY < -0.1) {
-        climber.moveClimbers(-CLIMBER_SPEED, -CLIMBER_SPEED);
+        climber.moveClimbers(-CLIMBER_SPEED, -CLIMBER_SPEED); //Both climbers move down
       } else if (joystickY > 0.1) {
-        climber.moveClimbers(CLIMBER_SPEED, CLIMBER_SPEED);
+        climber.moveClimbers(CLIMBER_SPEED, CLIMBER_SPEED); //Both climbers move up
       } else {
         climber.moveClimbers(0.0, 0.0);
       }
