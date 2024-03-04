@@ -241,9 +241,9 @@ public class RobotContainer {
     // new JoystickButton(driverXbox, 6).whileTrue(new RunCommand(() -> armSubsystem.moveArm(-0.1), armSubsystem));
     // new JoystickButton(driverXbox, 1).whileTrue(new RunCommand(() -> armSubsystem.moveArm(0), armSubsystem));
     new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(() -> drivebase.zeroGyro()));
-    new JoystickButton(driverXbox, 5).onTrue(new RunCommand(() -> shooterIntake.setStateDirection("intake"), shooterIntake));
-    new JoystickButton(driverXbox, 6).onTrue(new RunCommand(() -> shooterIntake.setStateDirection("shoot"), shooterIntake));
-    new JoystickButton(driverXbox, 1).onTrue(new RunCommand(() -> shooterIntake.setStateDirection("off"), shooterIntake));
+    new JoystickButton(driverXbox, 5).onTrue(new RunCommand(() -> shooterIntake.setState("intake"), shooterIntake));
+    new JoystickButton(driverXbox, 6).onTrue(new RunCommand(() -> shooterIntake.setState("shoot"), shooterIntake));
+    new JoystickButton(driverXbox, 1).onTrue(new RunCommand(() -> shooterIntake.setState("off"), shooterIntake));
     // new JoystickButton(driverXbox, driverXbox.getPOV()).onTrue(new RunCommand(() -> armSubsystem.simSetArmPID(), armSubsystem));
     SmartDashboard.putData("Pathfind to Pickup Pos", AutoBuilder.pathfindToPose(
       new Pose2d(14.0, 6.5, Rotation2d.fromDegrees(0)), 
