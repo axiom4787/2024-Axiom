@@ -78,6 +78,13 @@ public final class Constants
     public static final int SHOOTER_SPEAKER_ANGLE = 70;
   }
 
+  public static final class Climber {
+    public static final int LEFT_CLIMBER_ID = 14;
+    public static final int RIGHT_CLIMBER_ID = 13;
+    public static final boolean LEFT_INVERTED = false;
+    public static final boolean RIGHT_INVERTED = !LEFT_INVERTED;
+  }
+
   public static class OperatorConstants
   {
 
@@ -86,6 +93,11 @@ public final class Constants
     public static final double LEFT_Y_DEADBAND = 0.2;
     public static final double RIGHT_X_DEADBAND = 0.2;
     public static final double TURN_CONSTANT = 0.2;
+    public static final double LEFT_X_DEADBAND = 0.75;
+    public static final double LEFT_Y_DEADBAND = 0.75;
+    public static final double RIGHT_X_DEADBAND = 0.75;
+    public static final double TURN_CONSTANT = 0.75;
+
   }
 
   public static final class LimelightConstants {

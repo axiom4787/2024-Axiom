@@ -27,11 +27,13 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.SetPointAngles;
+import frc.robot.commands.subsystemCommands.ClimberCommand;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.commands.swervedrive.drivebase.TeleopDrive;
 import frc.robot.subsystems.Blinkin;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.LimeLight;
 import frc.robot.subsystems.MotorTest;
 import frc.robot.subsystems.ShooterIntake;
@@ -59,9 +61,12 @@ public class RobotContainer {
   private final Pose2d simulatedAprilTag = new Pose2d(5.0, 5.0, new Rotation2d(200));
 
   // The robot's subsystems and commands are defined here...
-  private final LimeLight limelight = new LimeLight();
-  private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
-                                                                         "swerve/neo"), limelight);
+  // private final LimeLight limelight = new LimeLight();
+  // private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
+  //                                                                        "swerve/neo"), limelight);
+  private final Climber climber = new Climber();
+  private final ClimberCommand climberCommand;
+
   // CommandJoystick rotationController = new CommandJoystick(1);
   // Replace with CommandPS4Controller or CommandJoystick if needed
   // CommandJoystick driverController = new CommandJoystick(0);
@@ -73,6 +78,7 @@ public class RobotContainer {
   // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
   XboxController driverXbox = new XboxController(0);
   Blinkin blinkin = new Blinkin(Constants.BlinkinConstants.kPWMPort);
+  Joystick backupJoystick = new Joystick(1);
 
   private final SendableChooser<Command> autoChooser;
   private final Boolean lockToAprilTagBool = false;
@@ -95,6 +101,9 @@ public class RobotContainer {
                                                                                        OperatorConstants.LEFT_X_DEADBAND),
                                                           () -> driverXbox.getRightX(),
                                                           () -> -driverXbox.getRightY());
+    //Lambda 
+    climber.setDefaultCommand(new RunCommand(() -> climber.moveClimbers(0, 0), climber)); //Sets default command to brake climbers
+    climberCommand = new ClimberCommand(climber, driverXbox, backupJoystick);
 
     AbsoluteFieldDrive closedFieldAbsoluteDrive = new AbsoluteFieldDrive(drivebase,
                                                                          () -> -MathUtil.applyDeadband(driverXbox.getLeftY(),
@@ -103,17 +112,12 @@ public class RobotContainer {
                                                                                                       OperatorConstants.LEFT_X_DEADBAND),
                                                                          () -> -driverXbox.getRawAxis(3));
 
-    AbsoluteDriveAdv closedAbsoluteDriveAdv = new AbsoluteDriveAdv(drivebase,
-                                                                      () -> MathUtil.applyDeadband(driverXbox.getLeftY(),
-                                                                                                OperatorConstants.LEFT_Y_DEADBAND)/3,
-                                                                      () -> MathUtil.applyDeadband(driverXbox.getLeftX(),
-                                                                                                  OperatorConstants.LEFT_X_DEADBAND)/3,
-                                                                      () -> MathUtil.applyDeadband(driverXbox.getRightX(),
-                                                                                                  OperatorConstants.RIGHT_X_DEADBAND)/3, 
-                                                                      driverXbox::getYButtonPressed, 
-                                                                      driverXbox::getAButtonPressed, 
-                                                                      driverXbox::getXButtonPressed, 
-                                                                      driverXbox::getBButtonPressed);
+    // AbsoluteFieldDrive closedFieldAbsoluteDrive = new AbsoluteFieldDrive(drivebase,
+    //                                                                      () -> -MathUtil.applyDeadband(driverXbox.getLeftY(),
+    //                                                                                                 OperatorConstants.LEFT_Y_DEADBAND)/2,
+    //                                                                      () -> MathUtil.applyDeadband(driverXbox.getLeftX(),
+    //                                                                                                   OperatorConstants.LEFT_X_DEADBAND)/2,
+    //                                                                      () -> driverXbox.getRightX()/2);
 
     TeleopDrive simClosedFieldRel = new TeleopDrive(drivebase,
                                                     () -> -MathUtil.applyDeadband(driverXbox.getLeftY(),
@@ -130,23 +134,28 @@ public class RobotContainer {
     drivebase.setDefaultCommand(!RobotBase.isSimulation() ? closedFieldRel : closedFieldRel);
     // drivebase.setDefaultCommand(closedFieldAbsoluteDrive);
 
-    autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
-    SmartDashboard.putData("Auto Mode", autoChooser);
+    // // drivebase.setDefaultCommand(RobotBase.isSimulation() ? closedAbsoluteDrive : closedFieldAbsoluteDrive);
+    // drivebase.setDefaultCommand(closedFieldAbsoluteDrive);
+
+    // autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
+    // SmartDashboard.putData("Auto Mode", autoChooser);
+
+    
   }
 
   
-  public SimulatedLimelightData calculateSimulatedLimelightValues() {
-    // Get the robot's current pose
-    Pose2d currentPose = drivebase.getPose();
+   public SimulatedLimelightData calculateSimulatedLimelightValues() {
+     // Get the robot's current pose
+     Pose2d currentPose = drivebase.getPose();
 
-    // Calculate the angle to the simulatedAprilTag
-    double angleToTag = Math.atan2(simulatedAprilTag.getY() - currentPose.getY(),
-                                   simulatedAprilTag.getX() - currentPose.getX());
-    double robotHeading = currentPose.getRotation().getRadians();
-    angleToTag -= robotHeading; // Adjust for robot's current heading
+     // Calculate the angle to the simulatedAprilTag
+     double angleToTag = Math.atan2(simulatedAprilTag.getY() - currentPose.getY(),
+                                    simulatedAprilTag.getX() - currentPose.getX());
+     double robotHeading = currentPose.getRotation().getRadians();
+     angleToTag -= robotHeading; // Adjust for robot's current heading
 
-    // Calculate the distance to the simulatedAprilTag
-    double distanceToTag = Math.hypot(simulatedAprilTag.getX() - currentPose.getX(),
+     // Calculate the distance to the simulatedAprilTag
+     double distanceToTag = Math.hypot(simulatedAprilTag.getX() - currentPose.getX(),
                                       simulatedAprilTag.getY() - currentPose.getY());
 
     // Normalize angle to [-180, 180] range
@@ -154,52 +163,52 @@ public class RobotContainer {
     if (xAngleToTag > 180) xAngleToTag -= 360;
     if (xAngleToTag < -180) xAngleToTag += 360; 
 
-    // Check if the tag is within the Limelight's FOV (80 degrees)
-    boolean isTargetVisible = Math.abs(xAngleToTag) <= 40; // 80-degree FOV divided by 2
+     // Check if the tag is within the Limelight's FOV (80 degrees)
+     boolean isTargetVisible = Math.abs(xAngleToTag) <= 40; // 80-degree FOV divided by 2
 
-    // Calculate the robot's offset from where the AprilTag is facing
-    // Assuming AprilTag is facing along positive Y-axis
-    double tagFacingAngle = Math.toDegrees(Math.atan2(1.0, 0.0)); // 90 degrees or pi/2 radians
-    double robotOffsetFromTagFacing = robotHeading - Math.toRadians(tagFacingAngle);
-    // Normalize to [-180, 180] range
-    robotOffsetFromTagFacing = Math.toDegrees(robotOffsetFromTagFacing);
-    if (robotOffsetFromTagFacing > 180) robotOffsetFromTagFacing -= 360;
-    if (robotOffsetFromTagFacing < -180) robotOffsetFromTagFacing += 360;
+     // Calculate the robot's offset from where the AprilTag is facing
+     // Assuming AprilTag is facing along positive Y-axis
+     double tagFacingAngle = Math.toDegrees(Math.atan2(1.0, 0.0)); // 90 degrees or pi/2 radians
+     double robotOffsetFromTagFacing = robotHeading - Math.toRadians(tagFacingAngle);
+     // Normalize to [-180, 180] range
+     robotOffsetFromTagFacing = Math.toDegrees(robotOffsetFromTagFacing);
+     if (robotOffsetFromTagFacing > 180) robotOffsetFromTagFacing -= 360;
+     if (robotOffsetFromTagFacing < -180) robotOffsetFromTagFacing += 360;
 
-    return new SimulatedLimelightData(xAngleToTag, robotOffsetFromTagFacing, distanceToTag, isTargetVisible);
-  }
+     return new SimulatedLimelightData(xAngleToTag, robotOffsetFromTagFacing, distanceToTag, isTargetVisible);
+   }
 
 
-  public double calculateTrackingAngularVelocity(double rot) {
-    /*
-     * if (LL.getXAngle() != 0 && Math.abs(LL.getXAngle()) >= 1) {
-     * double speed = 0.03; // between 0 amd 1
-     * double direction = (-LL.getXAngle()) / Math.abs(LL.getXAngle());
-     * double scaleFactor = (Math.abs(LL.getXAngle())) * speed;
-     * SmartDashboard.putNumber("tracking velocity", direction * scaleFactor);
-     * if (scaleFactor > 2) {
-     * scaleFactor = 1.4;
-     * }
-     * return direction * scaleFactor;
-     * }
-     * 
-     * return 0;
-     */
+   public double calculateTrackingAngularVelocity(double rot) {
+  //   /*
+  //    * if (LL.getXAngle() != 0 && Math.abs(LL.getXAngle()) >= 1) {
+  //    * double speed = 0.03; // between 0 amd 1
+  //    * double direction = (-LL.getXAngle()) / Math.abs(LL.getXAngle());
+  //    * double scaleFactor = (Math.abs(LL.getXAngle())) * speed;
+  //    * SmartDashboard.putNumber("tracking velocity", direction * scaleFactor);
+  //    * if (scaleFactor > 2) {
+  //    * scaleFactor = 1.4;
+  //    * }
+  //    * return direction * scaleFactor;
+  //    * }
+  //    * 
+  //    * return 0;
+  //    */
 
-    // SimulatedLimelightData simulatedLimelightData = calculateSimulatedLimelightValues(); 
-    // double simulatedXAngle = simulatedLimelightData.xAngleToTag;
+  //   // SimulatedLimelightData simulatedLimelightData = calculateSimulatedLimelightValues(); 
+  //   // double simulatedXAngle = simulatedLimelightData.xAngleToTag;
 
-    if (rot != 0) {
-        return rot;
-    }
+     if (rot != 0) {
+         return rot;
+     }
 
-    if (limelight.getXAngle() != 0) {
-      double pidOutput = Constants.Auton.trackingPID.calculate(limelight.getXAngle(), 0);
-      return MathUtil.clamp(pidOutput, -1, 1);
-    }
+     if (limelight.getXAngle() != 0) {
+       double pidOutput = Constants.Auton.trackingPID.calculate(limelight.getXAngle(), 0);
+       return MathUtil.clamp(pidOutput, -1, 1);
+     }
 
-    return 0;
-  }
+     return 0;
+   }
 
   public double calculateTrackingXVelocity(double xVelocity) {
     // SimulatedLimelightData simulatedLimelightData = calculateSimulatedLimelightValues(); 
@@ -265,14 +274,14 @@ public class RobotContainer {
       0
     ));
 
-    SmartDashboard.putData("Pathfind to AmpCycle", AutoBuilder.followPath(
-      PathPlannerPath.fromPathFile("PathFindCycleToAmp")
-      // new PathConstraints(
-      //   4.0, 4.0, 
-      //   Units.degreesToRadians(360), Units.degreesToRadians(540)
-      // ), 
-      // 0
-    ));
+    // SmartDashboard.putData("Pathfind to AmpCycle", AutoBuilder.followPath(
+    //   PathPlannerPath.fromPathFile("PathFindCycleToAmp")
+    //   // new PathConstraints(
+    //   //   4.0, 4.0, 
+    //   //   Units.degreesToRadians(360), Units.degreesToRadians(540)
+    //   // ), 
+    //   // 0
+    // ));
 
     // SmartDashboard.putData("move forward", AutoBuilder.followPath(
     //   PathPlannerPath.fromPathFile("test")
@@ -329,7 +338,16 @@ public class RobotContainer {
   {
     // An example command will be run in autonomous
     // return drivebase.getAutonomousCommand("New Path", true);
-    return autoChooser.getSelected();
+    //return autoChooser.getSelected();
+    return Commands.none();
+  }
+
+  public Command getTeleopCommand()
+  {
+    // An example command will be run in autonomous
+    // return drivebase.getAutonomousCommand("New Path", true);
+    //return autoChooser.getSelected();
+    return climberCommand;
   }
 
   public void setDriveMode()
@@ -339,7 +357,7 @@ public class RobotContainer {
 
   public void setMotorBrake(boolean brake)
   {
-    drivebase.setMotorBrake(brake);
+    //drivebase.setMotorBrake(brake);
   }
 
 
