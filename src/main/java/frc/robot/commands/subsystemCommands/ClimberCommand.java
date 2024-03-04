@@ -36,44 +36,41 @@ public class ClimberCommand extends Command {
     double leftTrigger = controller.getLeftTriggerAxis();
     double rightTrigger = controller.getRightTriggerAxis();
     
-    boolean controlToJoystick = joystick.getRawAxis(3) < 0; //This is the throttle thing on the front of the joystick
     double joystickY = joystick.getRawAxis(1); //Y axis of joystick
+    boolean triggerButton = joystick.getRawButton(1) || joystick.getRawButton(2); //Either trigger button should mean movement
     boolean leftButton = joystick.getRawButton(5) || joystick.getRawButton(3); // Both buttons on the left side- either should mean that left is being pressed
     boolean rightButton = joystick.getRawButton(6) || joystick.getRawButton(4); // Both buttons on the right side- either should mean that right is being pressed
 
-    if (controlToJoystick) { //If control is delegated to joystick
-      if (leftButton && rightButton) { //If both buttons are pressed, stop
-        climber.moveClimbers(0.0, 0.0);
-      } else if (leftButton) {
-        //If y axis is outside deadzone and negative, move left climber down, else move up
-        if (joystickY < -0.1) { //Checking if outside deadzone and negative (controller forwards is negative)
-          climber.moveClimbers(-CLIMBER_SPEED, 0.0);
-        } else if (joystickY > 0.1) { //Checking if outside deadzone and positive (controller backwards is positive)
-          climber.moveClimbers(CLIMBER_SPEED, 0.0);
-        } else { //If inside deadzone, stop
-          climber.moveClimbers(0.0, 0.0);
-        }
-      } else if (rightButton) {
-        //If y axis is outside deadzone and negative, move right climber down, else move up
-        if (joystickY < -0.1) { //Checking if outside deadzone and negative (controller forwards is negative)
-          climber.moveClimbers(0.0, -CLIMBER_SPEED);
-        } else if (joystickY > 0.1) { //Checking if outside deadzone and positive (controller backwards is positive)
-          climber.moveClimbers(0.0, CLIMBER_SPEED);
-        } else { //If inside deadzone, stop
-          climber.moveClimbers(0.0, 0.0);
-        }
-      } else { //If no buttons are pressed, stop
+    if (triggerButton) { //
+      if (joystickY < -0.1) {
+        climber.moveClimbers(-CLIMBER_SPEED, -CLIMBER_SPEED);
+      } else if (joystickY > 0.1) {
+        climber.moveClimbers(CLIMBER_SPEED, CLIMBER_SPEED);
+      } else {
         climber.moveClimbers(0.0, 0.0);
       }
-    } else if (leftTrigger > 0.1 || rightTrigger > 0.1) { //In case control not delegated to joystick: If triggers are outside deadzone, move climber
-      if (leftTrigger > rightTrigger) {
-        climber.moveClimbers(CLIMBER_SPEED, CLIMBER_SPEED); //If left trigger is pressed more, move both climbers up- left is faster
+    } else if (leftButton && rightButton) { //If both buttons are pressed, stop
+      climber.moveClimbers(0.0, 0.0);
+    } else if (leftButton) {
+      //If y axis is outside deadzone and negative, move left climber down, else move up
+      if (joystickY < -0.1) { //Checking if outside deadzone and negative (controller forwards is negative)
+        climber.moveClimbers(-CLIMBER_SPEED, 0.0);
+      } else if (joystickY > 0.1) { //Checking if outside deadzone and positive (controller backwards is positive)
+        climber.moveClimbers(CLIMBER_SPEED, 0.0);
+      } else { //If inside deadzone, stop
+        climber.moveClimbers(0.0, 0.0);
       }
-      else {
-        climber.moveClimbers(-CLIMBER_SPEED, -CLIMBER_SPEED); //If right trigger is pressed more, move both climbers down- left is faster
+    } else if (rightButton) {
+      //If y axis is outside deadzone and negative, move right climber down, else move up
+      if (joystickY < -0.1) { //Checking if outside deadzone and negative (controller forwards is negative)
+        climber.moveClimbers(0.0, -CLIMBER_SPEED);
+      } else if (joystickY > 0.1) { //Checking if outside deadzone and positive (controller backwards is positive)
+        climber.moveClimbers(0.0, CLIMBER_SPEED);
+      } else { //If inside deadzone, stop
+        climber.moveClimbers(0.0, 0.0);
       }
-    } else {
-      climber.moveClimbers(0.0, 0.0); //If triggers are inside deadzone, stop
+    } else { //If no buttons are pressed, stop
+      climber.moveClimbers(0.0, 0.0);
     }
   }
 
