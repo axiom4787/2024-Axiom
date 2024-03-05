@@ -72,10 +72,10 @@ public final class Constants
 
   public static final class SetPointAngles
   {
-    public static final int INTAKE_GROUND_ANGLE = 100;
-    public static final int INTAKE_HUMAN_ANGLE = 90;
-    public static final int SHOOTER_AMP_ANGLE = -10;
-    public static final int SHOOTER_SPEAKER_ANGLE = 70;
+    public static final int INTAKE_GROUND_ANGLE = 0;
+    public static final int INTAKE_HUMAN_ANGLE = -90;
+    public static final int SHOOTER_AMP_ANGLE = -135;
+    public static final int SHOOTER_SPEAKER_ANGLE = -70;
   }
 
   public static final class Climber {
