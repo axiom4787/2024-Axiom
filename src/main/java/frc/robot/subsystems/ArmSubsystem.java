@@ -62,7 +62,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void simCalculateArmPID(double kSetpoint) {
-    ticks = 2.844444444444 *  kSetpoint;
+    ticks = (42.0/360/0) *  kSetpoint;
     if (armLeftEncoder.getPosition() > ticks || armLeftEncoder.getPosition() < ticks) {
       armLeftMotor.setVoltage(MathUtil.clamp(armPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, -1, 1));
       armRightMotor.setVoltage(MathUtil.clamp(armPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, -1, 1));

@@ -144,12 +144,12 @@ public class ShooterIntake extends SubsystemBase {
         
         if (driverXbox.getLeftTriggerAxis() > 0.9) {
           bottomMotor.set(1.0);
-          topMotor.set(0);
+          topMotor.set(1.0);
 
         }
         else if (driverXbox.getRightTriggerAxis() > 0.9) {
-          bottomMotor.set(0);
-          topMotor.set(1.0);
+          bottomMotor.set(-1.0);
+          topMotor.set(-1.0);
           // System.out.println("shooter spin");
 
         }
@@ -162,7 +162,7 @@ public class ShooterIntake extends SubsystemBase {
       }
       else if (state=="intake") {
         bottomMotor.set(0);
-        topMotor.set(-1.0);
+        topMotor.set(1.0);
 
       }
       else if (state=="off") {
