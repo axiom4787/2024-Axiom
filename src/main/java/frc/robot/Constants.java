@@ -47,7 +47,7 @@ public final class Constants
 
   public static final class ArmIntakeShooter 
   {
-    public static final int TOP_MOTORID = 22; // neo
+    public static final int TOP_MOTORID = 12; // neo
     public static final int BOTTOM_MOTORID = 11; //neo 550
     public static final int LEFTARM_MOTORID = 10; //neo 
     public static final int RIGHTARM_MOTORID = 9; //neo

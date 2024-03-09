@@ -147,7 +147,7 @@ public class RobotContainer {
   }
 
   
-   public SimulatedLimelightData calculateSimulatedLimelightValues() {
+  public SimulatedLimelightData calculateSimulatedLimelightValues() {
      // Get the robot's current pose
      Pose2d currentPose = drivebase.getPose();
 
@@ -166,23 +166,23 @@ public class RobotContainer {
     if (xAngleToTag > 180) xAngleToTag -= 360;
     if (xAngleToTag < -180) xAngleToTag += 360; 
 
-     // Check if the tag is within the Limelight's FOV (80 degrees)
-     boolean isTargetVisible = Math.abs(xAngleToTag) <= 40; // 80-degree FOV divided by 2
+    // Check if the tag is within the Limelight's FOV (80 degrees)
+    boolean isTargetVisible = Math.abs(xAngleToTag) <= 40; // 80-degree FOV divided by 2
 
-     // Calculate the robot's offset from where the AprilTag is facing
-     // Assuming AprilTag is facing along positive Y-axis
-     double tagFacingAngle = Math.toDegrees(Math.atan2(1.0, 0.0)); // 90 degrees or pi/2 radians
-     double robotOffsetFromTagFacing = robotHeading - Math.toRadians(tagFacingAngle);
-     // Normalize to [-180, 180] range
-     robotOffsetFromTagFacing = Math.toDegrees(robotOffsetFromTagFacing);
-     if (robotOffsetFromTagFacing > 180) robotOffsetFromTagFacing -= 360;
-     if (robotOffsetFromTagFacing < -180) robotOffsetFromTagFacing += 360;
+    // Calculate the robot's offset from where the AprilTag is facing
+    // Assuming AprilTag is facing along positive Y-axis
+    double tagFacingAngle = Math.toDegrees(Math.atan2(1.0, 0.0)); // 90 degrees or pi/2 radians
+    double robotOffsetFromTagFacing = robotHeading - Math.toRadians(tagFacingAngle);
+    // Normalize to [-180, 180] range
+    robotOffsetFromTagFacing = Math.toDegrees(robotOffsetFromTagFacing);
+    if (robotOffsetFromTagFacing > 180) robotOffsetFromTagFacing -= 360;
+    if (robotOffsetFromTagFacing < -180) robotOffsetFromTagFacing += 360;
 
-     return new SimulatedLimelightData(xAngleToTag, robotOffsetFromTagFacing, distanceToTag, isTargetVisible);
-   }
+    return new SimulatedLimelightData(xAngleToTag, robotOffsetFromTagFacing, distanceToTag, isTargetVisible);
+  }
 
 
-   public double calculateTrackingAngularVelocity(double rot) {
+  public double calculateTrackingAngularVelocity(double rot) {
   //   /*
   //    * if (LL.getXAngle() != 0 && Math.abs(LL.getXAngle()) >= 1) {
   //    * double speed = 0.03; // between 0 amd 1
@@ -201,17 +201,17 @@ public class RobotContainer {
   //   // SimulatedLimelightData simulatedLimelightData = calculateSimulatedLimelightValues(); 
   //   // double simulatedXAngle = simulatedLimelightData.xAngleToTag;
 
-     if (rot != 0) {
-         return rot;
-     }
+    if (rot != 0) {
+        return rot;
+    }
 
-     if (limelight.getXAngle() != 0) {
-       double pidOutput = Constants.Auton.trackingPID.calculate(limelight.getXAngle(), 0);
-       return MathUtil.clamp(pidOutput, -1, 1);
-     }
+    if (limelight.getXAngle() != 0) {
+      double pidOutput = Constants.Auton.trackingPID.calculate(limelight.getXAngle(), 0);
+      return MathUtil.clamp(pidOutput, -1, 1);
+    }
 
-     return 0;
-   }
+    return 0;
+  }
 
   public double calculateTrackingXVelocity(double xVelocity) {
     // SimulatedLimelightData simulatedLimelightData = calculateSimulatedLimelightValues(); 
