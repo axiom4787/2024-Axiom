@@ -26,9 +26,8 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 public class Robot extends TimedRobot
 {
 
-  private static Robot   instance;
-  private        Command m_autonomousCommand;
-  private        Command m_teleopCommand;
+  private static Robot instance;
+  private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
 
@@ -132,11 +131,8 @@ public class Robot extends TimedRobot
     {
       m_autonomousCommand.cancel();
     }
-    m_teleopCommand = m_robotContainer.getTeleopCommand();
-    if (m_teleopCommand != null)
-    {
-      m_teleopCommand.schedule();
-    }
+    m_robotContainer.setDriveMode();
+    m_robotContainer.setMotorBrake(true);
   }
 
   /**

@@ -62,7 +62,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void simCalculateArmPID(double kSetpoint) {
-    ticks = 2.844444444444 *  kSetpoint;
+    ticks = (42.0/360/0) *  kSetpoint;
     if (armLeftEncoder.getPosition() > ticks || armLeftEncoder.getPosition() < ticks) {
       armLeftMotor.setVoltage(MathUtil.clamp(armPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, -1, 1));
       armRightMotor.setVoltage(MathUtil.clamp(armPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, -1, 1));
@@ -74,11 +74,15 @@ public class ArmSubsystem extends SubsystemBase {
   }
     // armPID.reset();
 
-  public void calculateArmPID(double kSetpoint) {
-    double pidOutput = MathUtil.clamp(armPID.calculate(armLeftEncoder.getPosition(), kSetpoint) + ArmIntakeShooter.FEED_FOWARD, -0.2, 0.2);
-    armLeftMotor.set(pidOutput);
-    armRightMotor.set(-pidOutput);
+  private void calculateArmPID(double kSetpoint) {
+    double convertedSetPoint = (42.0/360.0) *  kSetpoint;
+    System.out.println("convertedSetPoint: " + convertedSetPoint);
+    double pidOutput = armPID.calculate(armLeftEncoder.getPosition(), convertedSetPoint) + ArmIntakeShooter.FEED_FOWARD;
+    double clampedPidOutput = MathUtil.clamp(pidOutput, -0.2, 0.2);
     System.out.println("pid output:" + pidOutput);
+    armLeftMotor.set(clampedPidOutput);
+    armRightMotor.set(-clampedPidOutput);
+    
     System.out.println("armLeftEncoder ticks: " + armLeftEncoder.getPosition());
     // System.out.println("ticks: " + ticks);
     // armPID.reset();

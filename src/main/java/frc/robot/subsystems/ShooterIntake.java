@@ -39,8 +39,8 @@ public class ShooterIntake extends SubsystemBase {
     topMotor.restoreFactoryDefaults();
     bottomMotor.restoreFactoryDefaults();
 
-    topMotor.setInverted(false); 
-    bottomMotor.setInverted(true); 
+    topMotor.setInverted(true); 
+    bottomMotor.setInverted(false); 
 
     // topMotor.follow(bottomMotor);
 
@@ -64,12 +64,12 @@ public class ShooterIntake extends SubsystemBase {
       if (state=="shoot") {
         if (driverXbox.getLeftTriggerAxis() > 0.9) {
           bottomMotor.set(1.0);
-          topMotor.set(0);
+          topMotor.set(1.0);
 
         }
         else if (driverXbox.getRightTriggerAxis() > 0.9) {
-          bottomMotor.set(0);
-          topMotor.set(1.0);
+          bottomMotor.set(-1.0);
+          topMotor.set(-1.0);
           // System.out.println("shooter spin");
 
         }
@@ -81,7 +81,8 @@ public class ShooterIntake extends SubsystemBase {
 
       }
       else if (state=="intake") {
-        topMotor.set(-1.0);
+        bottomMotor.set(0);
+        topMotor.set(1.0);
 
       }
       else if (state=="off") {
