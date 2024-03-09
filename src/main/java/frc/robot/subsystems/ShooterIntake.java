@@ -55,35 +55,35 @@ public class ShooterIntake extends SubsystemBase {
     bottomEncoder = bottomMotor.getEncoder();
   }
 
-    public void setState(String state){
-
+    public void setState(String state) {
       this.state = state;
     }
 
     private void stateMachine() {
       if (state=="shoot") {
         if (driverXbox.getLeftTriggerAxis() > 0.9) {
-          bottomMotor.set(1.0);
-          topMotor.set(1.0);
+          bottomMotor.set(0.6);
+          topMotor.set(-1);
 
         }
         else if (driverXbox.getRightTriggerAxis() > 0.9) {
-          bottomMotor.set(-1.0);
-          topMotor.set(-1.0);
+          bottomMotor.set(-0.6);
+          topMotor.set(1);
           // System.out.println("shooter spin");
-
+ 
         }
         else {
           bottomMotor.set(0.0);
           topMotor.set(0.0);
           // System.out.println(stateLocation);
         }
+      }
+      else if (state == "intakeBegin") {
 
       }
       else if (state=="intake") {
         bottomMotor.set(0);
-        topMotor.set(1.0);
-
+        topMotor.set(-1);
       }
       else if (state=="off") {
         bottomMotor.set(0.0);
@@ -99,7 +99,7 @@ public class ShooterIntake extends SubsystemBase {
     public void periodic() {
       // simStateMachine(); 
       stateMachine(); 
-      System.out.println("motor output" + topMotor.getBusVoltage());
+      //System.out.println("motor output" + topMotor.getBusVoltage());
       
       // System.out.println(state);
       // topMotor.set(1);

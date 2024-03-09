@@ -73,8 +73,8 @@ public final class Constants
   public static final class SetPointAngles
   {
     public static final int INTAKE_GROUND_ANGLE = 0;
-    public static final int INTAKE_HUMAN_ANGLE = -90;
-    public static final int SHOOTER_AMP_ANGLE = -135;
+    public static final int INTAKE_HUMAN_ANGLE = -70; //Really goofy method of intaking, just get it in and push back and forth until it falls in right- should mainly ground intake
+    public static final int SHOOTER_AMP_ANGLE = -165; //REMEMBER THE BUMPERS
     public static final int SHOOTER_SPEAKER_ANGLE = -70;
   }
 

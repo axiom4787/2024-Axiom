@@ -24,8 +24,8 @@ public class ArmSubsystem extends SubsystemBase {
   private final RelativeEncoder armRightEncoder; //encoder for right arm
   
   private static double kP = 0.1;
-  private static double kI = 0.0;
-  private static double kD = 0.0;
+  private static double kI = 0.01;
+  private static double kD = 0.01;
 
   private double ticks = 0.0;
 
@@ -76,14 +76,14 @@ public class ArmSubsystem extends SubsystemBase {
 
   private void calculateArmPID(double kSetpoint) {
     double convertedSetPoint = (42.0/360.0) *  kSetpoint;
-    System.out.println("convertedSetPoint: " + convertedSetPoint);
+    //System.out.println("convertedSetPoint: " + convertedSetPoint);
     double pidOutput = armPID.calculate(armLeftEncoder.getPosition(), convertedSetPoint) + ArmIntakeShooter.FEED_FOWARD;
     double clampedPidOutput = MathUtil.clamp(pidOutput, -0.2, 0.2);
-    System.out.println("pid output:" + pidOutput);
+    //System.out.println("pid output:" + pidOutput);
     armLeftMotor.set(clampedPidOutput);
     armRightMotor.set(-clampedPidOutput);
     
-    System.out.println("armLeftEncoder ticks: " + armLeftEncoder.getPosition());
+    //System.out.println("armLeftEncoder ticks: " + armLeftEncoder.getPosition());
     // System.out.println("ticks: " + ticks);
     // armPID.reset();
   }
