@@ -56,6 +56,8 @@ public final class Constants
     public static final int BOTTOM_MOTOR_CURRENT_LIMIT = 20; // neo 550 amp
     public static final int LEFTARM_MOTOR_CURRENT_LIMIT = 40; //neo amp
     public static final int RIGHTARM_MOTOR_CURRENT_LIMIT = 40; // neo amp
+
+    public static final double SHOOT_DELAY = 0.5;
     
     // public static final IdleMode TOP_MOTOR_IDLE_MODE = IdleMode.kCoast;
     // public static final IdleMode BOTTOM_MOTOR_IDLE_MODE = IdleMode.kBrake;

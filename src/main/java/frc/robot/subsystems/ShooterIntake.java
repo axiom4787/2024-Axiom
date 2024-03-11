@@ -60,40 +60,47 @@ public class ShooterIntake extends SubsystemBase {
     }
 
     private void stateMachine() {
-      if (state=="shoot") {
+      if (state.equals("shoot")) {  // Use .equals for string comparison in Java
         if (driverXbox.getLeftTriggerAxis() > 0.9) {
-          bottomMotor.set(0.6);
-          topMotor.set(-1);
-
-        }
-        else if (driverXbox.getRightTriggerAxis() > 0.9) {
-          bottomMotor.set(-0.6);
+          // Start bottom motor immediately
           topMotor.set(1);
-          // System.out.println("shooter spin");
- 
-        }
-        else {
+    
+          // Create a new Thread to handle the delay and top motor activation
+          new Thread(() -> {
+            // Delay using FPGA Timer
+            Timer.delay(Constants.ArmIntakeShooter.SHOOT_DELAY);  // Assuming SHOOT_DELAY is defined in your constants
+    
+            // After delay, start the top motor
+            bottomMotor.set(-1);
+          }).start();
+    
+        } else if (driverXbox.getRightTriggerAxis() > 0.9) {
+          // Similar logic for the opposite condition, adjust motor speeds and directions as necessary
+          topMotor.set(-1);
+          bottomMotor.set(1);
+    
+        } else {
+          // Stop motors if neither condition is met
           bottomMotor.set(0.0);
           topMotor.set(0.0);
-          // System.out.println(stateLocation);
         }
       }
-      else if (state == "intakeBegin") {
-
+      // Handle other states as before
+      else if (state.equals("intakeBegin")) {
+        // Your intakeBegin logic here
       }
-      else if (state=="intake") {
-        bottomMotor.set(0);
-        topMotor.set(-1);
+      else if (state.equals("intake")) {
+        // Your intake logic here
       }
-      else if (state=="off") {
+      else if (state.equals("off")) {
         bottomMotor.set(0.0);
         topMotor.set(0.0);
-
       }
       else {
-
+        // Any additional states or default behavior
       }
     }
+    
 
     @Override
     public void periodic() {

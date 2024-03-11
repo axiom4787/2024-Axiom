@@ -1,7 +1,7 @@
 {
   "drive": {
     "type": "sparkflex",
-    "id": 8,
+    "id": 20,
     "canbus": null
   },
   "angle": {
