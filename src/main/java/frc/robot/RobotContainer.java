@@ -133,9 +133,9 @@ public class RobotContainer {
                                                     () -> -driverXbox.getRawAxis(4), () -> true);
     TeleopDrive closedFieldRel = new TeleopDrive(
         drivebase,
-        () -> -MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),////////////////////////////////////
-        () -> MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> MathUtil.applyDeadband(driverXbox.getRightX(), OperatorConstants.RIGHT_X_DEADBAND), () -> true);
+        () -> -MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND) * 0,////////////////////////////////////
+        () -> MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND) * 0,
+        () -> MathUtil.applyDeadband(driverXbox.getRightX(), OperatorConstants.RIGHT_X_DEADBAND) * 0, () -> true);
 
     drivebase.setDefaultCommand(!RobotBase.isSimulation() ? closedFieldRel : closedFieldRel);
     // drivebase.setDefaultCommand(closedFieldAbsoluteDrive);
@@ -253,7 +253,7 @@ public class RobotContainer {
     new JoystickButton(backupJoystick, 11).whileTrue(new RunCommand(() -> armSubsystem.moveArm(-0.1), armSubsystem));
     new JoystickButton(backupJoystick, 9).whileTrue(new RunCommand(() -> armSubsystem.moveArm(0), armSubsystem));
     new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(() -> drivebase.zeroGyro()));
-    // new JoystickButton(driverXbox, 5).onTrue(new RunCommand(() -> shooterIntake.setState("intake"), shooterIntake));
+    new JoystickButton(driverXbox, 5).onTrue(new RunCommand(() -> shooterIntake.setState("intake"), shooterIntake));
     new JoystickButton(driverXbox, 6).onTrue(new RunCommand(() -> shooterIntake.setState("shoot"), shooterIntake));
     new JoystickButton(driverXbox, 1).onTrue(new RunCommand(() -> shooterIntake.setState("off"), shooterIntake));
     new JoystickButton(driverXbox, driverXbox.getPOV()).onTrue(new RunCommand(() -> armSubsystem.simSetArmPID(), armSubsystem));
