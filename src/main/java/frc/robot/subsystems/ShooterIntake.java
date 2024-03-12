@@ -85,10 +85,7 @@ public class ShooterIntake extends SubsystemBase {
           topMotor.set(0.0);
         }
       }
-      // Handle other states as before
-      else if (state.equals("intakeBegin")) {
-        // Your intakeBegin logic here
-      }
+      
       else if (state.equals("intake")) {
         // Your intake logic here
           bottomMotor.set(0.0);
