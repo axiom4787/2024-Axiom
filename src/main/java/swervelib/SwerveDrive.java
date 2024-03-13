@@ -591,7 +591,6 @@ public class SwerveDrive
     // Sets states
     for (SwerveModule module : swerveModules)
     {
-      System.out.println(module.moduleNumber + ": " + desiredStates[module.moduleNumber].speedMetersPerSecond);
       module.setDesiredState(desiredStates[module.moduleNumber], isOpenLoop, false);
 
       if (SwerveDriveTelemetry.verbosity.ordinal() >= TelemetryVerbosity.HIGH.ordinal())

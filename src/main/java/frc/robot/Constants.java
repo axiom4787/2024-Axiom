@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.util.PIDConstants;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
@@ -30,8 +32,8 @@ public final class Constants
   public static final class Auton
   {
 
-    public static final PIDFConfig TranslationPID     = new PIDFConfig(0.7, 0, 0);
-    public static final PIDFConfig angleAutoPID = new PIDFConfig(0.4, 0, 0.01);
+    public static final PIDConstants TranslationPID     = new PIDConstants(0.7, 0, 0);
+    public static final PIDConstants angleAutoPID       = new PIDConstants(0.4, 0, 0.01);
 
     public static final double MAX_ACCELERATION = 2;
     public static final PIDController trackingPID = new PIDController(0.02, 0.0,

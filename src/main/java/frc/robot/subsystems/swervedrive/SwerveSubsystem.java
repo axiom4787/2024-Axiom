@@ -18,6 +18,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -108,11 +109,9 @@ public class SwerveSubsystem extends SubsystemBase
         this::getRobotVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         this::setChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                                         new PIDConstants(2, 0.0, 0.0), // P: 5 I: 0.0 D: 0.0
+                                         Constants.Auton.TranslationPID, // P: 5 I: 0.0 D: 0.0 // P: 2
                                          // Translation PID constants
-                                         new PIDConstants(swerveDrive.swerveController.config.headingPIDF.p,
-                                                          swerveDrive.swerveController.config.headingPIDF.i,
-                                                          swerveDrive.swerveController.config.headingPIDF.d),
+                                         Constants.Auton.angleAutoPID,
                                          // Rotation PID constants
                                          4.5,
                                          // Max module speed, in m/s
@@ -121,7 +120,13 @@ public class SwerveSubsystem extends SubsystemBase
                                          new ReplanningConfig()
                                          // Default path replanning config. See the API for the options here
         ),
-        () -> false,
+        () -> {
+          // Boolean supplier that controls when the path will be mirrored for the red alliance
+          // This will flip the path being followed to the red side of the field.
+          // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+          var alliance = DriverStation.getAlliance();
+          return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
+        },
         this // Reference to this subsystem to set requirements
                                   );
   }
@@ -228,13 +233,13 @@ public class SwerveSubsystem extends SubsystemBase
     //                                       SmartDashboard.getNumber("Heading D", headingPIDOverride.getD()));
 
     //set all motors and angle stuff to new overrides
-    for (int i = 0; i < swerveDrive.getModules().length; i++)
-    {
-      swerveDrive.getModules()[i].configuration.anglePIDF = anglePIDOverride;
-      swerveDrive.getModules()[i].configuration.velocityPIDF = drivePIDOverride;
-    }  
+    // for (int i = 0; i < swerveDrive.getModules().length; i++)
+    // {
+    //   swerveDrive.getModules()[i].configuration.anglePIDF = anglePIDOverride;
+    //   swerveDrive.getModules()[i].configuration.velocityPIDF = drivePIDOverride;
+    // }  
 
-    swerveDrive.swerveController.thetaController = headingPIDOverride;
+    // swerveDrive.swerveController.thetaController = headingPIDOverride;
 
     // SmartDashboard.putNumber("Drive P", drivePIDOverride.p);
     // SmartDashboard.putNumber("Drive I", drivePIDOverride.i);

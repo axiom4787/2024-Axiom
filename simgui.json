@@ -87,9 +87,7 @@
         "left": 150,
         "right": 2961,
         "top": 79,
-        "width": 16.541748046875
-      },
-      "/SmartDashboard/Pathfind to AmpCycle": {
+        "width": 16.541748046875,
         "window": {
           "visible": true
         }
@@ -100,11 +98,6 @@
         }
       },
       "/SmartDashboard/Pathfind to Scoring Pos": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/lock to tag": {
         "window": {
           "visible": true
         }
