@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import java.util.HashMap;
 import java.util.concurrent.TransferQueue;
 
 import com.revrobotics.CANSparkMax;
@@ -31,6 +32,8 @@ public class ArmSubsystem extends SubsystemBase {
 
   XboxController driverXbox = new XboxController(0);
   private PIDController armPID = new PIDController(kP, kI, kD);
+
+  HashMap<Integer, Integer> ArmPIDValues = new HashMap<Integer, Integer>();
   
 
   public ArmSubsystem() {
@@ -59,6 +62,11 @@ public class ArmSubsystem extends SubsystemBase {
 
     // REVPhysicsSim.getInstance().addSparkMax(armLeftMotor, DCMotor.getNEO(1));
     // REVPhysicsSim.getInstance().addSparkMax(armRightMotor, DCMotor.getNEO(1));
+
+    ArmPIDValues.put(180, SetPointAngles.INTAKE_GROUND_ANGLE);
+    ArmPIDValues.put(270, SetPointAngles.SHOOTER_AMP_ANGLE);
+    ArmPIDValues.put(90, SetPointAngles.SHOOTER_SPEAKER_ANGLE);
+    ArmPIDValues.put(0, SetPointAngles.INTAKE_HUMAN_ANGLE);
   }
 
   public void simCalculateArmPID(double kSetpoint) {
@@ -92,24 +100,40 @@ public class ArmSubsystem extends SubsystemBase {
   //   armLeftMotor.set(Movement/2.5); //Change this for more motor power
   // }
 
-  public void setArmPID() {
-    if (driverXbox.getPOV() == 180) {
-      calculateArmPID(SetPointAngles.INTAKE_GROUND_ANGLE);
-      // armLeftMotor.set(1);
+  public void setArmPID(int intakeValue) {
+    switch(intakeValue) {
+      case 180:
+        calculateArmPID(ArmPIDValues.get(intakeValue));
+        break;
+      case 270: 
+        calculateArmPID(ArmPIDValues.get(intakeValue));
+        break;
+      case 90:
+        calculateArmPID(ArmPIDValues.get(intakeValue));
+        break;
+      case 0:
+        calculateArmPID(ArmPIDValues.get(intakeValue));
+        break;
+      default:
+        armLeftMotor.set(0);
+        armRightMotor.set(0);
     }
-    else if (driverXbox.getPOV() == 270) {
-      calculateArmPID(SetPointAngles.SHOOTER_AMP_ANGLE);
-    }
-    else if (driverXbox.getPOV() == 90) {
-      calculateArmPID(SetPointAngles.SHOOTER_SPEAKER_ANGLE);
-    }
-    else if (driverXbox.getPOV() == 0) {
-      calculateArmPID(SetPointAngles.INTAKE_HUMAN_ANGLE);
-    }
-    else {
-      armLeftMotor.set(0);
-      armRightMotor.set(0);
-    }
+    // if (intakeValue == 180) {
+    //   calculateArmPID(ArmPIDValues.get(intakeValue));
+    // }
+    // else if (intakeValue == 270) {
+    //   calculateArmPID(SetPointAngles.SHOOTER_AMP_ANGLE);
+    // }
+    // else if (intakeValue == 90) {
+    //   calculateArmPID(SetPointAngles.SHOOTER_SPEAKER_ANGLE);
+    // }
+    // else if (intakeValue == 0) {
+    //   calculateArmPID(SetPointAngles.INTAKE_HUMAN_ANGLE);
+    // }
+    // else {
+    //   armLeftMotor.set(0);
+    //   armRightMotor.set(0);
+    // }
   }
   public void simSetArmPID() {
     // System.out.println(driverXbox.getPOV());
@@ -141,6 +165,23 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if (driverXbox.getPOV() == 180) {
+      setArmPID(180);
+      // armLeftMotor.set(1);
+    }
+    else if (driverXbox.getPOV() == 270) {
+      setArmPID(270);
+    }
+    else if (driverXbox.getPOV() == 90) {
+      setArmPID(90);
+    }
+    else if (driverXbox.getPOV() == 0) {
+      setArmPID(0);
+    }
+    else {
+      armLeftMotor.set(0);
+      armRightMotor.set(0);
+    }
     // System.out.println("encoder pos: " + armLeftEncoder.getPosition());
   // This method will be called once per scheduler run
     // if (driverXbox.getPOV() == 180) {
@@ -160,6 +201,5 @@ public class ArmSubsystem extends SubsystemBase {
     //   System.out.println(driverXbox.getPOV());
     // }
     // need an else statement once triggers ready.
-    setArmPID();
   }
 }
