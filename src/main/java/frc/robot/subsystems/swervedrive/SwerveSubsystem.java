@@ -124,8 +124,11 @@ public class SwerveSubsystem extends SubsystemBase
           // Boolean supplier that controls when the path will be mirrored for the red alliance
           // This will flip the path being followed to the red side of the field.
           // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-          var alliance = DriverStation.getAlliance();
-          return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
+
+          // var alliance = DriverStation.getAlliance();
+          // return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
+
+          return false;
         },
         this // Reference to this subsystem to set requirements
                                   );
@@ -210,10 +213,10 @@ public class SwerveSubsystem extends SubsystemBase
   public void periodic()
   {
   
-    // double timestamp = Timer.getFPGATimestamp();
-    // if (this.limelight.getBotPose2d().getX() != 0 && this.limelight.getBotPose2d().getY() != 0) {
-    //   swerveDrive.addVisionMeasurement(this.limelight.getBotPose2d(), timestamp);
-    // }
+    double timestamp = Timer.getFPGATimestamp();
+    if (this.limelight.getBotPose2d().getX() != 0 && this.limelight.getBotPose2d().getY() != 0) {
+      swerveDrive.addVisionMeasurement(this.limelight.getBotPose2d(), timestamp);
+    }
     // System.out.println("Pose: " + getPose().getX() + " | " + getPose().getY());
 
     // anglePIDOverride = new PIDFConfig(SmartDashboard.getNumber("Angle P", anglePIDOverride.p),

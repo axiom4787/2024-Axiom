@@ -3,28 +3,28 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 14.958967372480199,
-        "y": 0.8769021174405992
+        "x": 14.557831297480776,
+        "y": 1.4925993488350622
       },
       "prevControl": null,
       "nextControl": {
-        "x": 11.871175063297994,
-        "y": 1.2036218263879799
+        "x": 11.47003898829857,
+        "y": 1.8193190577824425
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.284942222836145,
+        "x": 8.28,
         "y": 4.126676732781015
       },
       "prevControl": {
-        "x": 8.63108503092592,
+        "x": 8.626142808089774,
         "y": 0.2375007360934518
       },
       "nextControl": {
-        "x": 8.074352875978478,
+        "x": 8.069410653142333,
         "y": 6.492807167432517
       },
       "isLocked": false,
@@ -32,19 +32,25 @@
     },
     {
       "anchor": {
-        "x": 1.833421848661879,
-        "y": 7.565612949407717
+        "x": 14.78,
+        "y": 0.65
       },
       "prevControl": {
-        "x": 4.258895790518864,
-        "y": 7.668229154640127
+        "x": 17.205478609278465,
+        "y": 0.75250582488898
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Right Human Intake"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0,
+      "rotationDegrees": 0,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -55,7 +61,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.98776039963991,
+    "rotation": 90.0,
     "rotateFast": true
   },
   "reversed": false,

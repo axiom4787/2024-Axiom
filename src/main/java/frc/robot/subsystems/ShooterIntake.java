@@ -63,7 +63,7 @@ public class ShooterIntake extends SubsystemBase {
       if (state.equals("shoot")) {  // Use .equals for string comparison in Java
         if (driverXbox.getLeftTriggerAxis() > 0.9) {
           // Start bottom motor immediately
-          topMotor.set(1);
+          topMotor.set(-1);
     
           // Create a new Thread to handle the delay and top motor activation
           new Thread(() -> {
@@ -76,8 +76,8 @@ public class ShooterIntake extends SubsystemBase {
     
         } else if (driverXbox.getRightTriggerAxis() > 0.9) {
           // Similar logic for the opposite condition, adjust motor speeds and directions as necessary
-          topMotor.set(-1);
-          bottomMotor.set(1);
+          topMotor.set(0.3);
+          bottomMotor.set(0.3);
     
         } else {
           // Stop motors if neither condition is met

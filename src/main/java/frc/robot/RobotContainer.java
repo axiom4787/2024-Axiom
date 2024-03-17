@@ -20,7 +20,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -42,6 +45,9 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.ShooterIntake;
 import java.io.File;
 import java.util.List;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import org.opencv.core.Mat;
 
@@ -51,6 +57,7 @@ import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import frc.robot.subsystems.ArmSubsystem; 
+import edu.wpi.first.wpilibj2.command.Command;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -133,11 +140,11 @@ public class RobotContainer {
                                                     () -> -driverXbox.getRawAxis(4), () -> true);
     TeleopDrive closedFieldRel = new TeleopDrive(
         drivebase,
-        () -> -MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND) * 0,////////////////////////////////////
-        () -> MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND) * 0,
-        () -> MathUtil.applyDeadband(driverXbox.getRightX(), OperatorConstants.RIGHT_X_DEADBAND) * 0, () -> true);
+        () -> -MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+        () -> MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+        () -> MathUtil.applyDeadband(driverXbox.getRightX(), OperatorConstants.RIGHT_X_DEADBAND), () -> true);
 
-    drivebase.setDefaultCommand(!RobotBase.isSimulation() ? closedFieldRel : closedFieldRel);
+    drivebase.setDefaultCommand(RobotBase.isSimulation() ? simClosedFieldRel : closedFieldRel);
     // drivebase.setDefaultCommand(closedFieldAbsoluteDrive);
 
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
@@ -229,6 +236,10 @@ public class RobotContainer {
     return 0;
   }
 
+  private Command commandConsumer(Supplier<Command> consumer) {
+    return consumer.get();
+  }
+
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
    * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary predicate, or via the
@@ -249,6 +260,11 @@ public class RobotContainer {
     // new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
     // Add a button to run pathfinding commands to SmartDashboard
     // Button binding based on the numbered box from the left.
+
+    Command intakeCommand = new RunCommand(() -> shooterIntake.setState("intake"), shooterIntake);
+    Command shootCommand = new RunCommand(() -> shooterIntake.setState("shoot"), shooterIntake);
+    Command shooterIntakeOffCommand = new RunCommand(() -> shooterIntake.setState("off"), shooterIntake);
+
     new JoystickButton(backupJoystick, 7).whileTrue(new RunCommand(() -> armSubsystem.moveArm(0.1), armSubsystem));
     new JoystickButton(backupJoystick, 11).whileTrue(new RunCommand(() -> armSubsystem.moveArm(-0.1), armSubsystem));
     new JoystickButton(backupJoystick, 9).whileTrue(new RunCommand(() -> armSubsystem.moveArm(0), armSubsystem));
@@ -257,35 +273,86 @@ public class RobotContainer {
     new JoystickButton(driverXbox, 6).onTrue(new RunCommand(() -> shooterIntake.setState("shoot"), shooterIntake));
     new JoystickButton(driverXbox, 1).onTrue(new RunCommand(() -> shooterIntake.setState("off"), shooterIntake));
     new JoystickButton(driverXbox, driverXbox.getPOV()).onTrue(new RunCommand(() -> armSubsystem.simSetArmPID(), armSubsystem));
-    SmartDashboard.putData("Pathfind to Pickup Pos", AutoBuilder.pathfindToPose(
-      new Pose2d(14.0, 6.5, Rotation2d.fromDegrees(0)), 
-      new PathConstraints(
-        3.0, 3.0, 
-        Units.degreesToRadians(540), Units.degreesToRadians(720)
-      ), 
-      0, 
-      0
-    ));
     
-    SmartDashboard.putData("Pathfind to Scoring Pos", AutoBuilder.pathfindToPose(
-      new Pose2d(2.15, 3.0, Rotation2d.fromDegrees(180)), 
-      new PathConstraints(
-        3.0, 3.0, 
-        Units.degreesToRadians(540), Units.degreesToRadians(720)
-      ), 
-      0, 
-      0
+    BooleanSupplier isMoving = () -> Math.abs(driverXbox.getLeftY()) > OperatorConstants.LEFT_Y_DEADBAND 
+                                  || Math.abs(driverXbox.getLeftX()) > OperatorConstants.LEFT_X_DEADBAND 
+                                  || Math.abs(driverXbox.getRightX()) > OperatorConstants.RIGHT_X_DEADBAND;
+    
+    Supplier<Command> ampCommand = () -> new ParallelDeadlineGroup(
+      new SequentialCommandGroup(
+        AutoBuilder.pathfindToPose(
+          new Pose2d(1.86, 7.41, Rotation2d.fromDegrees(-90)), 
+          new PathConstraints(
+            3.0, 3.0, 
+            Units.degreesToRadians(540), Units.degreesToRadians(720)
+          ), 
+          0,
+          0
+        ),
+        new ParallelDeadlineGroup(
+          new WaitCommand(0.8),
+          new RunCommand(() -> shooterIntake.setState("intake"), shooterIntake)
+        )
+      ),
+      new RunCommand(() -> armSubsystem.simCalculateArmPID(90), armSubsystem)
+    ).until(isMoving);
+
+    Supplier<Command> speakerCommand = () -> new ParallelDeadlineGroup(
+      new SequentialCommandGroup(
+        AutoBuilder.pathfindToPose(
+          new Pose2d(1.48, 5.49, Rotation2d.fromDegrees(180)), 
+          new PathConstraints(
+            3.0, 3.0, 
+            Units.degreesToRadians(540), Units.degreesToRadians(720)
+          ), 
+          0, 
+          0
+        ),
+        new RunCommand(() -> shooterIntake.setState("shoot"), shooterIntake).withTimeout(0.8)
+      ),
+      new RunCommand(() -> armSubsystem.simCalculateArmPID(90), armSubsystem)
+    ).until(isMoving);
+
+    Supplier<Command> humanIntakeCommand = () -> new ParallelDeadlineGroup(
+      new SequentialCommandGroup(
+        AutoBuilder.pathfindToPose(
+          new Pose2d(14.78, 0.65, Rotation2d.fromDegrees(-53.96)), 
+          new PathConstraints(
+            3.0, 3.0, 
+            Units.degreesToRadians(540), Units.degreesToRadians(720)
+          ), 
+          0, 
+          0
+        ),
+        new RunCommand(() -> shooterIntake.setState("shoot"), shooterIntake).withTimeout(0.8)
+      ),
+      new RunCommand(() -> armSubsystem.simCalculateArmPID(0), armSubsystem)
+    ).until(isMoving);
+
+    Command speakerCycle = new SequentialCommandGroup(
+      commandConsumer(humanIntakeCommand),
+      commandConsumer(speakerCommand)
+    );
+
+    Command ampCycle = new SequentialCommandGroup(
+      commandConsumer(humanIntakeCommand),
+      commandConsumer(ampCommand)
+    );
+
+    SmartDashboard.putData("Pathfind to Amp", commandConsumer(ampCommand));
+
+    SmartDashboard.putData("Pathfind to Speaker", commandConsumer(speakerCommand));
+
+    SmartDashboard.putData("Pathfind to Human Intake", commandConsumer(humanIntakeCommand));
+
+    SmartDashboard.putData("Speaker Cycle", speakerCycle);
+
+    SmartDashboard.putData("Amp Cycle", ampCycle);
+
+    SmartDashboard.putData("3 Piece Auto", AutoBuilder.buildAuto(
+      "3PIece"
     ));
 
-    // SmartDashboard.putData("Pathfind to AmpCycle", AutoBuilder.followPath(
-    //   PathPlannerPath.fromPathFile("PathFindCycleToAmp")
-    //   // new PathConstraints(
-    //   //   4.0, 4.0, 
-    //   //   Units.degreesToRadians(360), Units.degreesToRadians(540)
-    //   // ), 
-    //   // 0
-    // ));
-
     // SmartDashboard.putData("move forward", AutoBuilder.followPath(
     //   PathPlannerPath.fromPathFile("test")
     // ));
@@ -297,10 +364,6 @@ public class RobotContainer {
     // SmartDashboard.putData("move forward", AutoBuilder.followPath(
     //   PathPlannerPath.fromPathFile("test")
     // ));
-
-    SmartDashboard.putData("move forward", 
-      drivebase.getAutonomousCommand("test", true)
-    );
 
     // TeleopDrive lockToAprilTag = new TeleopDrive(
     //     drivebase,

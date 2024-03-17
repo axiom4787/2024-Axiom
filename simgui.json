@@ -55,21 +55,37 @@
       "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
       "/LiveWindow/Ungrouped/Pigeon 2 [13]": "Gyro",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
+      "/SmartDashboard/3 Piece Auto": "Command",
+      "/SmartDashboard/Amp Cycle": "Command",
       "/SmartDashboard/Auto Mode": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/On-the-fly path": "Command",
+      "/SmartDashboard/Pathfind to Amp": "Command",
       "/SmartDashboard/Pathfind to AmpCycle": "Command",
+      "/SmartDashboard/Pathfind to Human Intake": "Command",
       "/SmartDashboard/Pathfind to Pickup Pos": "Command",
       "/SmartDashboard/Pathfind to Scoring Pos": "Command",
+      "/SmartDashboard/Pathfind to Speaker": "Command",
       "/SmartDashboard/Pigeon 2 (v6) [13]": "Gyro",
       "/SmartDashboard/Pigeon 2 [13]": "Gyro",
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
+      "/SmartDashboard/Speaker Cycle": "Command",
       "/SmartDashboard/lock to tag": "Command",
       "/SmartDashboard/move forward": "Command",
       "/SmartDashboard/navX-Sensor[1]": "Gyro",
       "/SmartDashboard/navX-Sensor[4]": "Gyro"
     },
     "windows": {
+      "/SmartDashboard/3 Piece Auto": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Amp Cycle": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Field": {
         "XModules": {
           "arrowColor": [
@@ -92,12 +108,22 @@
           "visible": true
         }
       },
-      "/SmartDashboard/Pathfind to Pickup Pos": {
+      "/SmartDashboard/Pathfind to Amp": {
         "window": {
           "visible": true
         }
       },
-      "/SmartDashboard/Pathfind to Scoring Pos": {
+      "/SmartDashboard/Pathfind to Human Intake": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Pathfind to Speaker": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Speaker Cycle": {
         "window": {
           "visible": true
         }

@@ -71,15 +71,16 @@ public class ArmSubsystem extends SubsystemBase {
       armLeftMotor.setVoltage(0);
       armRightMotor.setVoltage(0);
     }
+    System.out.println("aligning arm");
   }
     // armPID.reset();
 
-  private void calculateArmPID(double kSetpoint) {
+  public void calculateArmPID(double kSetpoint) {
     double convertedSetPoint = (42.0/360.0) *  kSetpoint;
     //System.out.println("convertedSetPoint: " + convertedSetPoint);
     double pidOutput = armPID.calculate(armLeftEncoder.getPosition(), convertedSetPoint) + ArmIntakeShooter.FEED_FOWARD;
     double clampedPidOutput = MathUtil.clamp(pidOutput, -0.2, 0.2);
-    //System.out.println("pid output:" + pidOutput);
+
     armLeftMotor.set(clampedPidOutput);
     armRightMotor.set(-clampedPidOutput);
     
