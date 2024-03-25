@@ -28,22 +28,22 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.MechState;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.SetPointAngles;
-import frc.robot.commands.subsystemCommands.ClimberCommand;
+import frc.robot.Constants.CurrentMechState;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.commands.swervedrive.drivebase.TeleopDrive;
-import frc.robot.subsystems.Blinkin;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.LimeLight;
-import frc.robot.subsystems.MotorTest;
-import frc.robot.subsystems.ShooterIntake;
+import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.LimelightHelpers;
+import frc.robot.subsystems.MechanismSubsystem;
 import frc.robot.subsystems.SimulatedLimelightData;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-import frc.robot.subsystems.ShooterIntake;
 import java.io.File;
+import java.sql.Date;
+import java.time.Instant;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -56,7 +56,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
-import frc.robot.subsystems.ArmSubsystem; 
 import edu.wpi.first.wpilibj2.command.Command;
 
 /**
@@ -68,27 +67,24 @@ public class RobotContainer {
   private final Pose2d simulatedAprilTag = new Pose2d(5.0, 5.0, new Rotation2d(200));
 
   // The robot's subsystems and commands are defined here...
-  private final LimeLight limelight = new LimeLight();
+  private final LimelightHelpers limelight = new LimelightHelpers();
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
-                                                                          "swerve/neo"), limelight);
-  private final Climber climber = new Climber();
-  private final ClimberCommand climberCommand;
+                                                                          "swerve/neo"));
+  // private final ClimberSubsystem climber = new ClimberSubsystem();
 
   // CommandJoystick rotationController = new CommandJoystick(1);
   // Replace with CommandPS4Controller or CommandJoystick if needed
   // CommandJoystick driverController = new CommandJoystick(0);
 
-  ShooterIntake shooterIntake = new ShooterIntake();
-  ArmSubsystem armSubsystem = new ArmSubsystem();
-  MotorTest testSubsystem = new MotorTest();
+  MechanismSubsystem kitBotMechanism = new MechanismSubsystem();
 
   // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
   XboxController driverXbox = new XboxController(0);
-  Blinkin blinkin = new Blinkin(Constants.BlinkinConstants.kPWMPort);
   Joystick backupJoystick = new Joystick(1);
 
   private final SendableChooser<Command> autoChooser;
   private final Boolean lockToAprilTagBool = false;
+  private CurrentMechState currentMechState = CurrentMechState.mShooter;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -97,10 +93,6 @@ public class RobotContainer {
   {
     // Configure the trigger bindings
     configureBindings();
-
-    //Lambda 
-    climber.setDefaultCommand(new RunCommand(() -> climber.moveClimbers(0, 0), climber)); //Sets default command to brake climbers
-    climberCommand = new ClimberCommand(climber, driverXbox, backupJoystick);
 
     AbsoluteDrive closedAbsoluteDrive = new AbsoluteDrive(drivebase,
                                                           // Applies deadbands and inverts controls because joysticks
@@ -189,56 +181,87 @@ public class RobotContainer {
   }
 
 
-  public double calculateTrackingAngularVelocity(double rot) {
-  //   /*
-  //    * if (LL.getXAngle() != 0 && Math.abs(LL.getXAngle()) >= 1) {
-  //    * double speed = 0.03; // between 0 amd 1
-  //    * double direction = (-LL.getXAngle()) / Math.abs(LL.getXAngle());
-  //    * double scaleFactor = (Math.abs(LL.getXAngle())) * speed;
-  //    * SmartDashboard.putNumber("tracking velocity", direction * scaleFactor);
-  //    * if (scaleFactor > 2) {
-  //    * scaleFactor = 1.4;
-  //    * }
-  //    * return direction * scaleFactor;
-  //    * }
-  //    * 
-  //    * return 0;
-  //    */
+  // public double calculateTrackingAngularVelocity(double rot) {
+  // //   /*
+  // //    * if (LL.getXAngle() != 0 && Math.abs(LL.getXAngle()) >= 1) {
+  // //    * double speed = 0.03; // between 0 amd 1
+  // //    * double direction = (-LL.getXAngle()) / Math.abs(LL.getXAngle());
+  // //    * double scaleFactor = (Math.abs(LL.getXAngle())) * speed;
+  // //    * SmartDashboard.putNumber("tracking velocity", direction * scaleFactor);
+  // //    * if (scaleFactor > 2) {
+  // //    * scaleFactor = 1.4;
+  // //    * }
+  // //    * return direction * scaleFactor;
+  // //    * }
+  // //    * 
+  // //    * return 0;
+  // //    */
 
+  // //   // SimulatedLimelightData simulatedLimelightData = calculateSimulatedLimelightValues(); 
+  // //   // double simulatedXAngle = simulatedLimelightData.xAngleToTag;
+
+  //   if (rot != 0) {
+  //       return rot;
+  //   }
+
+  //   if (limelight.getXAngle() != 0) {
+  //     double pidOutput = Constants.Auton.trackingPID.calculate(limelight.getXAngle(), 0);
+  //     return MathUtil.clamp(pidOutput, -1, 1);
+  //   }
+
+  //   return 0;
+  // }
+
+  // public double calculateTrackingXVelocity(double xVelocity) {
   //   // SimulatedLimelightData simulatedLimelightData = calculateSimulatedLimelightValues(); 
-  //   // double simulatedXAngle = simulatedLimelightData.xAngleToTag;
+  //   // double simulatedXAngleOfRobot = simulatedLimelightData.robotAngleInTagSpace;
 
-    if (rot != 0) {
-        return rot;
-    }
+  //   if (xVelocity != 0) {
+  //       return xVelocity;
+  //   }
 
-    if (limelight.getXAngle() != 0) {
-      double pidOutput = Constants.Auton.trackingPID.calculate(limelight.getXAngle(), 0);
-      return MathUtil.clamp(pidOutput, -1, 1);
-    }
-
-    return 0;
-  }
-
-  public double calculateTrackingXVelocity(double xVelocity) {
-    // SimulatedLimelightData simulatedLimelightData = calculateSimulatedLimelightValues(); 
-    // double simulatedXAngleOfRobot = simulatedLimelightData.robotAngleInTagSpace;
-
-    if (xVelocity != 0) {
-        return xVelocity;
-    }
-
-    // limelight.getCamPose2dInTargetSpace().getRotation().getDegrees()
-    if (limelight.getCamPose2dInTargetSpace().getRotation().getDegrees() != 0) {
-      double pidOutput = Constants.Auton.trackingPID.calculate(limelight.getCamPose2dInTargetSpace().getRotation().getDegrees(), 0);
-      return MathUtil.clamp(pidOutput, -1, 1);
-    }
-    return 0;
-  }
+  //   // limelight.getCamPose2dInTargetSpace().getRotation().getDegrees()
+  //   if (limelight.getCamPose2dInTargetSpace().getRotation().getDegrees() != 0) {
+  //     double pidOutput = Constants.Auton.trackingPID.calculate(limelight.getCamPose2dInTargetSpace().getRotation().getDegrees(), 0);
+  //     return MathUtil.clamp(pidOutput, -1, 1);
+  //   }
+  //   return 0;
+  // }
 
   private Command commandConsumer(Supplier<Command> consumer) {
     return consumer.get();
   }
+
+  private Command createCommandForMechanism(Consumer<MechState> setStateFunction, MechState state) {
+    return new InstantCommand(() -> setStateFunction.accept(state), kitBotMechanism);
+  }
+
+  private void currentMechStateHandler(MechState mechState) {
+    // System.out.println("currentMechStateHandler mechState=" + String.valueOf(mechState));
+    // SmartDashboard.putString("Current Time", String.valueOf(System.currentTimeMillis()));
+    // SmartDashboard.putString("currentMechStateHandler CMS", currentMechState.toString());
+    if (currentMechState == CurrentMechState.mRoller) {
+        createCommandForMechanism(kitBotMechanism::setRollerState, mechState).schedule();
+    } else if (currentMechState == CurrentMechState.mShooter) {
+        createCommandForMechanism(kitBotMechanism::setShooterState, mechState).schedule();
+    } else if (currentMechState == CurrentMechState.mGroundIntake){
+        createCommandForMechanism(kitBotMechanism::setGroundIntakeState, mechState).schedule();
+    } else if (currentMechState == CurrentMechState.mBoth) {
+        // Handle both roller and shooter states
+        new InstantCommand(() -> kitBotMechanism.setBothStates(mechState, mechState)).schedule();
+    } else {
+        // If it's neither roller, shooter, nor both, or you need to reset both
+        Command rollerOffCommand = createCommandForMechanism(kitBotMechanism::setRollerState, MechState.mOff);
+        Command shooterOffCommand = createCommandForMechanism(kitBotMechanism::setShooterState, MechState.mOff);
+        new SequentialCommandGroup(rollerOffCommand, shooterOffCommand).schedule();;
+    }
+  } 
+
+  private void setCurrentMechState(CurrentMechState state) {
+    currentMechState = state;
+    SmartDashboard.putString("CMS", currentMechState.toString());  
+  }
+
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
@@ -261,72 +284,77 @@ public class RobotContainer {
     // Add a button to run pathfinding commands to SmartDashboard
     // Button binding based on the numbered box from the left.
 
-    Command intakeCommand = new RunCommand(() -> shooterIntake.setState("intake"), shooterIntake);
-    Command shootCommand = new RunCommand(() -> shooterIntake.setState("shoot"), shooterIntake);
-    Command shooterIntakeOffCommand = new RunCommand(() -> shooterIntake.setState("off"), shooterIntake);
-
-    new JoystickButton(backupJoystick, 7).whileTrue(new RunCommand(() -> armSubsystem.moveArm(0.1), armSubsystem));
-    new JoystickButton(backupJoystick, 11).whileTrue(new RunCommand(() -> armSubsystem.moveArm(-0.1), armSubsystem));
-    new JoystickButton(backupJoystick, 9).whileTrue(new RunCommand(() -> armSubsystem.moveArm(0), armSubsystem));
-    new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(() -> drivebase.zeroGyro()));
-    new JoystickButton(driverXbox, 5).onTrue(new RunCommand(() -> shooterIntake.setState("intake"), shooterIntake));
-    new JoystickButton(driverXbox, 6).onTrue(new RunCommand(() -> shooterIntake.setState("shoot"), shooterIntake));
-    new JoystickButton(driverXbox, 1).onTrue(new RunCommand(() -> shooterIntake.setState("off"), shooterIntake));
-    new JoystickButton(driverXbox, driverXbox.getPOV()).onTrue(new RunCommand(() -> armSubsystem.simSetArmPID(), armSubsystem));
     
+
+    new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(() -> drivebase.zeroGyro()));
+    new JoystickButton(driverXbox, 5).onTrue(new InstantCommand(() -> setCurrentMechState(CurrentMechState.mRoller), kitBotMechanism));
+    new JoystickButton(driverXbox, 6).onTrue(new InstantCommand(() -> setCurrentMechState(CurrentMechState.mShooter), kitBotMechanism));
+    new JoystickButton(driverXbox, 0).onTrue(new InstantCommand(() -> setCurrentMechState(CurrentMechState.mGroundIntake), kitBotMechanism));
+    // use joysticktriggers to set current mech state to roller (left trigger) or shooter (right trigger) and when let go, set to off with driverXbox.getLeftTriggerReleased() or driverXbox.getRightTriggerReleased()
+    // Left Trigger for Roller
+    // Left Trigger for Intake
+    new Trigger(() -> driverXbox.getLeftTriggerAxis() > 0.5)
+    .onTrue(new InstantCommand(() -> currentMechStateHandler(MechState.mIntake)));
+
+    // // Right Trigger for Shoot
+    new Trigger(() -> driverXbox.getRightTriggerAxis() > 0.5)
+    .onTrue(new InstantCommand(() -> currentMechStateHandler(MechState.mChargeShoot))
+    .andThen(new WaitCommand(Constants.ShooterConstants.kIndexerDelay))
+    .andThen(new InstantCommand(() -> currentMechStateHandler(MechState.mShoot)))
+    .until(() -> driverXbox.getRightTriggerAxis() < 0.5));
+
+    // // when both are not pressed, set to off
+    new Trigger(() -> driverXbox.getLeftTriggerAxis() < 0.5 && driverXbox.getRightTriggerAxis() < 0.5)
+    .onTrue(new InstantCommand(() -> currentMechStateHandler(MechState.mOff)));
+
     BooleanSupplier isMoving = () -> Math.abs(driverXbox.getLeftY()) > OperatorConstants.LEFT_Y_DEADBAND 
                                   || Math.abs(driverXbox.getLeftX()) > OperatorConstants.LEFT_X_DEADBAND 
                                   || Math.abs(driverXbox.getRightX()) > OperatorConstants.RIGHT_X_DEADBAND;
     
-    Supplier<Command> ampCommand = () -> new ParallelDeadlineGroup(
+    Supplier<Command> ampCommand = () -> new SequentialCommandGroup(
       new SequentialCommandGroup(
-        AutoBuilder.pathfindToPose(
-          new Pose2d(1.86, 7.41, Rotation2d.fromDegrees(-90)), 
-          new PathConstraints(
-            3.0, 3.0, 
-            Units.degreesToRadians(540), Units.degreesToRadians(720)
-          ), 
-          0,
-          0
-        ),
-        new ParallelDeadlineGroup(
-          new WaitCommand(0.8),
-          new RunCommand(() -> shooterIntake.setState("intake"), shooterIntake)
-        )
+          AutoBuilder.pathfindToPose(
+              new Pose2d(1.86, 7.41, Rotation2d.fromDegrees(-90)),
+              new PathConstraints(4.12, 3.0, Units.degreesToRadians(540), Units.degreesToRadians(720)),
+              0,
+              0
+          ),
+          new SequentialCommandGroup(
+              new InstantCommand(() -> currentMechState = CurrentMechState.mRoller),
+              new InstantCommand(() -> currentMechStateHandler(MechState.mShoot))
+              .andThen(new WaitCommand(Constants.ShooterConstants.kIndexerDelay))
+          )
       ),
-      new RunCommand(() -> armSubsystem.simCalculateArmPID(90), armSubsystem)
+      new InstantCommand(() -> currentMechStateHandler(MechState.mOff))
+    ).until(isMoving);                       
+
+    Supplier<Command> speakerCommand = () -> new SequentialCommandGroup(
+      new SequentialCommandGroup(
+          AutoBuilder.pathfindToPose(
+              new Pose2d(1.48, 5.49, Rotation2d.fromDegrees(180)), 
+              new PathConstraints(4.12, 3.0, Units.degreesToRadians(540), Units.degreesToRadians(720)), 
+              0, 0
+          ),
+          new SequentialCommandGroup(
+              new InstantCommand(() -> currentMechState = CurrentMechState.mShooter),
+              new WaitCommand(0.8),
+              new InstantCommand(() -> currentMechStateHandler(MechState.mShoot)).withTimeout(0.8)
+          )
+      ),
+      new InstantCommand(() -> currentMechStateHandler(MechState.mOff))
     ).until(isMoving);
 
-    Supplier<Command> speakerCommand = () -> new ParallelDeadlineGroup(
-      new SequentialCommandGroup(
-        AutoBuilder.pathfindToPose(
-          new Pose2d(1.48, 5.49, Rotation2d.fromDegrees(180)), 
-          new PathConstraints(
-            3.0, 3.0, 
-            Units.degreesToRadians(540), Units.degreesToRadians(720)
-          ), 
-          0, 
-          0
-        ),
-        new RunCommand(() -> shooterIntake.setState("shoot"), shooterIntake).withTimeout(0.8)
+    Supplier<Command> humanIntakeCommand = () -> new SequentialCommandGroup(
+      AutoBuilder.pathfindToPose(
+        new Pose2d(14.78, 0.65, Rotation2d.fromDegrees(-53.96)), 
+        new PathConstraints(
+          4.12, 3.0, 
+          Units.degreesToRadians(540), Units.degreesToRadians(720)
+        ), 
+        0, 
+        0
       ),
-      new RunCommand(() -> armSubsystem.simCalculateArmPID(90), armSubsystem)
-    ).until(isMoving);
-
-    Supplier<Command> humanIntakeCommand = () -> new ParallelDeadlineGroup(
-      new SequentialCommandGroup(
-        AutoBuilder.pathfindToPose(
-          new Pose2d(14.78, 0.65, Rotation2d.fromDegrees(-53.96)), 
-          new PathConstraints(
-            3.0, 3.0, 
-            Units.degreesToRadians(540), Units.degreesToRadians(720)
-          ), 
-          0, 
-          0
-        ),
-        new RunCommand(() -> shooterIntake.setState("shoot"), shooterIntake).withTimeout(0.8)
-      ),
-      new RunCommand(() -> armSubsystem.simCalculateArmPID(0), armSubsystem)
+      new InstantCommand(() -> currentMechStateHandler(MechState.mOff))
     ).until(isMoving);
 
     Command speakerCycle = new SequentialCommandGroup(
@@ -349,17 +377,14 @@ public class RobotContainer {
 
     SmartDashboard.putData("Amp Cycle", ampCycle);
 
-    SmartDashboard.putData("3 Piece Auto", AutoBuilder.buildAuto(
-      "3PIece"
-    ));
+    // SmartDashboard.putData("3 Piece Auto", AutoBuilder.buildAuto(
+    //   "3PIece"
+    // ));
 
     // SmartDashboard.putData("move forward", AutoBuilder.followPath(
     //   PathPlannerPath.fromPathFile("test")
     // ));
 
-    SmartDashboard.putData("move forward", 
-      drivebase.getAutonomousCommand("test", true)
-    );
 
     // SmartDashboard.putData("move forward", AutoBuilder.followPath(
     //   PathPlannerPath.fromPathFile("test")
@@ -405,16 +430,17 @@ public class RobotContainer {
     // An example command will be run in autonomous
     // return drivebase.getAutonomousCommand("New Path", true);
     //return autoChooser.getSelected();
-    return Commands.none();
+    return drivebase.getAutonomousCommand("3PIece");
+    //return Commands.none();
   }
 
-  public Command getTeleopCommand()
-  {
-    // An example command will be run in autonomous
-    // return drivebase.getAutonomousCommand("New Path", true);
-    //return autoChooser.getSelected();
-    return climberCommand;
-  }
+  // public Command getTeleopCommand()
+  // {
+  //   // An example command will be run in autonomous
+  //   // return drivebase.getAutonomousCommand("New Path", true);
+  //   //return autoChooser.getSelected();
+  //   return climberCommand;
+  // }
 
   public void setDriveMode()
   {
@@ -444,7 +470,11 @@ public class RobotContainer {
   // }
   
 
-  public RunCommand getArmCommand() {
-    return new RunCommand(() -> armSubsystem.setArmPID(), armSubsystem);
+  // public RunCommand getArmCommand() {
+  //   return new RunCommand(() -> armSubsystem.setArmPID(), armSubsystem);
+  // }
+
+  public void updateDashboard() {
+    SmartDashboard.putString("Current Mech State", currentMechState.toString());
   }
 }

@@ -32,8 +32,8 @@ public final class Constants
   public static final class Auton
   {
 
-    public static final PIDConstants TranslationPID     = new PIDConstants(0.7, 0, 0);
-    public static final PIDConstants angleAutoPID       = new PIDConstants(0.4, 0, 0.01);
+    public static final PIDConstants TranslationPID     = new PIDConstants(6, 0, 0);
+    public static final PIDConstants angleAutoPID       = new PIDConstants(2.5, 0, 0.01);
 
     public static final double MAX_ACCELERATION = 2;
     public static final PIDController trackingPID = new PIDController(0.02, 0.0,
@@ -96,9 +96,9 @@ public final class Constants
     public static final int DRIVER_CONTROLLER_PORT = 0;
 
     // Joystick Deadband
-    public static final double LEFT_X_DEADBAND = 0.2;
-    public static final double LEFT_Y_DEADBAND = 0.2;
-    public static final double RIGHT_X_DEADBAND = 0.2;
+    public static final double LEFT_X_DEADBAND = 0.5;
+    public static final double LEFT_Y_DEADBAND = 0.5;
+    public static final double RIGHT_X_DEADBAND = 0.5;
     public static final double TURN_CONSTANT = 0.2;
   }
 
@@ -119,4 +119,52 @@ public final class Constants
     public static final double kSolidOrange = 0.65;
     public static final double kAllianceColor = -0.01;
   }
+
+  public static final class ClimberConstants
+  {
+      public static final int kLeftCanId = 14; // neo
+      public static final int kRightCanId = 15; // neo
+      public static final double kClimberSpeed = 0.75;
+  }
+
+  public static final class ShooterConstants
+  {
+      public static final int kFrontCanId = 11; // neo
+      public static final int kBackCanId = 12; // neo
+      public static final int kIndexerCanId = 13; // redline
+      public static final double kShooterLaunchSpeed = 1;//1;
+      public static final double kShooterIntakeSpeed = -0.5;//-1;
+      public static final double kIndexerLaunchSpeed = 1;//0.5;
+      public static final double kIndexerIntakeSpeed = -0.5;//-0.5;
+      public static final double kIndexerDelay = 1;
+  }
+
+  public static final class RollerConstants
+  {
+      public static final int kRollerCanId = 10; // neo
+      public static final double kRollerSpeed = 0.2;
+  }
+
+  public static final class GroundIntakeConstants
+  {
+      public static final int kGroundIntakeCanId = 16; // neo
+      public static final double kIntakeSpeed = 0.2;
+  }
+
+  public enum MechState
+  {
+      mOff,
+      mShoot,
+      mIntake, 
+      mChargeShoot,
+  }
+
+  public enum CurrentMechState {
+    mOff,
+    mRoller,
+    mShooter,
+    mGroundIntake,
+    mBoth, // Represents the state where both roller and shooter are active
+}
+
 }
