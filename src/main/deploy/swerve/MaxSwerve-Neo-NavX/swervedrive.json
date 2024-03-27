@@ -1,12 +1,12 @@
 {
-  "maxSpeed": 98.5,
+  "maxSpeed": 4.12,
   "optimalVoltage": 12,
   "imu": {
     "type": "navx_spi",
     "id": 0,
     "canbus": "null"
   },
-  "invertedIMU": true,
+  "invertedIMU": false,
   "modules": [
     "frontleft.json",
     "frontright.json",
