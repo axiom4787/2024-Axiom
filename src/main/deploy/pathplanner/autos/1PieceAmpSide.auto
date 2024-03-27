@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.4,
-      "y": 5.51
+      "x": 1.3973572133190786,
+      "y": 5.509243409791169
     },
     "rotation": 0
   },
@@ -12,52 +12,9 @@
     "data": {
       "commands": [
         {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "mmShooter"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "mChargeShoot"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 2.0
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "mShoot"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 1.0
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "mOff"
-                }
-              }
-            ]
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "StartMid"
+            "pathName": "StartLeft"
           }
         },
         {

@@ -1,0 +1,220 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.8525708479988394,
+        "y": 6.714031713777714
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.8525708479988414,
+        "y": 6.714031713777714
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.007511157879459,
+        "y": 6.977901955803912
+      },
+      "prevControl": {
+        "x": 2.6988869343514006,
+        "y": 7.376783219552176
+      },
+      "nextControl": {
+        "x": 3.316135381407517,
+        "y": 6.579020692055647
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 0.8525708479988394,
+        "y": 6.714031713777714
+      },
+      "prevControl": {
+        "x": -0.14742915200116058,
+        "y": 6.714031713777714
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.0,
+      "rotationDegrees": 60.0,
+      "rotateFast": true
+    },
+    {
+      "waypointRelativePos": 1.9,
+      "rotationDegrees": 60.0,
+      "rotateFast": true
+    },
+    {
+      "waypointRelativePos": 0.95,
+      "rotationDegrees": 0.0,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Shooting",
+      "waypointRelativePos": 0.0,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "mmShooter"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "mChargeShoot"
+              }
+            },
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 2.0
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "mShoot"
+              }
+            },
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 1.0
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "mOff"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Intaking",
+      "waypointRelativePos": 0.7,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "mmGroundIntake"
+              }
+            },
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 0.2
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "mIntake"
+              }
+            },
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 0.7
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "mOff"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Shooting2",
+      "waypointRelativePos": 1.4,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "mmShooter"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "mChargeShoot"
+              }
+            },
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 2.0
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "mShoot"
+              }
+            },
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 1.0
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "mOff"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 2.0,
+    "maxAcceleration": 2.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

@@ -475,6 +475,18 @@ public class RobotContainer {
     //return Commands.none();
   }
 
+  public Command getBackupAutoCommand()
+  {
+    SequentialCommandGroup backupCommand = new SequentialCommandGroup(new MMShooterCommand(this),
+                                                                      new MChargeShootCommand(this),
+                                                                      new WaitCommand(2),
+                                                                      new MShootCommand(this),
+                                                                      new WaitCommand(1),
+                                                                      new InstantCommand(() -> currentMechStateHandler(MechState.mOff)),
+                                                                      drivebase.getAutonomousCommand("moveForward"));
+    return backupCommand;
+  }
+
   // public Command getTeleopCommand()
   // {
   //   // An example command will be run in autonomous
