@@ -44,6 +44,7 @@ import frc.robot.commands.swervedrive.drivebase.AbsoluteDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.LimelightHelpers;
+import frc.robot.subsystems.BlinkinLights;
 import frc.robot.subsystems.MechanismSubsystem;
 import frc.robot.subsystems.SimulatedLimelightData;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -93,6 +94,8 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
   private final Boolean lockToAprilTagBool = false;
   private CurrentMechState currentMechState = CurrentMechState.mShooter;
+
+  private final BlinkinLights m_blinkinLights = new BlinkinLights();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.

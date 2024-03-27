@@ -16,5 +16,7 @@ public class BlinkinLights extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    m_blinkin.set(0.57);
+    System.out.println("BlinkinLights periodic called");
   }
 }
