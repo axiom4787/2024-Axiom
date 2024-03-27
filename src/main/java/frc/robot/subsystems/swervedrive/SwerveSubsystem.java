@@ -48,7 +48,7 @@ public class SwerveSubsystem extends SubsystemBase
   /**
    * Maximum speed of the robot in meters per second, used to limit acceleration.
    */
-  public        double      maximumSpeed = 4.12;
+  public        double      maximumSpeed = 5.71;
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -65,7 +65,7 @@ public class SwerveSubsystem extends SubsystemBase
     //  In this case the wheel diameter is 4 inches, which must be converted to meters to get meters/second.
     //  The gear ratio is 6.75 motor revolutions per wheel rotation.
     //  The encoder resolution per motor revolution is 1 per motor revolution.
-    double driveConversionFactor = SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(3), 5.50);
+    double driveConversionFactor = SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(3), 4.71);
     System.out.println("\"conversionFactor\": {");
     System.out.println("\t\"angle\": " + angleConversionFactor + ",");
     System.out.println("\t\"drive\": " + driveConversionFactor);
@@ -116,7 +116,7 @@ public class SwerveSubsystem extends SubsystemBase
                                          // Translation PID constants
                                          Auton.angleAutoPID,
                                          // Rotation PID constants
-                                         4.12,
+                                         5.71,
                                          // Max module speed, in m/s
                                          swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters(),
                                          // Drive base radius in meters. Distance from robot center to furthest module.
@@ -507,8 +507,8 @@ public class SwerveSubsystem extends SubsystemBase
   public void addVisionReading()
   {
 
-    LimelightHelpers.PoseEstimate limelightPose = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-april");
-    if(LimelightHelpers.getTV("limelight-april") && !lastPose.equals(limelightPose.pose)) {
+    LimelightHelpers.PoseEstimate limelightPose = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+    if(LimelightHelpers.getTV("limelight") && !lastPose.equals(limelightPose.pose)) {
       lastPose = limelightPose.pose;
       
       SmartDashboard.putNumber("# of tags", limelightPose.tagCount);
@@ -530,7 +530,7 @@ public class SwerveSubsystem extends SubsystemBase
                  history.fetchInterpolatedGyroData(limelightPose.timestampSeconds));
 
       swerveDrive.addVisionMeasurement(computedPose, limelightPose.timestampSeconds);
-
+      
       
     }
   }

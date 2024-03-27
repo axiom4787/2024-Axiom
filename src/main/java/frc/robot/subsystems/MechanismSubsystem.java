@@ -20,7 +20,7 @@ import frc.robot.Constants.MechState;
 
 public class MechanismSubsystem extends SubsystemBase {
     private final CANSparkMax m_frontShooter, m_backShooter;
-    private final CANSparkMax m_indexer;
+    private final CANSparkMax m_topIndexer, m_bottomIndexer;
     private final CANSparkMax m_roller;
     private final CANSparkMax m_groundIntake;
     private MechState m_shooterState, m_rollerState, m_groundIntakeState;
@@ -32,17 +32,20 @@ public class MechanismSubsystem extends SubsystemBase {
     {
         m_frontShooter = new CANSparkMax(ShooterConstants.kFrontCanId, MotorType.kBrushless);
         m_backShooter = new CANSparkMax(ShooterConstants.kBackCanId, MotorType.kBrushless);
-        m_indexer = new CANSparkMax(ShooterConstants.kIndexerCanId, MotorType.kBrushed);
+        m_topIndexer = new CANSparkMax(ShooterConstants.kTopIndexerCanId, MotorType.kBrushed);
+        m_bottomIndexer = new CANSparkMax(GroundIntakeConstants.kBottomIndexerCanId, MotorType.kBrushless);
         m_roller = new CANSparkMax(RollerConstants.kRollerCanId, MotorType.kBrushless);
         m_groundIntake = new CANSparkMax(GroundIntakeConstants.kGroundIntakeCanId, MotorType.kBrushless);
-        m_frontShooter.setSmartCurrentLimit(30);
-        m_backShooter.setSmartCurrentLimit(30);
-        m_indexer.setSmartCurrentLimit(20);
-        m_roller.setSmartCurrentLimit(30);
-        m_groundIntake.setSmartCurrentLimit(30);
+        m_frontShooter.setSmartCurrentLimit(40);
+        m_backShooter.setSmartCurrentLimit(40);
+        m_topIndexer.setSmartCurrentLimit(20);
+        m_bottomIndexer.setSmartCurrentLimit(20);
+        m_roller.setSmartCurrentLimit(40);
+        m_groundIntake.setSmartCurrentLimit(40);
         m_frontShooter.setIdleMode(IdleMode.kCoast);
         m_backShooter.setIdleMode(IdleMode.kCoast);
-        m_indexer.setIdleMode(IdleMode.kCoast);
+        m_topIndexer.setIdleMode(IdleMode.kCoast);
+        m_bottomIndexer.setIdleMode(IdleMode.kCoast);
         m_roller.setIdleMode(IdleMode.kCoast);
         m_groundIntake.setIdleMode(IdleMode.kCoast);
         m_shooterState = m_rollerState = m_groundIntakeState = MechState.mOff;
@@ -57,12 +60,13 @@ public class MechanismSubsystem extends SubsystemBase {
             case mIntake:
                 m_frontShooter.set(ShooterConstants.kShooterIntakeSpeed);
                 m_backShooter.set(ShooterConstants.kShooterIntakeSpeed);
-                m_indexer.set(ShooterConstants.kIndexerIntakeSpeed);
+                m_topIndexer.set(ShooterConstants.kTopIndexerIntakeSpeed);
                 break;
             case mShoot:
                 m_frontShooter.set(ShooterConstants.kShooterLaunchSpeed);
                 m_backShooter.set(ShooterConstants.kShooterLaunchSpeed);
-                m_indexer.set(ShooterConstants.kIndexerLaunchSpeed);
+                m_topIndexer.set(ShooterConstants.kTopIndexerLaunchSpeed);
+                m_bottomIndexer.set(GroundIntakeConstants.kBottomIndexerSpeed);
                 break;
             case mChargeShoot:
                 m_frontShooter.set(ShooterConstants.kShooterLaunchSpeed);
@@ -71,7 +75,9 @@ public class MechanismSubsystem extends SubsystemBase {
             case mOff:
                 m_frontShooter.set(0);
                 m_backShooter.set(0);
-                m_indexer.set(0);
+                m_topIndexer.set(0);
+                m_bottomIndexer.set(0);
+
         }
         switch (m_rollerState)
         {
@@ -90,14 +96,22 @@ public class MechanismSubsystem extends SubsystemBase {
         switch (m_groundIntakeState)
         {
             case mIntake:
-                m_groundIntake.set(GroundIntakeConstants.kIntakeSpeed);
+                m_groundIntake.set(-GroundIntakeConstants.kIntakeSpeed);
+                m_bottomIndexer.set(GroundIntakeConstants.kBottomIndexerSpeed);
+                m_topIndexer.set(-ShooterConstants.kTopIndexerIntakeSpeed);
                 break;
             case mShoot:
-                m_groundIntake.set(-GroundIntakeConstants.kIntakeSpeed);
+                m_groundIntake.set(GroundIntakeConstants.kIntakeSpeed);
+                m_bottomIndexer.set(-GroundIntakeConstants.kBottomIndexerSpeed);
+                m_topIndexer.set(ShooterConstants.kTopIndexerIntakeSpeed);
                 break;
             case mChargeShoot:
+                m_groundIntake.set(GroundIntakeConstants.kIntakeSpeed);
+                m_bottomIndexer.set(-GroundIntakeConstants.kBottomIndexerSpeed);
+                m_topIndexer.set(ShooterConstants.kTopIndexerIntakeSpeed);
                 break;
             case mOff:
+                m_bottomIndexer.set(0);
                 m_groundIntake.set(0);
                 break;
         }

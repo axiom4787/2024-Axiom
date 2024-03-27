@@ -47,49 +47,6 @@ public final class Constants
     public static final double WHEEL_LOCK_TIME = 10; // seconds
   }
 
-  public static final class ArmIntakeShooter 
-  {
-    public static final int TOP_MOTORID = 12; // neo
-    public static final int BOTTOM_MOTORID = 11; //neo 550
-    public static final int LEFTARM_MOTORID = 10; //neo 
-    public static final int RIGHTARM_MOTORID = 9; //neo
-    
-    public static final int TOP_MOTOR_CURRENT_LIMIT = 40; // neo amp
-    public static final int BOTTOM_MOTOR_CURRENT_LIMIT = 20; // neo 550 amp
-    public static final int LEFTARM_MOTOR_CURRENT_LIMIT = 40; //neo amp
-    public static final int RIGHTARM_MOTOR_CURRENT_LIMIT = 40; // neo amp
-
-    public static final double SHOOT_DELAY = 0.5;
-    
-    // public static final IdleMode TOP_MOTOR_IDLE_MODE = IdleMode.kCoast;
-    // public static final IdleMode BOTTOM_MOTOR_IDLE_MODE = IdleMode.kBrake;
-    // public static final IdleMode LEFTARM_MOTOR_IDLE_MODE = IdleMode.kBrake;
-    // public static final IdleMode RIGHTMOTOR_MOTOR_IDLE_MODE = IdleMode.kBrake;
-
-    public static final double FEED_FOWARD = 0.0;
-  }
-
-  public static final class MotorTestConstants
-  {
-    public static final int MOTOR_ID = 13; // neo
-  }
-
-  public static final class SetPointAngles
-  {
-    public static final int INTAKE_GROUND_ANGLE = 0;
-    public static final int INTAKE_HUMAN_ANGLE = -70; //Really goofy method of intaking, just get it in and push back and forth until it falls in right- should mainly ground intake
-    public static final int SHOOTER_AMP_ANGLE = -165; //REMEMBER THE BUMPERS
-    public static final int SHOOTER_SPEAKER_ANGLE = -70;
-  }
-
-  public static final class Climber
-  {
-    public static final int LEFT_CLIMBER_ID = 14;
-    public static final int RIGHT_CLIMBER_ID = 13;
-    public static final boolean LEFT_INVERTED = false;
-    public static final boolean RIGHT_INVERTED = true;
-  }
-
   public static class OperatorConstants
   {
     // Controller Ports
@@ -122,33 +79,37 @@ public final class Constants
 
   public static final class ClimberConstants
   {
-      public static final int kLeftCanId = 14; // neo
-      public static final int kRightCanId = 15; // neo
+      public static final int kLeftCanId = 16; // neo
+      public static final int kRightCanId = 12; // neo
       public static final double kClimberSpeed = 0.75;
   }
 
   public static final class ShooterConstants
   {
-      public static final int kFrontCanId = 11; // neo
-      public static final int kBackCanId = 12; // neo
-      public static final int kIndexerCanId = 13; // redline
+      public static final int kFrontCanId = 13; // neo
+      public static final int kBackCanId = 15; // neo
+      public static final int kTopIndexerCanId = 11; // redline
+
       public static final double kShooterLaunchSpeed = 1;//1;
       public static final double kShooterIntakeSpeed = -0.5;//-1;
-      public static final double kIndexerLaunchSpeed = 1;//0.5;
-      public static final double kIndexerIntakeSpeed = -0.5;//-0.5;
-      public static final double kIndexerDelay = 1;
+      public static final double kTopIndexerLaunchSpeed = 1;//0.5;
+      public static final double kTopIndexerIntakeSpeed = -0.5;//-0.5;
+      public static final double kTopIndexerDelay = 2;
+
   }
 
   public static final class RollerConstants
   {
-      public static final int kRollerCanId = 10; // neo
+      public static final int kRollerCanId = 14; // neo
       public static final double kRollerSpeed = 0.2;
   }
 
   public static final class GroundIntakeConstants
   {
-      public static final int kGroundIntakeCanId = 16; // neo
-      public static final double kIntakeSpeed = 0.2;
+      public static final int kGroundIntakeCanId = 9; // neo
+      public static final int kBottomIndexerCanId = 10; // neo 550
+      public static final double kIntakeSpeed = 0.3;
+      public static final double kBottomIndexerSpeed = 0.8;
   }
 
   public enum MechState
