@@ -3,12 +3,12 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
+        "x": 2.234441105733733,
         "y": 7.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0,
+        "x": 3.2344411057337354,
         "y": 7.0
       },
       "isLocked": false,
@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 14.78,
-        "y": 0.65
+        "x": 6.18,
+        "y": 7.0
       },
       "prevControl": {
-        "x": 13.950572239215317,
-        "y": 0.09138601016470593
+        "x": 5.18,
+        "y": 7.0
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Right Human Intake"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -39,7 +39,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -58.16845753391601,
+    "rotation": 0,
     "rotateFast": false
   },
   "reversed": false,
