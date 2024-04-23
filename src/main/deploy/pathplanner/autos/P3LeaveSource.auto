@@ -2,21 +2,15 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.39,
-      "y": 5.53
+      "x": 0.76,
+      "y": 4.37
     },
-    "rotation": 0.0
+    "rotation": -60.042156717215576
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
-        {
-          "type": "path",
-          "data": {
-            "pathName": "StartMid"
-          }
-        },
         {
           "type": "sequential",
           "data": {
@@ -36,7 +30,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.4
+                  "waitTime": 2.0
                 }
               },
               {
@@ -48,7 +42,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.4
+                  "waitTime": 1.0
                 }
               },
               {
@@ -63,13 +57,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartLeft"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "StartRight"
+            "pathName": "P3 Source"
           }
         }
       ]

@@ -76,12 +76,7 @@
       "/SmartDashboard/navX-Sensor[4]": "Gyro"
     },
     "windows": {
-      "/SmartDashboard/3 Piece Auto": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Amp Cycle": {
+      "/SmartDashboard/Auto Mode": {
         "window": {
           "visible": true
         }
@@ -107,26 +102,6 @@
         "window": {
           "visible": true
         }
-      },
-      "/SmartDashboard/Pathfind to Amp": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Pathfind to Human Intake": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Pathfind to Speaker": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Speaker Cycle": {
-        "window": {
-          "visible": true
-        }
       }
     }
   },
@@ -141,10 +116,13 @@
     }
   },
   "NetworkTables Info": {
-    "Clients": {
-      "open": true
-    },
-    "Connections": {
+    "DartClient_23767379@1": {
+      "Publishers": {
+        "open": true
+      },
+      "Subscribers": {
+        "open": true
+      },
       "open": true
     },
     "Server": {

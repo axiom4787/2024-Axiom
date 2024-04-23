@@ -3,53 +3,59 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.4242897057222692,
-        "y": 5.51
+        "x": 0.75,
+        "y": 6.699372255887369
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5242897057222693,
-        "y": 5.51
+        "x": 1.0871675314730147,
+        "y": 6.963242497907477
       },
       "isLocked": false,
-      "linkedName": "Speaker"
+      "linkedName": "AmpSideBetter"
     },
     {
       "anchor": {
-        "x": 2.6410247106208504,
-        "y": 6.948583040023223
+        "x": 1.8200950687615667,
+        "y": 6.992561413694256
       },
       "prevControl": {
-        "x": 1.719392947719577,
-        "y": 6.764256687442968
+        "x": 1.7190572952574479,
+        "y": 6.985231684749084
       },
       "nextControl": {
-        "x": 3.5221656500047,
-        "y": 7.124811227899992
+        "x": 1.9211328422656864,
+        "y": 6.999891142639428
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.4242897057222692,
-        "y": 5.51
+        "x": 4.3122029101201065,
+        "y": 6.992561413694256
       },
       "prevControl": {
-        "x": 2.8047438440902948,
-        "y": 5.860343837111411
+        "x": 4.018224536449074,
+        "y": 6.9888965492216695
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Speaker"
+      "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 0,
+      "rotateFast": true
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [
     {
       "name": "Intaking",
-      "waypointRelativePos": 0.8,
+      "waypointRelativePos": 1.1,
       "command": {
         "type": "sequential",
         "data": {
@@ -61,12 +67,6 @@
               }
             },
             {
-              "type": "wait",
-              "data": {
-                "waitTime": 0.2
-              }
-            },
-            {
               "type": "named",
               "data": {
                 "name": "mIntake"
@@ -75,7 +75,7 @@
             {
               "type": "wait",
               "data": {
-                "waitTime": 0.7
+                "waitTime": 1.3
               }
             },
             {
@@ -103,7 +103,7 @@
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": 60.19,
     "velocity": 0
   },
   "useDefaultConstraints": true

@@ -1,0 +1,74 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.75,
+        "y": 6.699372255887369
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.0871675314730147,
+        "y": 6.963242497907477
+      },
+      "isLocked": false,
+      "linkedName": "AmpSideBetter"
+    },
+    {
+      "anchor": {
+        "x": 1.7761166950905336,
+        "y": 7.4909829819659635
+      },
+      "prevControl": {
+        "x": 1.5298138765905063,
+        "y": 7.357902590803278
+      },
+      "nextControl": {
+        "x": 2.022419513590561,
+        "y": 7.624063373128649
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.25,
+        "y": 7.59
+      },
+      "prevControl": {
+        "x": 3.956021626328967,
+        "y": 7.586335135527413
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": 0,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 2.0,
+    "maxAcceleration": 2.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": 60.19,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

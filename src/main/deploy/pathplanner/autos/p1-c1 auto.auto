@@ -2,19 +2,62 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.39,
-      "y": 5.53
+      "x": 0.8525708479988394,
+      "y": 6.714031713777714
     },
-    "rotation": 0.0
+    "rotation": 60.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "mmShooter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "mChargeShoot"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 2.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "mShoot"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "mOff"
+                }
+              }
+            ]
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "StartMid"
+            "pathName": "P1-C1 Path"
           }
         },
         {
@@ -36,7 +79,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.4
+                  "waitTime": 2.0
                 }
               },
               {
@@ -48,7 +91,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.4
+                  "waitTime": 1.0
                 }
               },
               {
@@ -58,18 +101,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "StartLeft"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "StartRight"
           }
         }
       ]

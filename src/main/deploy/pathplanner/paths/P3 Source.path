@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
-        "y": 7.0
+        "x": 0.7646141006567733,
+        "y": 4.368518451322617
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0,
-        "y": 7.0
+        "x": 1.82823921203398,
+        "y": 2.836197894618011
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 14.78,
-        "y": 0.65
+        "x": 7.500635001270004,
+        "y": 0.7696215392430785
       },
       "prevControl": {
-        "x": 13.950572239215317,
-        "y": 0.09138601016470593
+        "x": 5.9613919227838466,
+        "y": 0.8978917957835917
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Right Human Intake"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -39,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -58.16845753391601,
+    "rotation": 0,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": -58.240519915187214,
     "velocity": 0
   },
   "useDefaultConstraints": true

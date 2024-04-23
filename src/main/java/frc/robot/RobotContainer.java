@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -28,22 +29,29 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.MechState;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.Constants.SetPointAngles;
-import frc.robot.commands.subsystemCommands.ClimberCommand;
+import frc.robot.Constants.CurrentMechState;
+import frc.robot.commands.swervedrive.auto.MChargeShootCommand;
+import frc.robot.commands.swervedrive.auto.MIntakeCommand;
+import frc.robot.commands.swervedrive.auto.MMClimberCommand;
+import frc.robot.commands.swervedrive.auto.MMGroundIntakeCommand;
+import frc.robot.commands.swervedrive.auto.MMRollerCommand;
+import frc.robot.commands.swervedrive.auto.MMShooterCommand;
+import frc.robot.commands.swervedrive.auto.MOffCommand;
+import frc.robot.commands.swervedrive.auto.MShootCommand;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
-import frc.robot.commands.swervedrive.drivebase.TeleopDrive;
-import frc.robot.subsystems.Blinkin;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.LimeLight;
-import frc.robot.subsystems.MotorTest;
-import frc.robot.subsystems.ShooterIntake;
+import frc.robot.LimelightHelpers;
+import frc.robot.subsystems.BlinkinLights;
+import frc.robot.subsystems.MechanismSubsystem;
 import frc.robot.subsystems.SimulatedLimelightData;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-import frc.robot.subsystems.ShooterIntake;
 import java.io.File;
+import java.sql.Date;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -53,10 +61,10 @@ import org.opencv.core.Mat;
 
 import com.ctre.phoenix.Util;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
-import frc.robot.subsystems.ArmSubsystem; 
 import edu.wpi.first.wpilibj2.command.Command;
 
 /**
@@ -68,27 +76,25 @@ public class RobotContainer {
   private final Pose2d simulatedAprilTag = new Pose2d(5.0, 5.0, new Rotation2d(200));
 
   // The robot's subsystems and commands are defined here...
-  private final LimeLight limelight = new LimeLight();
+  private final LimelightHelpers limelight = new LimelightHelpers();
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
-                                                                          "swerve/neo"), limelight);
-  private final Climber climber = new Climber();
-  private final ClimberCommand climberCommand;
+                                                                          "swerve/neo"));
+  private final BlinkinLights blinkin = new BlinkinLights();
+  // private final ClimberSubsystem climber = new ClimberSubsystem();
 
   // CommandJoystick rotationController = new CommandJoystick(1);
   // Replace with CommandPS4Controller or CommandJoystick if needed
   // CommandJoystick driverController = new CommandJoystick(0);
 
-  ShooterIntake shooterIntake = new ShooterIntake();
-  ArmSubsystem armSubsystem = new ArmSubsystem();
-  MotorTest testSubsystem = new MotorTest();
+  MechanismSubsystem kitBotMechanism = new MechanismSubsystem();
 
   // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
   XboxController driverXbox = new XboxController(0);
-  Blinkin blinkin = new Blinkin(Constants.BlinkinConstants.kPWMPort);
   Joystick backupJoystick = new Joystick(1);
 
   private final SendableChooser<Command> autoChooser;
   private final Boolean lockToAprilTagBool = false;
+  private CurrentMechState currentMechState = CurrentMechState.mShooter;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -98,53 +104,35 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
 
-    //Lambda 
-    climber.setDefaultCommand(new RunCommand(() -> climber.moveClimbers(0, 0), climber)); //Sets default command to brake climbers
-    climberCommand = new ClimberCommand(climber, driverXbox, backupJoystick);
-
-    AbsoluteDrive closedAbsoluteDrive = new AbsoluteDrive(drivebase,
-                                                          // Applies deadbands and inverts controls because joysticks
-                                                          // are back-right positive while robot
-                                                          // controls are front-left positive
-                                                          () -> -MathUtil.applyDeadband(driverXbox.getLeftY(),
-                                                                                       OperatorConstants.LEFT_Y_DEADBAND),
-                                                          () -> MathUtil.applyDeadband(driverXbox.getLeftX(),
-                                                                                       OperatorConstants.LEFT_X_DEADBAND),
-                                                          () -> driverXbox.getRightX(),
-                                                          () -> -driverXbox.getRightY());
-
-    AbsoluteFieldDrive closedFieldAbsoluteDrive = new AbsoluteFieldDrive(drivebase,
-                                                                         () -> -MathUtil.applyDeadband(driverXbox.getLeftY(),
-                                                                                                    OperatorConstants.LEFT_Y_DEADBAND),
-                                                                         () -> -MathUtil.applyDeadband(driverXbox.getLeftX(),
-                                                                                                      OperatorConstants.LEFT_X_DEADBAND),
-                                                                         () -> -driverXbox.getRawAxis(3));
-
-                                                                         AbsoluteDriveAdv closedAbsoluteDriveAdv = new AbsoluteDriveAdv(drivebase,
-                                                                         () -> MathUtil.applyDeadband(driverXbox.getLeftY(),
-                                                                                                   OperatorConstants.LEFT_Y_DEADBAND)/3,
-                                                                         () -> MathUtil.applyDeadband(driverXbox.getLeftX(),
-                                                                                                     OperatorConstants.LEFT_X_DEADBAND)/3,
-                                                                         () -> MathUtil.applyDeadband(driverXbox.getRightX(),
-                                                                                                     OperatorConstants.RIGHT_X_DEADBAND)/3, 
-                                                                         driverXbox::getYButtonPressed, 
-                                                                         driverXbox::getAButtonPressed, 
-                                                                         driverXbox::getXButtonPressed, 
-                                                                         driverXbox::getBButtonPressed);
-
-    TeleopDrive simClosedFieldRel = new TeleopDrive(drivebase,
-                                                    () -> -MathUtil.applyDeadband(driverXbox.getLeftY(),
-                                                                                 OperatorConstants.LEFT_Y_DEADBAND),
-                                                    () -> -MathUtil.applyDeadband(driverXbox.getLeftX(),
-                                                                                 OperatorConstants.LEFT_X_DEADBAND),
-                                                    () -> -driverXbox.getRawAxis(4), () -> true);
-    TeleopDrive closedFieldRel = new TeleopDrive(
-        drivebase,
-        () -> -MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+    // Applies deadbands and inverts controls because joysticks
+    // are back-right positive while robot
+    // controls are front-left positive
+    // left stick controls translation
+    // right stick controls the desired angle NOT angular rotation
+    Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
+        () -> MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
         () -> MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> MathUtil.applyDeadband(driverXbox.getRightX(), OperatorConstants.RIGHT_X_DEADBAND), () -> true);
+        () -> driverXbox.getRightX(),
+        () -> driverXbox.getRightY());
 
-    drivebase.setDefaultCommand(RobotBase.isSimulation() ? simClosedFieldRel : closedFieldRel);
+    // Applies deadbands and inverts controls because joysticks
+    // are back-right positive while robot
+    // controls are front-left positive
+    // left stick controls translation
+    // right stick controls the angular velocity of the robot
+    Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
+        () -> -MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+        () -> -MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+        () -> -driverXbox.getRightX()*1.1);
+
+    Command driveFieldOrientedDirectAngleSim = drivebase.simDriveCommand(
+        () -> MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+        () -> MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+        () -> driverXbox.getRawAxis(2));
+
+    drivebase.setDefaultCommand(
+        !RobotBase.isSimulation() ? driveFieldOrientedAnglularVelocity : driveFieldOrientedAnglularVelocity);
+    
     // drivebase.setDefaultCommand(closedFieldAbsoluteDrive);
 
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
@@ -189,56 +177,89 @@ public class RobotContainer {
   }
 
 
-  public double calculateTrackingAngularVelocity(double rot) {
-  //   /*
-  //    * if (LL.getXAngle() != 0 && Math.abs(LL.getXAngle()) >= 1) {
-  //    * double speed = 0.03; // between 0 amd 1
-  //    * double direction = (-LL.getXAngle()) / Math.abs(LL.getXAngle());
-  //    * double scaleFactor = (Math.abs(LL.getXAngle())) * speed;
-  //    * SmartDashboard.putNumber("tracking velocity", direction * scaleFactor);
-  //    * if (scaleFactor > 2) {
-  //    * scaleFactor = 1.4;
-  //    * }
-  //    * return direction * scaleFactor;
-  //    * }
-  //    * 
-  //    * return 0;
-  //    */
+  // public double calculateTrackingAngularVelocity(double rot) {
+  // //   /*
+  // //    * if (LL.getXAngle() != 0 && Math.abs(LL.getXAngle()) >= 1) {
+  // //    * double speed = 0.03; // between 0 amd 1
+  // //    * double direction = (-LL.getXAngle()) / Math.abs(LL.getXAngle());
+  // //    * double scaleFactor = (Math.abs(LL.getXAngle())) * speed;
+  // //    * SmartDashboard.putNumber("tracking velocity", direction * scaleFactor);
+  // //    * if (scaleFactor > 2) {
+  // //    * scaleFactor = 1.4;
+  // //    * }
+  // //    * return direction * scaleFactor;
+  // //    * }
+  // //    * 
+  // //    * return 0;
+  // //    */
 
+  // //   // SimulatedLimelightData simulatedLimelightData = calculateSimulatedLimelightValues(); 
+  // //   // double simulatedXAngle = simulatedLimelightData.xAngleToTag;
+
+  //   if (rot != 0) {
+  //       return rot;
+  //   }
+
+  //   if (limelight.getXAngle() != 0) {
+  //     double pidOutput = Constants.Auton.trackingPID.calculate(limelight.getXAngle(), 0);
+  //     return MathUtil.clamp(pidOutput, -1, 1);
+  //   }
+
+  //   return 0;
+  // }
+
+  // public double calculateTrackingXVelocity(double xVelocity) {
   //   // SimulatedLimelightData simulatedLimelightData = calculateSimulatedLimelightValues(); 
-  //   // double simulatedXAngle = simulatedLimelightData.xAngleToTag;
+  //   // double simulatedXAngleOfRobot = simulatedLimelightData.robotAngleInTagSpace;
 
-    if (rot != 0) {
-        return rot;
-    }
+  //   if (xVelocity != 0) {
+  //       return xVelocity;
+  //   }
 
-    if (limelight.getXAngle() != 0) {
-      double pidOutput = Constants.Auton.trackingPID.calculate(limelight.getXAngle(), 0);
-      return MathUtil.clamp(pidOutput, -1, 1);
-    }
-
-    return 0;
-  }
-
-  public double calculateTrackingXVelocity(double xVelocity) {
-    // SimulatedLimelightData simulatedLimelightData = calculateSimulatedLimelightValues(); 
-    // double simulatedXAngleOfRobot = simulatedLimelightData.robotAngleInTagSpace;
-
-    if (xVelocity != 0) {
-        return xVelocity;
-    }
-
-    // limelight.getCamPose2dInTargetSpace().getRotation().getDegrees()
-    if (limelight.getCamPose2dInTargetSpace().getRotation().getDegrees() != 0) {
-      double pidOutput = Constants.Auton.trackingPID.calculate(limelight.getCamPose2dInTargetSpace().getRotation().getDegrees(), 0);
-      return MathUtil.clamp(pidOutput, -1, 1);
-    }
-    return 0;
-  }
+  //   // limelight.getCamPose2dInTargetSpace().getRotation().getDegrees()
+  //   if (limelight.getCamPose2dInTargetSpace().getRotation().getDegrees() != 0) {
+  //     double pidOutput = Constants.Auton.trackingPID.calculate(limelight.getCamPose2dInTargetSpace().getRotation().getDegrees(), 0);
+  //     return MathUtil.clamp(pidOutput, -1, 1);
+  //   }
+  //   return 0;
+  // }
 
   private Command commandConsumer(Supplier<Command> consumer) {
     return consumer.get();
   }
+
+  private Command createCommandForMechanism(Consumer<MechState> setStateFunction, MechState state) {
+    return new InstantCommand(() -> setStateFunction.accept(state), kitBotMechanism);
+  }
+
+  public void currentMechStateHandler(MechState mechState) {
+    SmartDashboard.putString("currentMechStateHandler mechState", String.valueOf(mechState));
+    // SmartDashboard.putString("Current Time", String.valueOf(System.currentTimeMillis()));
+    // SmartDashboard.putString("currentMechStateHandler CMS", currentMechState.toString());
+    if (currentMechState == CurrentMechState.mRoller) {
+        createCommandForMechanism(kitBotMechanism::setRollerState, mechState).schedule();
+    } else if (currentMechState == CurrentMechState.mShooter) {
+        createCommandForMechanism(kitBotMechanism::setShooterState, mechState).schedule();
+    } else if (currentMechState == CurrentMechState.mGroundIntake){
+        createCommandForMechanism(kitBotMechanism::setGroundIntakeState, mechState).schedule();
+    } else if (currentMechState == CurrentMechState.mClimber) {
+        createCommandForMechanism(kitBotMechanism::setClimberState, mechState).schedule();
+    } else if (currentMechState == CurrentMechState.mBoth) {
+        // Handle both roller and shooter states
+        new InstantCommand(() -> kitBotMechanism.setBothStates(mechState, mechState)).schedule();
+    } else {
+        // If it's neither roller, shooter, nor both, or you need to reset both
+        Command rollerOffCommand = createCommandForMechanism(kitBotMechanism::setRollerState, MechState.mOff);
+        Command shooterOffCommand = createCommandForMechanism(kitBotMechanism::setShooterState, MechState.mOff);
+        new SequentialCommandGroup(rollerOffCommand, shooterOffCommand).schedule();;
+    }
+  } 
+
+  public void setCurrentMechState(CurrentMechState state) {
+    currentMechState = state;
+    SmartDashboard.putString("CMS", currentMechState.toString());  
+  }
+
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
@@ -261,105 +282,172 @@ public class RobotContainer {
     // Add a button to run pathfinding commands to SmartDashboard
     // Button binding based on the numbered box from the left.
 
-    Command intakeCommand = new RunCommand(() -> shooterIntake.setState("intake"), shooterIntake);
-    Command shootCommand = new RunCommand(() -> shooterIntake.setState("shoot"), shooterIntake);
-    Command shooterIntakeOffCommand = new RunCommand(() -> shooterIntake.setState("off"), shooterIntake);
+    // Command mIntakeCommand = new InstantCommand(() -> currentMechStateHandler(MechState.mIntake));
+    // Command mShootCommand = new InstantCommand(() -> currentMechStateHandler(MechState.mShoot));
+    // Command mChargeShootCommand = new InstantCommand(() -> currentMechStateHandler(MechState.mChargeShoot));
+    // Command mOffCommand = new InstantCommand(() -> currentMechStateHandler(MechState.mOff));
+    // Command mmRollerCommand = new InstantCommand(() -> setCurrentMechState(CurrentMechState.mRoller), kitBotMechanism);
+    // Command mmShooterCommand = new InstantCommand(() -> setCurrentMechState(CurrentMechState.mShooter), kitBotMechanism);
+    // Command mmGroundIntakeCommand = new InstantCommand(() -> setCurrentMechState(CurrentMechState.mGroundIntake), kitBotMechanism);
 
-    new JoystickButton(backupJoystick, 7).whileTrue(new RunCommand(() -> armSubsystem.moveArm(0.1), armSubsystem));
-    new JoystickButton(backupJoystick, 11).whileTrue(new RunCommand(() -> armSubsystem.moveArm(-0.1), armSubsystem));
-    new JoystickButton(backupJoystick, 9).whileTrue(new RunCommand(() -> armSubsystem.moveArm(0), armSubsystem));
+    MIntakeCommand mIntakeCommand = new MIntakeCommand(this);
+    MShootCommand mShootCommand = new MShootCommand(this);
+    MChargeShootCommand mChargeShootCommand = new MChargeShootCommand(this);
+    MOffCommand mOffCommand = new MOffCommand(this);
+    MMRollerCommand mmRollerCommand = new MMRollerCommand(this);
+    MMShooterCommand mmShooterCommand = new MMShooterCommand(this);
+    MMGroundIntakeCommand mmGroundIntakeCommand = new MMGroundIntakeCommand(this);
+    MMClimberCommand mmClimberCommand = new MMClimberCommand(this);
+
+    // List<Pair<String, Command>> commandList = new ArrayList<>();
+    // commandList.add(new Pair<>("mIntake", mIntakeCommand));
+    // commandList.add(new Pair<>("mShoot", mShootCommand));
+    // commandList.add(new Pair<>("mChargeShoot", mChargeShootCommand));
+    // commandList.add(new Pair<>("mOff", mOffCommand));
+    // commandList.add(new Pair<>("mmRoller", mmRollerCommand));
+    // commandList.add(new Pair<>("mmShooter", mmShooterCommand));
+    // commandList.add(new Pair<>("mmGroundIntake", mmGroundIntakeCommand));
+
+    // NamedCommands.registerCommands(commandList);   
+    //register individual commands
+    NamedCommands.registerCommand("mIntake", mIntakeCommand);
+    NamedCommands.registerCommand("mShoot", mShootCommand);
+    NamedCommands.registerCommand("mChargeShoot", mChargeShootCommand);
+    NamedCommands.registerCommand("mOff", mOffCommand);
+    NamedCommands.registerCommand("mmRoller", mmRollerCommand);
+    NamedCommands.registerCommand("mmShooter", mmShooterCommand);
+    NamedCommands.registerCommand("mmGroundIntake", mmGroundIntakeCommand);
+    // NamedCommands.registerCommand("shooting", new SequentialCommandGroup(
+    //   mmShooterCommand,
+    //   mChargeShootCommand,
+    //   new WaitCommand(Constants.ShooterConstants.kTopIndexerDelay),
+    //   mShootCommand,
+    //   new WaitCommand(0.4),
+    //   mOffCommand
+    // ));
+
+
     new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(() -> drivebase.zeroGyro()));
-    new JoystickButton(driverXbox, 5).onTrue(new RunCommand(() -> shooterIntake.setState("intake"), shooterIntake));
-    new JoystickButton(driverXbox, 6).onTrue(new RunCommand(() -> shooterIntake.setState("shoot"), shooterIntake));
-    new JoystickButton(driverXbox, 1).onTrue(new RunCommand(() -> shooterIntake.setState("off"), shooterIntake));
-    new JoystickButton(driverXbox, driverXbox.getPOV()).onTrue(new RunCommand(() -> armSubsystem.simSetArmPID(), armSubsystem));
-    
+    // new JoystickButton(driverXbox, 5).onTrue(mmRollerCommand);
+    new JoystickButton(driverXbox, 6).onTrue(mmShooterCommand);
+    new JoystickButton(driverXbox, 2).onTrue(mmGroundIntakeCommand);
+    new JoystickButton(driverXbox, 1).onTrue(mmClimberCommand);
+
+    new JoystickButton(backupJoystick, 8).onTrue(new InstantCommand(() -> drivebase.zeroGyro()));
+    new JoystickButton(backupJoystick, 7).onTrue(mmGroundIntakeCommand);
+    new JoystickButton(backupJoystick, 9).onTrue(mmShooterCommand);
+    new JoystickButton(backupJoystick, 11).onTrue(mmClimberCommand);
+
+    // use joysticktriggers to set current mech state to roller (left trigger) or shooter (right trigger) and when let go, set to off with driverXbox.getLeftTriggerReleased() or driverXbox.getRightTriggerReleased()
+    // Left Trigger for Roller
+    // Left Trigger for Intake
+    // new Trigger(() -> driverXbox.getLeftTriggerAxis() > 0.5)
+    // .onTrue(mIntakeCommand);
+
+    // // // Right Trigger for Shoot
+    // new Trigger(() -> driverXbox.getRightTriggerAxis() > 0.5)
+    // .onTrue(
+    //   mChargeShootCommand
+    //   .andThen((new WaitCommand(Constants.ShooterConstants.kTopIndexerDelay)))
+    //   .andThen(mShootCommand)
+    //   .until(() -> driverXbox.getRightTriggerAxis() < 0.5)
+    // );
+
+    // // // when both are not pressed, set to off
+    // new Trigger(() -> driverXbox.getLeftTriggerAxis() < 0.5 && driverXbox.getRightTriggerAxis() < 0.5)
+    // .onTrue(mOffCommand);
+
+    // same 3 trigger functions as above but for the backupJoystick buttons 1 and 2
+    new JoystickButton(backupJoystick, 2).onTrue(mIntakeCommand);
+    new JoystickButton(backupJoystick, 1).onTrue(
+      mChargeShootCommand
+      .andThen((new WaitCommand(Constants.ShooterConstants.kTopIndexerDelay)))
+      .andThen(mShootCommand)
+      .until(() -> !backupJoystick.getRawButton(1))
+    );
+
+    // // when both are not pressed, set to off
+    new Trigger(() -> !backupJoystick.getRawButton(1) && !backupJoystick.getRawButton(2))
+    .onTrue(mOffCommand);
+
+
+
     BooleanSupplier isMoving = () -> Math.abs(driverXbox.getLeftY()) > OperatorConstants.LEFT_Y_DEADBAND 
                                   || Math.abs(driverXbox.getLeftX()) > OperatorConstants.LEFT_X_DEADBAND 
                                   || Math.abs(driverXbox.getRightX()) > OperatorConstants.RIGHT_X_DEADBAND;
     
-    Supplier<Command> ampCommand = () -> new ParallelDeadlineGroup(
-      new SequentialCommandGroup(
-        AutoBuilder.pathfindToPose(
-          new Pose2d(1.86, 7.41, Rotation2d.fromDegrees(-90)), 
-          new PathConstraints(
-            3.0, 3.0, 
-            Units.degreesToRadians(540), Units.degreesToRadians(720)
-          ), 
-          0,
-          0
-        ),
-        new ParallelDeadlineGroup(
-          new WaitCommand(0.8),
-          new RunCommand(() -> shooterIntake.setState("intake"), shooterIntake)
-        )
-      ),
-      new RunCommand(() -> armSubsystem.simCalculateArmPID(90), armSubsystem)
-    ).until(isMoving);
+    // Supplier<Command> ampCommand = () -> new SequentialCommandGroup(
+    //   new SequentialCommandGroup(
+    //       AutoBuilder.pathfindToPose(
+    //           new Pose2d(1.86, 7.41, Rotation2d.fromDegrees(-90)),
+    //           new PathConstraints(1, 1.0, Units.degreesToRadians(540), Units.degreesToRadians(720)),
+    //           0,
+    //           0
+    //       ),
+    //       new SequentialCommandGroup(
+    //           new InstantCommand(() -> currentMechState = CurrentMechState.mRoller),
+    //           new InstantCommand(() -> currentMechStateHandler(MechState.mShoot))
+    //           .andThen(new WaitCommand(Constants.ShooterConstants.kTopIndexerDelay))
+    //       )
+    //   ),
+    //   new InstantCommand(() -> currentMechStateHandler(MechState.mOff))
+    // ).until(isMoving);                       
 
-    Supplier<Command> speakerCommand = () -> new ParallelDeadlineGroup(
-      new SequentialCommandGroup(
-        AutoBuilder.pathfindToPose(
-          new Pose2d(1.48, 5.49, Rotation2d.fromDegrees(180)), 
-          new PathConstraints(
-            3.0, 3.0, 
-            Units.degreesToRadians(540), Units.degreesToRadians(720)
-          ), 
-          0, 
-          0
-        ),
-        new RunCommand(() -> shooterIntake.setState("shoot"), shooterIntake).withTimeout(0.8)
-      ),
-      new RunCommand(() -> armSubsystem.simCalculateArmPID(90), armSubsystem)
-    ).until(isMoving);
+    // Supplier<Command> speakerCommand = () -> new SequentialCommandGroup(
+    //   new SequentialCommandGroup(
+    //       AutoBuilder.pathfindToPose(
+    //           new Pose2d(1.48, 5.49, Rotation2d.fromDegrees(180)), 
+    //           new PathConstraints(1, 1.0, Units.degreesToRadians(540), Units.degreesToRadians(720)), 
+    //           0, 0
+    //       ),
+    //       new SequentialCommandGroup(
+    //           new InstantCommand(() -> currentMechState = CurrentMechState.mShooter),
+    //           new WaitCommand(0.8),
+    //           new InstantCommand(() -> currentMechStateHandler(MechState.mShoot)).withTimeout(0.8)
+    //       )
+    //   ),
+    //   new InstantCommand(() -> currentMechStateHandler(MechState.mOff))
+    // ).until(isMoving);
 
-    Supplier<Command> humanIntakeCommand = () -> new ParallelDeadlineGroup(
-      new SequentialCommandGroup(
-        AutoBuilder.pathfindToPose(
-          new Pose2d(14.78, 0.65, Rotation2d.fromDegrees(-53.96)), 
-          new PathConstraints(
-            3.0, 3.0, 
-            Units.degreesToRadians(540), Units.degreesToRadians(720)
-          ), 
-          0, 
-          0
-        ),
-        new RunCommand(() -> shooterIntake.setState("shoot"), shooterIntake).withTimeout(0.8)
-      ),
-      new RunCommand(() -> armSubsystem.simCalculateArmPID(0), armSubsystem)
-    ).until(isMoving);
+    // Supplier<Command> humanIntakeCommand = () -> new SequentialCommandGroup(
+    //   AutoBuilder.pathfindToPose(
+    //     new Pose2d(14.78, 0.65, Rotation2d.fromDegrees(-53.96)), 
+    //     new PathConstraints(
+    //       1, 1.0, 
+    //       Units.degreesToRadians(540), Units.degreesToRadians(720)
+    //     ), 
+    //     0, 
+    //     0
+    //   ),
+    //   new InstantCommand(() -> currentMechStateHandler(MechState.mOff))
+    // ).until(isMoving);
 
-    Command speakerCycle = new SequentialCommandGroup(
-      commandConsumer(humanIntakeCommand),
-      commandConsumer(speakerCommand)
-    );
+    // Command speakerCycle = new SequentialCommandGroup(
+    //   commandConsumer(humanIntakeCommand),
+    //   commandConsumer(speakerCommand)
+    // );
 
-    Command ampCycle = new SequentialCommandGroup(
-      commandConsumer(humanIntakeCommand),
-      commandConsumer(ampCommand)
-    );
+    // Command ampCycle = new SequentialCommandGroup(
+    //   commandConsumer(humanIntakeCommand),
+    //   commandConsumer(ampCommand)
+    // );
 
-    SmartDashboard.putData("Pathfind to Amp", commandConsumer(ampCommand));
+    // SmartDashboard.putData("Pathfind to Amp", commandConsumer(ampCommand));
 
-    SmartDashboard.putData("Pathfind to Speaker", commandConsumer(speakerCommand));
+    // SmartDashboard.putData("Pathfind to Speaker", commandConsumer(speakerCommand));
 
-    SmartDashboard.putData("Pathfind to Human Intake", commandConsumer(humanIntakeCommand));
+    // SmartDashboard.putData("Pathfind to Human Intake", commandConsumer(humanIntakeCommand));
 
-    SmartDashboard.putData("Speaker Cycle", speakerCycle);
+    // SmartDashboard.putData("Speaker Cycle", speakerCycle);
 
-    SmartDashboard.putData("Amp Cycle", ampCycle);
+    // SmartDashboard.putData("Amp Cycle", ampCycle);
 
-    SmartDashboard.putData("3 Piece Auto", AutoBuilder.buildAuto(
-      "3PIece"
-    ));
-
-    // SmartDashboard.putData("move forward", AutoBuilder.followPath(
-    //   PathPlannerPath.fromPathFile("test")
+    // SmartDashboard.putData("3 Piece Auto", AutoBuilder.buildAuto(
+    //   "3PIece"
     // ));
 
-    SmartDashboard.putData("move forward", 
-      drivebase.getAutonomousCommand("test", true)
-    );
+    // SmartDashboard.putData("move forward", drivebase.getAutonomousCommand("move forward"));
+
 
     // SmartDashboard.putData("move forward", AutoBuilder.followPath(
     //   PathPlannerPath.fromPathFile("test")
@@ -385,7 +473,7 @@ public class RobotContainer {
       PathPlannerPath path = new PathPlannerPath(
         bezierPoints, 
         new PathConstraints(
-          4.0, 4.0, 
+          4.12, 4.0, 
           Units.degreesToRadians(360), Units.degreesToRadians(540)
         ),  
         new GoalEndState(0.0, currentPose.getRotation())
@@ -405,16 +493,29 @@ public class RobotContainer {
     // An example command will be run in autonomous
     // return drivebase.getAutonomousCommand("New Path", true);
     //return autoChooser.getSelected();
-    return Commands.none();
+    return drivebase.getAutonomousCommand("P3LeaveSource ");
+    //return Commands.none();
   }
 
-  public Command getTeleopCommand()
+  public Command getBackupAutoCommand()
   {
-    // An example command will be run in autonomous
-    // return drivebase.getAutonomousCommand("New Path", true);
-    //return autoChooser.getSelected();
-    return climberCommand;
+    SequentialCommandGroup backupCommand = new SequentialCommandGroup(new MMShooterCommand(this),
+                                                                      new MChargeShootCommand(this),
+                                                                      new WaitCommand(2),
+                                                                      new MShootCommand(this),
+                                                                      new WaitCommand(1),
+                                                                      new InstantCommand(() -> currentMechStateHandler(MechState.mOff)),
+                                                                      drivebase.getAutonomousCommand("moveForward"));
+    return backupCommand;
   }
+
+  // public Command getTeleopCommand()
+  // {
+  //   // An example command will be run in autonomous
+  //   // return drivebase.getAutonomousCommand("New Path", true);
+  //   //return autoChooser.getSelected();
+  //   return climberCommand;
+  // }
 
   public void setDriveMode()
   {
@@ -444,7 +545,11 @@ public class RobotContainer {
   // }
   
 
-  public RunCommand getArmCommand() {
-    return new RunCommand(() -> armSubsystem.setArmPID(), armSubsystem);
+  // public RunCommand getArmCommand() {
+  //   return new RunCommand(() -> armSubsystem.setArmPID(), armSubsystem);
+  // }
+
+  public void updateDashboard() {
+    SmartDashboard.putString("Current Mech State", currentMechState.toString());
   }
 }

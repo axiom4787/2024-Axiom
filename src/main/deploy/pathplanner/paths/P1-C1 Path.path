@@ -3,53 +3,85 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.4242897057222692,
-        "y": 5.51
+        "x": 0.75,
+        "y": 6.699372255887369
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5242897057222693,
-        "y": 5.51
+        "x": 1.750000000000002,
+        "y": 6.699372255887369
       },
       "isLocked": false,
-      "linkedName": "Speaker"
+      "linkedName": "AmpSideBetter"
     },
     {
       "anchor": {
-        "x": 2.6410247106208504,
-        "y": 6.948583040023223
+        "x": 3.0808084473311808,
+        "y": 6.977901955803912
       },
       "prevControl": {
-        "x": 1.719392947719577,
-        "y": 6.764256687442968
+        "x": 3.1552065248559935,
+        "y": 6.985135102229935
       },
       "nextControl": {
-        "x": 3.5221656500047,
-        "y": 7.124811227899992
+        "x": 2.0253274792263873,
+        "y": 6.875285750571502
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.4242897057222692,
-        "y": 5.51
+        "x": 1.9080518161036326,
+        "y": 6.977901955803912
       },
       "prevControl": {
-        "x": 2.8047438440902948,
-        "y": 5.860343837111411
+        "x": 1.9263761384665627,
+        "y": 6.985231684749083
+      },
+      "nextControl": {
+        "x": 1.791498614999854,
+        "y": 6.931280675362405
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 0.8525708479988394,
+        "y": 6.596756050654959
+      },
+      "prevControl": {
+        "x": 1.4829275372836466,
+        "y": 7.051199245255634
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Speaker"
+      "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 0.0,
+      "rotateFast": false
+    },
+    {
+      "waypointRelativePos": 3.0,
+      "rotationDegrees": 60.0,
+      "rotateFast": false
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": 0,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [
     {
       "name": "Intaking",
-      "waypointRelativePos": 0.8,
+      "waypointRelativePos": 0.5,
       "command": {
         "type": "sequential",
         "data": {
@@ -61,12 +93,6 @@
               }
             },
             {
-              "type": "wait",
-              "data": {
-                "waitTime": 0.2
-              }
-            },
-            {
               "type": "named",
               "data": {
                 "name": "mIntake"
@@ -75,7 +101,7 @@
             {
               "type": "wait",
               "data": {
-                "waitTime": 0.7
+                "waitTime": 2.0
               }
             },
             {
@@ -97,13 +123,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": 59.03624346792651,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": 59.34933204294713,
     "velocity": 0
   },
   "useDefaultConstraints": true

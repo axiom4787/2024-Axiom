@@ -3,37 +3,95 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.39,
-        "y": 5.531716932999084
+        "x": 1.4242897057222692,
+        "y": 5.51
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.389999999999999,
-        "y": 5.531716932999084
+        "x": 1.2774328824916281,
+        "y": 4.6267465219740265
+      },
+      "isLocked": false,
+      "linkedName": "Speaker"
+    },
+    {
+      "anchor": {
+        "x": 2.6117057948401614,
+        "y": 4.119307667186764
+      },
+      "prevControl": {
+        "x": 2.6803875841332054,
+        "y": 3.1005671293223513
+      },
+      "nextControl": {
+        "x": 2.512046221777574,
+        "y": 5.597534255488539
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.39,
-        "y": 4.1
+        "x": 1.4242897057222692,
+        "y": 5.51
       },
       "prevControl": {
-        "x": 1.3900000000000001,
-        "y": 4.1
+        "x": 1.811155282655569,
+        "y": 4.99000559346378
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Speaker"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Intaking",
+      "waypointRelativePos": 0.85,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "mmGroundIntake"
+              }
+            },
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 0.2
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "mIntake"
+              }
+            },
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 0.7
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "mOff"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
