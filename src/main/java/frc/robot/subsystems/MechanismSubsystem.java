@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -162,11 +163,18 @@ public class MechanismSubsystem extends SubsystemBase {
                 break;
         }
 
+        //smartdashboard put string of all current states
+        SmartDashboard.putString("Shooter State", m_shooterState.toString());
+        SmartDashboard.putString("Roller State", m_rollerState.toString());
+        SmartDashboard.putString("Ground Intake State", m_groundIntakeState.toString());
+        SmartDashboard.putString("Climber State", m_climberState.toString());
         // System.out.println("Shooter: " + m_shooterState + " Roller: " + m_rollerState);
     }
 
     public void setShooterState(MechState state)
     {
+        turnOffAllStates();
+
         if (state == MechState.mShoot && m_shooterState == MechState.mOff)
         {
             m_indexerStartTimer.reset();
@@ -178,18 +186,24 @@ public class MechanismSubsystem extends SubsystemBase {
 
     public void setRollerState(MechState state)
     {
+        turnOffAllStates();
+
         m_rollerState = state;
         System.out.println("Roller state set to " + state);
     }
 
     public void setGroundIntakeState(MechState state)
     {
+        turnOffAllStates();
+
         m_groundIntakeState = state;
         System.out.println("Ground Intake state set to " + state);
     }
 
     public void setClimberState(MechState state)
     {
+        turnOffAllStates();
+
         m_climberState = state;
         System.out.println("Climber state set to " + state);
     }
@@ -207,6 +221,23 @@ public class MechanismSubsystem extends SubsystemBase {
     public MechState getRollerState()
     {
         return m_rollerState;
+    }
+
+    private void turnOffAllStates() {
+        m_shooterState = MechState.mOff;
+        m_rollerState = MechState.mOff;
+        m_groundIntakeState = MechState.mOff;
+        m_climberState = MechState.mOff;
+    
+        // Ensure all motors are stopped
+        m_frontShooter.set(0);
+        m_backShooter.set(0);
+        m_topIndexer.set(0);
+        m_bottomIndexer.set(0);
+        m_roller.set(0);
+        m_groundIntake.set(0);
+        m_leftClimber.set(0);
+        m_rightClimber.set(0);
     }
 
 }

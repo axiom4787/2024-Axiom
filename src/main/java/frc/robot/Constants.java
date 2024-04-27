@@ -127,6 +127,12 @@ public final class Constants
     mGroundIntake,
     mClimber,
     mBoth, // Represents the state where both roller and shooter are active
-}
+  }
 
+  public enum ColorStates {
+    mGroundIntake,
+    mHumanIntake,
+    mShooter,
+    mdefault,
+  }
 }

@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.MechState;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.ColorStates;
 import frc.robot.Constants.CurrentMechState;
 import frc.robot.commands.swervedrive.auto.MChargeShootCommand;
 import frc.robot.commands.swervedrive.auto.MIntakeCommand;
@@ -44,6 +45,7 @@ import frc.robot.commands.swervedrive.drivebase.AbsoluteDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.LimelightHelpers;
+import frc.robot.subsystems.BlinkinLights;
 import frc.robot.subsystems.MechanismSubsystem;
 import frc.robot.subsystems.SimulatedLimelightData;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -78,6 +80,7 @@ public class RobotContainer {
   private final LimelightHelpers limelight = new LimelightHelpers();
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                           "swerve/neo"));
+  private final BlinkinLights blinkin = new BlinkinLights();
   // private final ClimberSubsystem climber = new ClimberSubsystem();
 
   // CommandJoystick rotationController = new CommandJoystick(1);
@@ -326,29 +329,49 @@ public class RobotContainer {
 
 
     new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(() -> drivebase.zeroGyro()));
-    new JoystickButton(driverXbox, 5).onTrue(mmRollerCommand);
+    // new JoystickButton(driverXbox, 5).onTrue(mmRollerCommand);
     new JoystickButton(driverXbox, 6).onTrue(mmShooterCommand);
     new JoystickButton(driverXbox, 2).onTrue(mmGroundIntakeCommand);
     new JoystickButton(driverXbox, 1).onTrue(mmClimberCommand);
 
+    new JoystickButton(backupJoystick, 8).onTrue(new InstantCommand(() -> drivebase.zeroGyro()));
+    new JoystickButton(backupJoystick, 7).onTrue(new ParallelCommandGroup(mmGroundIntakeCommand, new RunCommand(() -> blinkin.set_color(ColorStates.mGroundIntake), blinkin)));
+    new JoystickButton(backupJoystick, 9).onTrue(mmShooterCommand);
+    new JoystickButton(backupJoystick, 11).onTrue(mmClimberCommand);
+
     // use joysticktriggers to set current mech state to roller (left trigger) or shooter (right trigger) and when let go, set to off with driverXbox.getLeftTriggerReleased() or driverXbox.getRightTriggerReleased()
     // Left Trigger for Roller
     // Left Trigger for Intake
-    new Trigger(() -> driverXbox.getLeftTriggerAxis() > 0.5)
-    .onTrue(mIntakeCommand);
+    // new Trigger(() -> driverXbox.getLeftTriggerAxis() > 0.5)
+    // .onTrue(mIntakeCommand);
 
-    // // Right Trigger for Shoot
-    new Trigger(() -> driverXbox.getRightTriggerAxis() > 0.5)
-    .onTrue(
+    // // // Right Trigger for Shoot
+    // new Trigger(() -> driverXbox.getRightTriggerAxis() > 0.5)
+    // .onTrue(
+    //   mChargeShootCommand
+    //   .andThen((new WaitCommand(Constants.ShooterConstants.kTopIndexerDelay)))
+    //   .andThen(mShootCommand)
+    //   .until(() -> driverXbox.getRightTriggerAxis() < 0.5)
+    // );
+
+    // // // when both are not pressed, set to off
+    // new Trigger(() -> driverXbox.getLeftTriggerAxis() < 0.5 && driverXbox.getRightTriggerAxis() < 0.5)
+    // .onTrue(mOffCommand);
+
+    // same 3 trigger functions as above but for the backupJoystick buttons 1 and 2
+    new JoystickButton(backupJoystick, 2).onTrue(mIntakeCommand);
+    new JoystickButton(backupJoystick, 1).onTrue(
       mChargeShootCommand
       .andThen((new WaitCommand(Constants.ShooterConstants.kTopIndexerDelay)))
       .andThen(mShootCommand)
-      .until(() -> driverXbox.getRightTriggerAxis() < 0.5)
+      .until(() -> !backupJoystick.getRawButton(1))
     );
 
     // // when both are not pressed, set to off
-    new Trigger(() -> driverXbox.getLeftTriggerAxis() < 0.5 && driverXbox.getRightTriggerAxis() < 0.5)
+    new Trigger(() -> !backupJoystick.getRawButton(1) && !backupJoystick.getRawButton(2))
     .onTrue(mOffCommand);
+
+
 
     BooleanSupplier isMoving = () -> Math.abs(driverXbox.getLeftY()) > OperatorConstants.LEFT_Y_DEADBAND 
                                   || Math.abs(driverXbox.getLeftX()) > OperatorConstants.LEFT_X_DEADBAND 
@@ -412,7 +435,7 @@ public class RobotContainer {
 
     // SmartDashboard.putData("Pathfind to Amp", commandConsumer(ampCommand));
 
-    // SmartDashboard.putData("Pathfind to Speaker", commandConsumer(speakerCommand));
+    // SmartDashboard.putData("Pathfind to Speaker", commandConsumer(speakerCommand));\
 
     // SmartDashboard.putData("Pathfind to Human Intake", commandConsumer(humanIntakeCommand));
 
@@ -473,18 +496,6 @@ public class RobotContainer {
     //return autoChooser.getSelected();
     return drivebase.getAutonomousCommand("1Piece");
     //return Commands.none();
-  }
-
-  public Command getBackupAutoCommand()
-  {
-    SequentialCommandGroup backupCommand = new SequentialCommandGroup(new MMShooterCommand(this),
-                                                                      new MChargeShootCommand(this),
-                                                                      new WaitCommand(2),
-                                                                      new MShootCommand(this),
-                                                                      new WaitCommand(1),
-                                                                      new InstantCommand(() -> currentMechStateHandler(MechState.mOff)),
-                                                                      drivebase.getAutonomousCommand("moveForward"));
-    return backupCommand;
   }
 
   // public Command getTeleopCommand()

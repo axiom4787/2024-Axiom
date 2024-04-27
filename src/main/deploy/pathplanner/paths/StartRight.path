@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.34,
-        "y": 5.51
+        "x": 1.3973572133190786,
+        "y": 5.509243409791169
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.193143176769359,
-        "y": 4.6267465219740265
+        "x": 1.2505003900884375,
+        "y": 4.625989931765195
       },
       "isLocked": false,
       "linkedName": "Speaker"
     },
     {
       "anchor": {
-        "x": 2.6117057948401614,
-        "y": 4.119307667186764
+        "x": 2.6456402107795283,
+        "y": 4.053248321165694
       },
       "prevControl": {
-        "x": 2.6803875841332054,
-        "y": 3.1005671293223513
+        "x": 1.650385392697451,
+        "y": 3.955945458492435
       },
       "nextControl": {
-        "x": 2.512046221777574,
-        "y": 5.597534255488539
+        "x": 4.1201920543733745,
+        "y": 4.197410512531223
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.34,
-        "y": 5.51
+        "x": 1.3973572133190786,
+        "y": 5.509243409791169
       },
       "prevControl": {
-        "x": 1.7268655769333,
-        "y": 4.99000559346378
+        "x": 1.784222790252379,
+        "y": 4.989249003254949
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,49 +46,7 @@
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "eventMarkers": [
-    {
-      "name": "Intaking",
-      "waypointRelativePos": 0.85,
-      "command": {
-        "type": "sequential",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "mmGroundIntake"
-              }
-            },
-            {
-              "type": "wait",
-              "data": {
-                "waitTime": 0.2
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "mIntake"
-              }
-            },
-            {
-              "type": "wait",
-              "data": {
-                "waitTime": 0.7
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "mOff"
-              }
-            }
-          ]
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 2.0,
     "maxAcceleration": 2.0,
