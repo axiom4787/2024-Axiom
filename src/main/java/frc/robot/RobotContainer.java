@@ -334,16 +334,14 @@ public class RobotContainer {
     new JoystickButton(driverXbox, 2).onTrue(mmGroundIntakeCommand);
     new JoystickButton(driverXbox, 1).onTrue(mmClimberCommand);
 
-    new JoystickButton(backupJoystick, 8).onTrue(new InstantCommand(() -> drivebase.zeroGyro()));
-    new JoystickButton(backupJoystick, 7).onTrue(new ParallelCommandGroup(mmGroundIntakeCommand, new RunCommand(() -> blinkin.set_color(ColorStates.mGroundIntake), blinkin)));
-    new JoystickButton(backupJoystick, 9).onTrue(mmShooterCommand);
-    new JoystickButton(backupJoystick, 11).onTrue(mmClimberCommand);
+    // new JoystickButton(backupJoystick, 8).onTrue(new InstantCommand(() -> drivebase.zeroGyro()));
+    // new JoystickButton(backupJoystick, 7).onTrue(new ParallelCommandGroup(mmGroundIntakeCommand, new RunCommand(() -> blinkin.set_color(ColorStates.mGroundIntake), blinkin)));
+    // new JoystickButton(backupJoystick, 9).onTrue(mmShooterCommand);
+    // new JoystickButton(backupJoystick, 11).onTrue(mmClimberCommand);
 
     // use joysticktriggers to set current mech state to roller (left trigger) or shooter (right trigger) and when let go, set to off with driverXbox.getLeftTriggerReleased() or driverXbox.getRightTriggerReleased()
     // Left Trigger for Roller
     // Left Trigger for Intake
-    // new Trigger(() -> driverXbox.getLeftTriggerAxis() > 0.5)
-    // .onTrue(mIntakeCommand);
 
     // // // Right Trigger for Shoot
     // new Trigger(() -> driverXbox.getRightTriggerAxis() > 0.5)
@@ -359,18 +357,30 @@ public class RobotContainer {
     // .onTrue(mOffCommand);
 
     // same 3 trigger functions as above but for the backupJoystick buttons 1 and 2
-    new JoystickButton(backupJoystick, 2).onTrue(mIntakeCommand);
-    new JoystickButton(backupJoystick, 1).onTrue(
+    // new JoystickButton(backupJoystick, 2).onTrue(mIntakeCommand);
+    // new JoystickButton(backupJoystick, 1).onTrue(
+    //   mChargeShootCommand
+    //   .andThen((new WaitCommand(Constants.ShooterConstants.kTopIndexerDelay)))
+    //   .andThen(mShootCommand)
+    //   .until(() -> !backupJoystick.getRawButton(1))
+    // );
+
+    // // // when both are not pressed, set to off
+    // new Trigger(() -> !backupJoystick.getRawButton(1) && !backupJoystick.getRawButton(2))
+    // .onTrue(mOffCommand);
+
+    new Trigger(() -> driverXbox.getRightTriggerAxis() > 0.5).onTrue(
       mChargeShootCommand
       .andThen((new WaitCommand(Constants.ShooterConstants.kTopIndexerDelay)))
       .andThen(mShootCommand)
-      .until(() -> !backupJoystick.getRawButton(1))
+      .until(() -> driverXbox.getRightTriggerAxis() < 0.5)
     );
 
-    // // when both are not pressed, set to off
-    new Trigger(() -> !backupJoystick.getRawButton(1) && !backupJoystick.getRawButton(2))
-    .onTrue(mOffCommand);
+    new Trigger(() -> driverXbox.getLeftTriggerAxis() > 0.5).onTrue(mIntakeCommand);
 
+    // when both are not pressed, set to off
+    new Trigger(() -> driverXbox.getLeftTriggerAxis() < 0.5 && driverXbox.getRightTriggerAxis() < 0.5)
+    .onTrue(mOffCommand);
 
 
     BooleanSupplier isMoving = () -> Math.abs(driverXbox.getLeftY()) > OperatorConstants.LEFT_Y_DEADBAND 
