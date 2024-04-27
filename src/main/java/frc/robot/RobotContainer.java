@@ -331,8 +331,8 @@ public class RobotContainer {
     new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(() -> drivebase.zeroGyro()));
     // new JoystickButton(driverXbox, 5).onTrue(mmRollerCommand);
     new JoystickButton(driverXbox, 6).onTrue(mmShooterCommand);
-    new JoystickButton(driverXbox, 2).onTrue(mmGroundIntakeCommand);
-    new JoystickButton(driverXbox, 1).onTrue(mmClimberCommand);
+    new JoystickButton(driverXbox, 5).onTrue(mmGroundIntakeCommand);
+    new JoystickButton(driverXbox, 4).onTrue(mmClimberCommand);
 
     // new JoystickButton(backupJoystick, 8).onTrue(new InstantCommand(() -> drivebase.zeroGyro()));
     // new JoystickButton(backupJoystick, 7).onTrue(new ParallelCommandGroup(mmGroundIntakeCommand, new RunCommand(() -> blinkin.set_color(ColorStates.mGroundIntake), blinkin)));
@@ -357,30 +357,30 @@ public class RobotContainer {
     // .onTrue(mOffCommand);
 
     // same 3 trigger functions as above but for the backupJoystick buttons 1 and 2
-    // new JoystickButton(backupJoystick, 2).onTrue(mIntakeCommand);
-    // new JoystickButton(backupJoystick, 1).onTrue(
-    //   mChargeShootCommand
-    //   .andThen((new WaitCommand(Constants.ShooterConstants.kTopIndexerDelay)))
-    //   .andThen(mShootCommand)
-    //   .until(() -> !backupJoystick.getRawButton(1))
-    // );
-
-    // // // when both are not pressed, set to off
-    // new Trigger(() -> !backupJoystick.getRawButton(1) && !backupJoystick.getRawButton(2))
-    // .onTrue(mOffCommand);
-
-    new Trigger(() -> driverXbox.getRightTriggerAxis() > 0.5).onTrue(
+    new JoystickButton(driverXbox, 2).onTrue(mIntakeCommand);
+    new JoystickButton(driverXbox, 1).onTrue(
       mChargeShootCommand
       .andThen((new WaitCommand(Constants.ShooterConstants.kTopIndexerDelay)))
       .andThen(mShootCommand)
-      .until(() -> driverXbox.getRightTriggerAxis() < 0.5)
+      .until(() -> !driverXbox.getRawButton(1))
     );
 
-    new Trigger(() -> driverXbox.getLeftTriggerAxis() > 0.5).onTrue(mIntakeCommand);
-
-    // when both are not pressed, set to off
-    new Trigger(() -> driverXbox.getLeftTriggerAxis() < 0.5 && driverXbox.getRightTriggerAxis() < 0.5)
+    // // // when both are not pressed, set to off
+    new Trigger(() -> !driverXbox.getRawButton(1) && !driverXbox.getRawButton(2))
     .onTrue(mOffCommand);
+
+    // new Trigger(() -> driverXbox.getRightTriggerAxis() > 0.5).onTrue(
+    //   mChargeShootCommand
+    //   .andThen((new WaitCommand(Constants.ShooterConstants.kTopIndexerDelay)))
+    //   .andThen(mShootCommand)
+    //   .until(() -> driverXbox.getRightTriggerAxis() < 0.5)
+    // );
+
+    // new Trigger(() -> driverXbox.getLeftTriggerAxis() > 0.5).onTrue(mIntakeCommand);
+
+    // // when both are not pressed, set to off
+    // new Trigger(() -> driverXbox.getLeftTriggerAxis() < 0.5 && driverXbox.getRightTriggerAxis() < 0.5)
+    // .onTrue(mOffCommand);
 
 
     BooleanSupplier isMoving = () -> Math.abs(driverXbox.getLeftY()) > OperatorConstants.LEFT_Y_DEADBAND 
